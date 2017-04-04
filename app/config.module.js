@@ -12,14 +12,20 @@ ADT.config = {
 const config = require('angular')
     .module('config', []);
 
+const Environment = {
+    'DEV': 'dev',
+    'STAGE': 'stage',
+    'PROD': 'prod',
+};
+
 config.constant(ADT.config.Env, (()=>{
     const host = location.href;
     if(host.indexOf('localhost') > -1){
-        return 'dev';
+        return Environment.DEV;
     } else if(host.indexOf('stage') > -1){
-        return 'stage';
+        return Environment.STAGE;
     } else {
-        return 'prod';
+        return Environment.PROD;
     }
 })());
 
@@ -42,32 +48,32 @@ function PathProvider(Env) {
 
     function getPathBase(env){
         switch(env){
-            case 'dev': return '/RMWA/pulsar';
-            case 'stage': return '/IGME-330-stage/pulsar';
-            case 'prod': return '/IGME-330/pulsar';
+            case Environment.DEV: return '/';
+            case Environment.STAGE: return '/pulsar-stage';
+            case Environment.PROD: return '/pulsar';
         }
     }
 
     function getScriptModifier(env){
         switch(env){
-            case 'dev': return '';
-            case 'stage':
-            case 'prod': return '.min';
+            case Environment.DEV: return '';
+            case Environment.STAGE:
+            case Environment.PROD: return '.min';
         }
     }
 
-    const protocol = Env === 'dev' ? 'http://' : 'https://';
+    const protocol = Env === Environment.DEV ? 'http://' : 'https://';
     function getWarpApiPath(env) {
         switch (env) {
-            case 'dev': return  `${protocol}localhost:3000`;
-            case 'stage': return `${protocol}pulsar-api-stage.herokuapp.com`;
-            case 'prod': return `${protocol}pulsar-api.herokuapp.com`;
+            case Environment.DEV: return  `${protocol}localhost:3000`;
+            case Environment.STAGE: return `${protocol}pulsar-api-stage.herokuapp.com`;
+            case Environment.PROD: return `${protocol}pulsar-api.herokuapp.com`;
         }
     }
 
     const paths = {
         protocol: protocol,
-        host: Env === 'dev' ? `${protocol}localhost:63342` : `${protocol}thunderlab.net`,
+        host: Env === Environment.DEV ? `${protocol}localhost:63342` : `${protocol}thunderlab.net`,
         appPath: getPathBase(Env),
         api: `${protocol}thunderlab.net/pulsar-media/api`,
         scriptModifier: getScriptModifier(Env),

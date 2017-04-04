@@ -1,10 +1,9 @@
 {
-  "name": "rmwa",
-  "version": "1.1.4",
-  "description": "collection of web-apps for IGME 330",
-  "main": "index.js",
+  "name": "pulsar-ui",
+  "version": "1.0.0",
+  "description": "Pulsar Client",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec pulsar/test/*.js",
+    "test": "./node_modules/.bin/mocha --reporter spec test/*.js",
     "build": "grunt build-prod",
     "preversion": "npm test",
     "version": "npm run build",
@@ -15,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://thunder033@github.com/thunder033/RMWA.git"
+    "url": "git+https://thunder033@github.com/thunder033/pulsar-ui.git"
   },
   "author": "Greg Rozmarynowycz",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thunder033/RMWA/issues"
+    "url": "https://github.com/thunder033/pulsar-ui/issues"
   },
-  "homepage": "https://github.com/thunder033/RMWA#readme",
+  "homepage": "https://github.com/thunder033/pulsar-ui#readme",
   "dependencies": {
     "angular": "1.5.8",
     "angular-cookies": "1.6.0",
@@ -45,6 +44,7 @@
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
+    "heroku-deploy-tarball": "^1.0.0",
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
     "mocha": "^3.1.2",

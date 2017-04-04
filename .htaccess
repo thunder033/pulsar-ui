@@ -1,0 +1,17 @@
+DirectoryIndex index.html
+
+# BEGIN gzip
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteBase /
+RewriteOptions Inherit
+ReWriteCond %{HTTP:accept-encoding} (gzip.*)
+ReWriteCond %{REQUEST_FILENAME} !.+\.gz$
+RewriteCond %{REQUEST_FILENAME}.gz -f
+RewriteRule (.+) $1.gz [QSA,L]
+</IfModule>
+# END gzip
+
+<Files *.css.gz>
+ForceType text/css
+</Files>

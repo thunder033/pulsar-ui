@@ -3,11 +3,11 @@
  */
 'use strict';
 
-var browserify = {
+const browserify = {
     files: {
-        'pulsar/dist/bundle.js': 'pulsar/app/app.module.js',
-        'pulsar/dist/asyncHttpRequest.js': 'pulsar/assets/js/workers/asyncHttpRequest.js',
-        'pulsar/dist/generateAudioField.js': 'pulsar/assets/js/workers/generateAudioField.js'
+        'dist/bundle.js': 'app/app.module.js',
+        'dist/asyncHttpRequest.js': 'assets/js/workers/asyncHttpRequest.js',
+        'dist/generateAudioField.js': 'assets/js/workers/generateAudioField.js'
     },
     options: {
         alias: {
@@ -40,11 +40,11 @@ module.exports = function(grunt){
                 jshintrc: true,
                 reporter: require('jshint-stylish')
             },
-            all: ['pulsar/app/**/*.js']
+            all: ['app/**/*.js']
         },
         clean: {
-            all: ['pulsar/dist/*', '.tmp/*'],
-            pulsarDist: ['pulsar/dist/*'],
+            all: ['dist/*', '.tmp/*'],
+            dist: ['dist/*'],
             tmp: ['.tmp/*']
         },
         cssmin: {
@@ -55,7 +55,7 @@ module.exports = function(grunt){
             target: {
                 files: {
                     //Only include font-awesome.min
-                    'pulsar/dist/css/release.css': ['pulsar/assets/css/**/*.css', '!pulsar/assets/css/font-awesome.css']
+                    'dist/css/release.css': ['assets/css/**/*.css', '!assets/css/font-awesome.css']
                 }
             }
         },
@@ -68,46 +68,39 @@ module.exports = function(grunt){
                         }
                         return content;
                     },
-                    noProcess: ['pulsar/assets/**/*','pulsar/dist/**/*']
+                    noProcess: ['assets/**/*','dist/**/*']
                 },
                 files: [{expand: true, src: [
                     // Pulsar
-                    'pulsar/dist/**/*.gz',
-                    'pulsar/dist/fonts/*',
-                    'pulsar/index.html',
-                    'pulsar/grooveAuthenticate.html',
-                    'pulsar/assets/**',
-                    'pulsar/views/**',
-                    // Prod audio files are stored in an external directory
-                    '!pulsar/assets/audio/songs/**',
-                    '!pulsar/assets/fonts/**',
-                    '!pulsar/assets/css/**',
-                    // JS files are embedded in dist bundle
-                    '!pulsar/assets/js/**',
-
-                    'drawingApp/**',
-                    './home/**',
-                    './js/**',
-                    './SG1/**',
-
-                    '.htaccess',
+                    'dist/**/*.gz',
+                    'dist/fonts/*',
                     'index.html',
+                    'grooveAuthenticate.html',
+                    'assets/**',
+                    'views/**',
+                    // Prod audio files are stored in an external directory
+                    '!assets/audio/songs/**',
+                    '!assets/fonts/**',
+                    '!assets/css/**',
+                    // JS files are embedded in dist bundle
+                    '!assets/js/**',
+
                     'LICENSE',
                     'package.json'
                 ], dest: '.tmp'}]
             },
-            pulsarAssets: {
+            assets: {
                 files: [
-                    { expand: true, cwd: 'pulsar/assets/fonts', src: ['*'], dest: 'pulsar/dist/fonts/'}
+                    { expand: true, cwd: 'assets/fonts', src: ['*'], dest: 'dist/fonts/'}
                 ]
             }
         },
         uglify: {
             dist: {
                 files: {
-                    'pulsar/dist/bundle.min.js': ['pulsar/dist/bundle.js'],
-                    'pulsar/dist/asyncHttpRequest.min.js': ['pulsar/dist/asyncHttpRequest.js'],
-                    'pulsar/dist/generateAudioField.min.js': ['pulsar/dist/generateAudioField.js']
+                    'dist/bundle.min.js': ['dist/bundle.js'],
+                    'dist/asyncHttpRequest.min.js': ['dist/asyncHttpRequest.js'],
+                    'dist/generateAudioField.min.js': ['dist/generateAudioField.js']
                 }
             }
         },
@@ -118,34 +111,34 @@ module.exports = function(grunt){
                 },
                 files: [{
                     expand: true,
-                    cwd: 'pulsar/dist/',
+                    cwd: 'dist/',
                     src: ['**/*.min.js'],
-                    dest: 'pulsar/dist',
+                    dest: 'dist',
                     ext: '.min.js.gz'
                 }, {
                     expand: true,
-                    cwd: 'pulsar/dist/css',
+                    cwd: 'dist/css',
                     src: ['**/*.css'],
-                    dest: 'pulsar/dist/css',
+                    dest: 'dist/css',
                     ext: '.css.gz'
                 }]
             }
         },
         watch: {
             css: {
-                files: ['pulsar/assets/css/*.css'],
+                files: ['assets/css/*.css'],
                 tasks: ['cssmin']
             },
             js: {
-                files: ['pulsar/app/**/*.js'],
+                files: ['app/**/*.js'],
                 tasks: ['jshint:all','browserify:dev']
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -156,22 +149,22 @@ module.exports = function(grunt){
 
     grunt.registerTask('build-dev', [
         'jshint:all',
-        'clean:pulsarDist',
+        'clean:dist',
         'browserify:dev',
         'cssmin',
-        'copy:pulsarAssets'
+        'copy:assets'
     ]);
 
     grunt.registerTask('build-prod', [
         'jshint:all',
-        'clean:pulsarDist',
+        'clean:dist',
         'clean:tmp',
         'browserify:dist',
         'uglify:dist',
         'cssmin',
         'compress:prod',
-        'copy:pulsarAssets',
+        'copy:assets',
         'copy:prod',
-        'clean:pulsarDist'
+        'clean:dist'
     ]);
 };

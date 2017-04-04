@@ -1,10 +1,10 @@
 machine:
   node:
-    version: 5.5.0
+    version: 7.4.0
 dependencies:
   cache_directories:
-    - /opt/circleci/nodejs/v5.5.0/bin
-    - /opt/circleci/nodejs/v5.5.0/lib/node_modules
+    - /opt/circleci/nodejs/v7.4.0/bin
+    - /opt/circleci/nodejs/v7.4.0/lib/node_modules
   pre:
     - sh ./scripts/global_modules.sh
   override:
@@ -12,12 +12,8 @@ dependencies:
   post:
     - npm run build
 deployment:
-  production:
-    branch: prod
-    commands:
-      - sh ./scripts/deploy.sh
-  staging:
-    branch: master
+  default:
+    branch: [master, prod]
     commands:
       - sh ./scripts/deploy.sh
 general:
@@ -25,4 +21,4 @@ general:
     - "dist.tar.gz"
 notify:
   webhooks:
-    - url: https://thunderlab.net/deployRMWA.php
+    - url: https://thunderlab.net/deployPulsar.php

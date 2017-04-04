@@ -54,7 +54,7 @@ function getArtifact(artifacts, artifactName, artifactOut) {
 function getArtifactID(){
     //Path for getting build artifacts
     var apiBase = 'https://circleci.com/api/v1.1/project/';
-    var queryURI = `${apiBase}github/thunder033/RMWA/${buildNum}/artifacts?circle-token=${circleCIToken}`;
+    var queryURI = `${apiBase}github/thunder033/pulsar-ui/${buildNum}/artifacts?circle-token=${circleCIToken}`;
 
     request.get(queryURI, {headers: {'Accept': 'application/json'}}, function(err, response, body){
 
@@ -94,7 +94,7 @@ function triggerDeploy(artifact){
         return logError(`Could not parse artifact URL: ` + artifact.path);
     }
 
-    var deployURL = 'http://thunderlab.net/deployRMWA.php',
+    var deployURL = 'http://thunderlab.net/deployPulsar.php',
         payload = {
             artifact_path: path,
             artifact_server: server,

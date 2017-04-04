@@ -1,0 +1,46 @@
+/* https://jsfiddle.net/cherrador/jomgLb2h/ */
+
+.fa-stack > .fa-up{
+    position:absolute;
+    width:100%;
+    left:0;
+    text-align:center;
+    top:0;
+    font-size:1.5em
+}
+.fa-stack > .fa-down{
+    position:absolute;
+    width:100%;
+    left:0;
+    text-align:center;
+    bottom:0;
+    font-size:1.5em
+}
+.fa-stack > .fa-left{
+    position:absolute;
+    line-height:inherit;
+    left:0;
+    font-size:1.5em
+}
+.fa-stack > .fa-right{
+    position:absolute;
+    line-height:inherit;
+    right:0;
+    font-size:1.5em
+}
+.fa-stack > .fa-nudge-right{
+    left: 12%;
+    right:auto;
+}
+.fa-stack > .fa-nudge-left{
+    left:auto;
+    right: 12%;
+}
+.fa-stack > .fa-nudge-down{
+    top: 12%;
+    bottom:auto;
+}
+.fa-stack > .fa-nudge-up{
+    top:auto;
+    bottom: 12%;
+}

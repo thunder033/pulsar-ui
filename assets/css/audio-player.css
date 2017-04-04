@@ -1,0 +1,182 @@
+.play-button {
+    width: 7em;
+    height: 7em;
+    border-radius: 3.5em;
+    float: left;
+    margin-right: .5em;
+}
+
+.audio-player .ap-seek-forward {
+    float: left;
+    top: -1em;
+    left: -2.25em;
+}
+
+.volume-panel {
+    display: inline-block;
+    width: 6.5em;
+    top: .4em;
+    left: -2em;
+    position: relative;
+}
+
+.volume-bar {
+    width: 4em;
+    background: #111;
+    border: 1px #777 solid;
+    height: .3em;
+    border-radius: .15em;
+    margin-left: 1.5em;
+    position: relative;
+}
+
+.volume-fill {
+    width: 50%;
+    height: .3em;
+    background: #fff;
+}
+
+.volume-handle {
+    box-sizing: border-box;
+    height: .6em;
+    width: .6em;
+    background: #fff;
+    border: 1px #ccc solid;
+    border-radius: .3em;
+    left: 50%;
+    top: 50%;
+    margin: -.3em 0 0 -.3em;
+    position: absolute;
+}
+
+.volume-btn {
+    transform: scale(.65);
+    float: left;
+    top: -1em;
+    z-index: 5;
+}
+
+.audio-player .ap-seek-back {
+    position: relative;
+    top: 3.9em;
+    margin-right: -1.75em;
+    float: left;
+    z-index: 5;
+}
+
+.audio-player .volume-btn .fa-stack {
+    margin: -1em;
+    top: -.1em;
+    left: -.1em;
+    font-size: .7em;
+    text-align: left;
+}
+
+/* http://stackoverflow.com/questions/21233033/css3-marquee-effect */
+
+.clip-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    white-space: nowrap;
+    width: 10em;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.clip-title span {
+    display: inline-block;
+}
+
+.clip-title.marquee span {
+    animation: marquee 20s linear infinite;
+}
+
+.clip-title span:hover {
+    animation-play-state: paused
+}
+
+/* Make it move */
+@keyframes marquee {
+    0%   { transform: translate(10em, 0); }
+    100% { transform: translate(-100%, 0); }
+}
+
+.ap-clip-info {
+    font-size: .9em;
+    display: block;
+    height: 1em;
+}
+
+.ap-deep-link {
+    font-size: .9em;
+}
+
+.ap-timestamp {
+    font-size: .9em;
+    font-family: "Droid Sans Mono", "Courier New",  monospace ;
+    padding: .2em;
+    float: right;
+    margin: 0 1em 0 -2em;
+}
+
+.play-button.stopped:hover,
+.play-button.loading:hover {
+    cursor: default;
+    background: #555;
+}
+
+.play-button.paused:after {
+    content: "";
+    border-left: 3em #fff solid;
+    border-bottom: 2em transparent solid;
+    border-top: 2em transparent solid;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -2em 0 0 -1.2em;
+}
+
+.play-button.playing:after {
+    content: "";
+    border-left: .8em #fff solid;
+    border-right: .8em #fff solid;
+    width: .8em;
+    height: 3.4em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -1.7em 0 0 -1.2em;
+}
+
+.play-button.stopped:after {
+    content: "";
+    background: #fff;
+    width: 2.5em;
+    height: 2.5em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin:  -1.25em 0 0 -1.25em;
+    box-shadow: 0 0 2px #333;
+}
+
+.play-bar {
+    margin-top: .2em;
+    width: 16.05em;
+    height: 1em;
+    background: #111;
+    display: inline-block;
+    margin-left: -.7em;
+    border: 1px #777 solid;
+    border-bottom-right-radius: .5em;
+    border-top-right-radius: .5em;
+    overflow: hidden;
+}
+
+.play-bar-progress {
+    height: 1em;
+    display: inline-block;
+    background: #ccc;
+    border-right: 1px #fff solid;
+}

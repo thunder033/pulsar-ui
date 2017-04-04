@@ -1,0 +1,20 @@
+<div class="play-queue cp-container">
+    <button ng-if="!isFirstPage()"
+            ng-click="seekPage(-1)"
+            class="cp-button cp-button-round-sm pq-seek pq-seek-prev"
+            title="Previous Page">
+        <span class="fa fa-arrow-up"></span>
+    </button>
+
+    <button ng-if="!isLastPage()"
+            ng-click="seekPage(1)"
+            class="cp-button cp-button-round-sm pq-seek pq-seek-next"
+            title="Next Page">
+        <span class="fa fa-arrow-down"></span>
+    </button>
+
+    <ul>
+        <li ng-if="page.length === 0" class="pq-message">The play queue is empty. Add tracks from the Media Tab.</li>
+        <li ng-repeat="playable in page track by $index" ng-class="[playable.constructor.name]" ng-bind="playable.getName()"></li>
+    </ul>
+</div>

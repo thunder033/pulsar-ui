@@ -1,0 +1,22 @@
+[
+  "Kitchen Sink.mp3",
+  "Hallelujah.wav",
+  "Be Concerned.mp3",
+  "Trees.mp3",
+  "Panic Station.mp3",
+  "Secrets.mp3",
+  "Undisclosed Desires.mp3",
+  "Beam (Orchestral Remix).mp3",
+  "Remember the name.mp3",
+
+  "New Adventure Theme.mp3",
+  "Peanuts Theme.mp3",
+  "The Picard Song.mp3",
+
+  {"name": "Concert Hall.wav", "type": "ReverbImpulse"},
+  {"name": "Arena.wav", "type": "ReverbImpulse"},
+  {"name": "Bass Boost.wav", "type": "ReverbImpulse"},
+
+  {"name": "gemCollect.wav", "type": "Effect"},
+  {"name": "blackGem.wav", "type": "Effect"}
+]

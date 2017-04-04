@@ -1,0 +1,52 @@
+<div class="media-widget">
+
+    <div class="mw-search">
+        <input type="text" class="mw-search-input" ng-model="model.search" placeholder="Search" ng-model-options="{debounce: 500}">
+        <span class="fa fa-search mw-search-icon text-primary"></span>
+
+        <!--<button class="mw-source-toggle cp-button cp-button-md">-->
+            <!--<span class="fa fa-plus"></span>-->
+            <!--<span>Sources</span>-->
+        <!--</button>-->
+        <div class="mw-sources">
+            <div class="mw-source"
+                 ng-repeat="source in sources"
+                 ng-class="[{inactive: !source.isActive()}]"
+                 ng-click="toggleActive(source)"
+                 title="{{source.getName()}} [{{source.isActive() ? 'Active' : 'Inactive'}}]">
+                <span ng-if="source.isWorking()" class="mw-working fa fa-circle-o-notch fa-spin"></span>
+                <img ng-src="{{source.getIcon()}}" alt="{{source.getName()}}">
+            </div>
+        </div>
+    </div>
+
+    <label class="cp-control-title" ng-if="!hasActionOverride()">Queue Action</label>
+    <div class="mw-queue-options" ng-if="!hasActionOverride()">
+        <div class="mw-queue-option" ng-repeat="option in queueOptions track by $index" ng-class="{'selected': option.value === model.queueMode}">
+            <label>
+                <input type="radio" ng-value="option.value" ng-model="model.queueMode" name="mw-queue-mode">
+                <span ng-switch on="option.value" class="mw-queue-option-icon" title="{{option.name}}">
+                    <!--Play Now-->
+                    <span ng-switch-when="1" class="fa fa-play" style="margin-top: .1em"></span>
+                    <!--Play Next-->
+                    <span ng-switch-when="0" class="fa-stack" style="margin-top: -.5em">
+                        <span class="fa fa-list fa-stack-1x fa-nudge-left fa-nudge-down"></span>
+                        <span class="fa fa-share fa-stack-1x fa-flip-horizontal fa-nudge-up text-primary"></span>
+                    </span>
+                    <!--Add to Queue-->
+                    <span ng-switch-when="2" class="fa-stack">
+                        <span class="fa fa-list fa-stack-1x fa-nudge-left fa-nudge-up"></span>
+                        <span class="fa fa-share fa-rotate-180 fa-stack-1x fa-nudge-down text-primary"></span>
+                    </span>
+                </span>
+                <span class="mw-option-name" ng-bind="option.name"></span>
+            </label>
+        </div>
+    </div>
+
+    <button ng-click="playUserStream()" class="cp-button cp-button-md" title="Visualize Microphone Audio">
+        <span class="fa fa-lg fa-microphone"></span>
+    </button>
+
+    <playlist playlist="playlist" action-override="queueClip"></playlist>
+</div>

@@ -1,0 +1,107 @@
+.home {
+    text-align: center;
+    padding-top: 4em;
+}
+
+.home .ps-logo {
+    margin-bottom: 3rem;
+}
+
+.home .apps a {
+    font-size: 4em;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+    background: #ddd;
+    padding: .25em;
+    border: 1px #777 solid;
+    border-radius: .1em;
+    transition: all .5s;
+    text-shadow: 0 0 1px #fff;
+    box-shadow: 1px 0 2px #555;
+}
+
+.home .apps a:hover {
+    background: #fff;
+    transform: scale(1.1, 1.1);
+    transition: all .5s;
+}
+
+.home .apps a img {
+    max-height: 1em;
+    margin-right: .25em;
+    vertical-align: top;
+}
+
+.pulsar-launcher {
+    position: fixed;
+    top: .5em;
+    right: .5em;
+}
+
+.ps-icon {
+    background: #eee;
+    border: 1px #ddd solid;
+    height: 3em;
+    width: 3em;
+    border-radius: 1.5em;
+    padding: .5em;
+    box-sizing: border-box;
+    transition: all .2s ease-out .2s;
+}
+
+.pulsar-launcher:hover .ps-icon {
+    border-left: 5px #a00 solid;
+    border-top: 5px transparent solid;
+    border-bottom: 1px #b55 solid;
+    transform: rotate(135deg);
+    transition: all .2s ease-in 0s;
+    cursor: pointer;
+}
+
+.ps-menu {
+    box-sizing: border-box;
+    height: 0;
+    position: absolute;
+    top: 1.5em;
+    right: 0;
+    padding: 0;
+    border-right: 5px #aa0000 solid;
+    transition: all .2s ease-in 0s;
+    overflow: hidden;
+}
+
+.pulsar-launcher:hover .ps-menu {
+    height: 8em;
+    padding-top: 1.5em;
+    transition: all .2s ease-out .2s;
+}
+
+.ps-menu li {
+    width: 8em;
+    text-align: right;
+    background: #ddd;
+    margin-bottom: .2em;
+    position: relative;
+    transition: all .3s;
+    right: 0;
+    color: #333;
+    border-bottom-left-radius: .3em;
+    border-top-left-radius: .3em;
+    overflow: hidden;
+}
+
+.ps-menu li:hover {
+    transform: scale(1.1);
+    right: -5%;
+    cursor: pointer;
+    transition: all .3s;
+    width: 7.2em;
+}
+
+.ps-menu li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    padding: .5em;
+}

@@ -1,0 +1,110 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #eee;
+    font-size: 100%;
+    font-family: 'Cuprum', "Century Gothic", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+#visualizer {
+    margin-left: 25em;
+    height: 100%;
+}
+
+#visualizer canvas {
+    width: 100%;
+    height: 100%;
+}
+
+#visualizer.expanded {
+    margin-left: 0;
+}
+
+#warp {
+    width: 100%;
+    height: 100%;
+}
+
+.notes {
+    text-align: left;
+}
+
+h4 {
+    font-size: 1.1em;
+    margin: 0;
+    padding: .5em;
+    border-top: 1px #555 solid;
+}
+
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.clearfix { display: inline-block; }
+/* start commented backslash hack \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* close commented backslash hack */
+
+
+.text-danger {
+    color: #d55;
+}
+
+.text-primary {
+    color: #48d;
+}
+
+.text-info {
+    color: #ccc;
+}
+
+/* At this point we really only care about chrome... */
+::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    background: #000;
+    border-radius: 5px;
+    border: 1px #666 solid;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+    -webkit-border-radius: 5px;
+    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+::-webkit-scrollbar-corner {
+    background: #000;
+}
+
+.pulsar-footer {
+    position: fixed;
+    bottom: .5rem;
+    right: .5rem;
+    z-index: 100;
+    color: #fff;
+    text-shadow:
+            -1px 0 1px #f55,
+            1px 0 1px #333;
+}

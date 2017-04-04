@@ -1,0 +1,65 @@
+.menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 40em;
+    height: 20em;
+    box-sizing: border-box;
+    margin: -10em 0 0 -20em;
+    background: rgba(255, 255, 255, .3);
+    padding: 1em;
+    color: #fff;
+    border-radius: 1em;
+    text-align: center;
+}
+
+.menu .playlist {
+    height: 10.5em;
+    margin-top: .5em;
+}
+
+.menu .menu-btn {
+    background: #fff;
+    color: #333;
+    padding: .3em .5em;
+    font-family: 'Cuprum', "Century Gothic", sans-serif;
+    border: 0;
+    border-radius: .5em;
+    font-size: 1.1em;
+}
+
+.menu .menu-btn:hover {
+    background: #ddd;
+    cursor: pointer;
+}
+
+.song-title {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: .75em;
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.score {
+    position: fixed;
+    top: 1em;
+    color: #fff;
+    left: .33em;
+    font-size: 3em;
+    font-weight: bold;
+}
+
+.multiplier {
+    position: fixed;
+    top: 4em;
+    left: .66em;
+    color: #ffffff;
+    font-size: 1.5em;
+}
+
+.multiplier:before {
+    content: 'x';
+}

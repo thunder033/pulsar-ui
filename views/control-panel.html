@@ -1,0 +1,51 @@
+<div class="control-panel" ps-accordion>
+    <button class="cp-button cp-button-round-sm cp-expand-ctrl" ng-click="toggleExpanded()">
+        <span class="fa" ng-class="expanded ? 'fa-angle-double-left' : 'fa-angle-double-right'"></span>
+    </button>
+
+    <audio-player player="player" queue="playQueue"></audio-player>
+
+    <div ps-accordion-tab>
+        <h4 class="ps-accordion-header">
+            <span class="fa fa-list"></span>
+            Play Queue<span ng-bind="playQueue.getItems().length" class="pq-count"></span>
+            <!--Notification for new item in queue-->
+            <span class="cp-notification text-primary" ng-class="{active: isActiveNotification()}">
+                <span class="fa fa-plus-circle"></span>
+                <span>Added "{{playQueueAdded}}"</span>
+            </span>
+        </h4>
+        <play-queue audio-player="player" queue="playQueue"></play-queue>
+    </div>
+
+    <div class="ps-logo" ng-class="{visible: player.state !== 'Playing' && player.state !== 'Streaming'}">
+        <img src="assets/images/flare-logo.png" alt="Pulsar Logo">
+        <h2>Flare</h2>
+    </div>
+
+    <div ps-accordion-tab>
+        <h4 class="ps-accordion-header"><span class="fa fa-star"></span>Effects</h4>
+        <label ng-repeat="(name, effect) in effects" class="toggleButton effectOption">
+            <input type="checkbox" checklist-value="effect" checklist-model="visualizer.effects" ><span>{{ effect | capitalize }} </span>
+        </label>
+
+        <label class="select-box">Noise Amount
+            <input type="range" min="0" max="1" ng-model="visualizer.noiseThreshold" step="0.01">
+        </label>
+
+        <label class="color-input"><span>Visualization Color </span>
+            <div class="strip"></div>
+            <input type="range" min="0" max="360" ng-model="visualizer.hue">
+        </label>
+
+        <label class="select-box">Reverb Effect
+            <select ng-model="reverbEffect" ng-options="effect as effect.name for effect in reverbEffects track by effect.id" ng-change="setReverbEffect()"></select>
+        </label>
+    </div>
+
+    <div ps-accordion-tab selected>
+        <h4 class="ps-accordion-header"><span class="fa fa-music"></span>Music</h4>
+        <ps-media-widget player="player" queue="playQueue"></ps-media-widget>
+    </div>
+    <pulsar-launcher></pulsar-launcher>
+</div>

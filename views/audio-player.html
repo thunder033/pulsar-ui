@@ -1,0 +1,30 @@
+<div class="audio-player clearfix">
+
+    <button ng-click="seekBack()" class="cp-button cp-button-round-sm ap-seek ap-seek-back" title="Skip Backward">
+        <span class="fa fa-step-backward"></span>
+    </button>
+
+    <button class="cp-button play-button" ng-class="player.state.toLowerCase()" ng-click="player.togglePlaying()">
+        <loader-icon ng-if="player.state === 'Loading'"></loader-icon>
+        <span ng-if="player.state === 'Streaming'">
+            <span class="fa fa-microphone fa-2x"></span>
+        </span>
+    </button>
+    <span class="clip-title" ng-class="{marquee: marqueeClipTitle}"><span ng-bind="player.playing.name"></span></span><br>
+    <span class="ap-clip-info">
+        <span ng-bind="player.playing.getInfo()"></span>
+        <a ng-if="player.playing.getDeepLink()" href="{{player.playing.getDeepLink()}}" target="_blank" class="text-info ap-deep-link">
+            <span class="fa fa-external-link"></span>
+        </a>
+    </span>
+
+
+    <span class="play-bar" ng-click="setGain($event)"><span class="play-bar-progress" ng-style="{width: getPlaybarSize()}"></span></span>
+    <span class="ap-timestamp">{{ player.playbackTime | secondsToDate | date:'m:ss' }} / {{ player.trackLength | secondsToDate | date:'m:ss' }}</span>
+
+    <button ng-click="seekForward()" class="cp-button cp-button-round-sm ap-seek ap-seek-forward" title="Skip Forward">
+        <span class="fa fa-step-forward"></span>
+    </button>
+    
+    <ap-volume player="player" ng-if="player.state !== 'Streaming'"></ap-volume>
+</div>

@@ -1,0 +1,13 @@
+<div class="volume-panel">
+    <button class="cp-button cp-button-round-sm volume-btn" ng-click="toggleMute()">
+            <span ng-class="[muted ? 'fa-stack' : 'fa fa-volume-up fa-lg']">
+                <i ng-if="muted" class="fa fa-stack-2x fa-volume-off fa-nudge-left"></i>
+                <i ng-if="muted" class="fa fa-times fa-lg fa-right text-danger" style="font-size: 1em"></i>
+            </span>
+    </button>
+
+    <div class="volume-bar" ng-click="setGain($event)">
+        <div class="volume-fill" ng-style="{width: getGain() * 100 + '%'}"></div>
+        <div class="volume-handle" ng-style="{left: getGain() * 100 + '%'}"></div>
+    </div>
+</div>

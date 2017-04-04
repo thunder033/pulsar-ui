@@ -1,0 +1,55 @@
+{
+  "name": "rmwa",
+  "version": "1.1.4",
+  "description": "collection of web-apps for IGME 330",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec pulsar/test/*.js",
+    "build": "grunt build-prod",
+    "preversion": "npm test",
+    "version": "npm run build",
+    "postversion": "git push && git push --tags",
+    "watch": "grunt watch",
+    "updateLib": ".\\scripts\\update_lib.bat",
+    "buildDev": "grunt build-dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://thunder033@github.com/thunder033/RMWA.git"
+  },
+  "author": "Greg Rozmarynowycz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thunder033/RMWA/issues"
+  },
+  "homepage": "https://github.com/thunder033/RMWA#readme",
+  "dependencies": {
+    "angular": "1.5.8",
+    "angular-cookies": "1.6.0",
+    "angular-ui-router": "^0.3.1",
+    "checklist-model": "^0.10.0",
+    "eventtarget": "^0.1.0",
+    "modular-adal-angular": "^1.0.4",
+    "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.10"
+  },
+  "devDependencies": {
+    "angular-q-spread": "^1.1.0",
+    "angular-socket-io": "^0.7.0",
+    "chai": "^3.5.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-compress": "^1.3.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "mocha": "^3.1.2",
+    "request": "^2.79.0",
+    "socket.io-client": "^1.7.3",
+    "uglify-js": "github:mishoo/UglifyJS2#harmony"
+  }
+}

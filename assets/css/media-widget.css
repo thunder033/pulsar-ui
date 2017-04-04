@@ -1,0 +1,178 @@
+.mw-search {
+    background: #ddd;
+    position: relative;
+    border: 1px #777 solid;
+    border-radius: .3em;
+    overflow: hidden;
+    margin: .2em 0 .3em 0;
+    font-size: 1.2em;
+}
+
+.mw-search-input {
+    padding: .4em 7em .4em .4em;
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border: 0;
+    font-size: inherit;
+    z-index: 4;
+}
+
+.mw-search-icon {
+    position: absolute;
+    font-size: inherit;
+    right: 5.8em;
+    top: .4em;
+    z-index: 2;
+}
+
+.mw-source-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: .8em;
+    padding: .5em;
+    box-sizing: border-box;
+    width: 5.2em;
+}
+
+.mw-source-toggle.expanded {
+    background: #2a2a2a;
+}
+
+.mw-sources {
+    position: absolute;
+    top: 0;
+    right: 0;
+    box-sizing: border-box;
+    text-align: right;
+    border-left: 1px #999 solid;
+    padding-left: .15em;
+    z-index: 2;
+}
+
+.mw-sources:before {
+    content: 'Click to toggle music sources:';
+    width: 0;
+    font-size: .8em;
+    color: #333;
+    vertical-align: top;
+    padding: .25em 0;
+    background: #ddd;
+    overflow: hidden;
+    transition: all .2s;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-right: -.25em;
+    opacity: 0;
+}
+
+.mw-sources:hover:before {
+    width: 6.5em;
+    padding-right: .5em;
+    margin: 0;
+    opacity: 1;
+    transition: all .2s;
+}
+
+.mw-source {
+    display: inline-block;
+    padding: .2em .15em 0 0;
+    position: relative;
+    cursor: pointer;
+    transition: transform .3s;
+}
+
+.mw-source:hover {
+    transform: scale(1.08, 1.08);
+    transition: transform .3s;
+}
+
+.mw-working {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -.475em 0 0 -.61em;
+    color: #fff;
+    text-shadow: 0 0 2px #555;
+}
+
+.mw-source.inactive {
+    opacity: .5;
+}
+
+.mw-source img {
+    border-radius: .3em;
+    max-height: 1.6em;
+}
+
+.mw-queue-options {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.mw-queue-option {
+    display: inline-block;
+    width: 2.3em;
+    height: 2em;
+    overflow: hidden;
+    border: 1px #777 solid;
+    border-left: 0;
+    transition: width .3s;
+}
+
+.mw-queue-option:not(.selected):hover {
+    cursor: pointer;
+    background: #666666;
+}
+
+.mw-queue-option:not(.selected):hover * {
+    cursor: pointer;
+}
+
+.mw-queue-option:first-child {
+    border-left: 1px #777777 solid;
+    border-top-left-radius: .3em;
+    border-bottom-left-radius: .3em;
+}
+
+.mw-queue-option:last-child {
+    border-top-right-radius: .3em;
+    border-bottom-right-radius: .3em;
+}
+
+.mw-queue-option.selected {
+    background: #444;
+    width: 8em;
+    transition: width .3s;
+}
+
+.mw-queue-option input {
+    display: none;
+}
+
+.mw-queue-option label {
+    display: inline-block;
+    padding: .3em;
+}
+
+.mw-queue-option-icon {
+    width: 1.7em;
+    height: 1.4em;
+    margin-bottom: .3em;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+
+.mw-option-name {
+    display: inline-block;
+    height: 1.4em;
+    vert-align: middle;
+    margin-top: .2em;
+}
+
+.mw-queue-option .fa,
+.mw-queue-option .fa-stack {
+
+}

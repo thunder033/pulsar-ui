@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="https://cdn.jsdelivr.net/hls.js/latest/hls.min.js"></script>
+    <video id="video"></video>
+    <script>
+        if(Hls.isSupported()) {
+            var video = document.getElementById('video');
+            var config = {xhrSetup: function(xhr, url){
+                if(url.indexOf('thunderlab') < 0){
+                    xhr.open('get', 'http://thunderlab.net/pulsar-media/api/stream-proxy.php?url=' + encodeURIComponent(url));
+                }
+            }};
+            var hls = new Hls(config);
+            hls.loadSource('http://thunderlab.net/pulsar-media/api/groove/tracks/music.8D6KGX5C9PCJ/stream?authToken=EwAgA0Z%252bBAAU5jOtdX4NI1yewXdQBs8tjGYSSmQAATl53JgUkXwWumTXEmetXJtCJNQxsidM7kzrK0i%2FeWmMamsx3rCQ%252b5S34xr8NocusY3Lyy56M46cH3P%252bjrSxWEtnbRhE1pE6ohlQ3vXAjcQTawSlG9ms3XOv8y9PWgo6URbWjojS1sJLLur7kumC8Gk79uAdaXs%2F%2F9Miywc4Ya7LvRbpHSRoLEzzPVGqlPf3xgOdbEAN%2FDbVyJGQFAC5WTNOpkJoKM9CzT8%252b5INmRicT1GDd0z4xN%2Fly542GyS%252bXXweNiyYeEsfca7IiDptyDxYYNKrwC3H1bSX56lupoGS9GkYWqmJO8UcGtS5OvsS%252bCgeon002%2FEazjgzzqAMvNDUDZgAACHGPrwKedkl48AG1Py3xxYlDE5qVpM%2F1FIDxndZqNxM8JpMU0T7P37ox6vrPcVjLaXSPwMn%2FkDUEYhvEPyjH%252bZm4y4X9LaXWoBZcKMRakyO30lciQ0Ev61Y0wTKtN%252bUA%2FW5CkbwFZAMY1WozqLeT9hjpl5YnVPQy145Y8b8UdGiG9xK27QZLfhxBu0dE5IkeqZuqt46fK%252bEt%2Fr39XiKUI0FS9asE84YkVKH1Hn4VO4YqFlaf9xFcIG72Ogo%2F7xSbBv66F5FX7VNE9RlyzSuz5yEz2AlVyfArAImzy2evFrRfWInDVvICpnIUVegjXxRVQ4AaE2bWzKFGUL3wZFeFsw75cb5fqwhRanSY28f7O33qnxabD5wDG7gaZYn3du%252bOi7A3Cd6ifSHXcGky857mT1oaW2LzqB6IwduL0KzGxiEGfoSRSgLy75YXsGM1Q9R9JOL3y9OfdnGaWhvbnQZiiOpxzKO4Vo4P3Rystwh7o7LTW4VcOUqQMbraOp4GGpYaU5tftcpScx0mrUustQ0QOe2LYbkYpUI9Siurs6zEp%252b6ik4gqu06Xj%252b4kjuz%252bvxwsDpUJVqldkq52HzMuQN29xpo91DGM0eEGUCtkHsSN9SX67dszgSblCGijj1CkQjOTeWVzmJwpKchboscEPUwEbD49s8VuyAvmyn3J%2FwE%253d&clientInstanceId=AAAAAAAAAAAAAAAAAAAAADm2apE04EwQoADmdo2FmMs');
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED,function(evt, data) {
+                var audioCtx = new (AudioContext || webkitAudioContext)();
+                var source = audioCtx.createMediaElementSource(video);
+                //source.connect(audioCtx.destination);
+                video.play();
+            });
+        }
+    </script>
+
+</head>
+<body>
+    <audio controls src=""></audio>
+</body>
+</html>

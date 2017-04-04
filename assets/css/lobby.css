@@ -1,0 +1,101 @@
+#lobby input[type='text'] {
+    padding: .3em;
+}
+
+#lobby button {
+    padding: .3em;
+}
+
+#lobby .wrapper {
+    padding-top: 3em;
+    box-sizing: border-box;
+}
+
+#lobby,
+.wrapper,
+#game-wrapper,
+.warp-wrapper,
+#game,
+#game canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#lobby .staging-match-user-list {
+    padding: .3em;
+}
+
+#lobby .staging-match-user-list li {
+    list-style: none;
+    border: 1px #ccc solid;
+    padding: .3em;
+    height: 1.3em;
+    margin-bottom: .3em;
+}
+
+#lobby .error {
+    color: #c00;
+}
+
+#lobby .staging-panel {
+    padding: 1em;
+    border-left: 1px #ccc solid;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+#lobby .match-list {
+    width: 8em;
+}
+
+#lobby select {
+    overflow: hidden;
+    width: 100%;
+}
+
+#lobby select option {
+    padding: .5em;
+}
+
+#game-wrapper .warp-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.debug-stats {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1em;
+    color: #fff;
+    z-index: 1000;
+}
+
+.start-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 25em;
+    height: 10em;
+    margin: -5em 0 0 -12.5em;
+    text-align: center;
+    z-index: 100;
+}
+
+.match-players {
+    font-size: 1.2em;
+    font-style: italic;
+}
+
+.match-players span.name {
+    font-weight: bold;
+    font-style: normal;
+}
+
+.end-button {
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    z-index: 100;
+}

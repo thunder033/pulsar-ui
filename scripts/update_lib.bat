@@ -1,0 +1,1 @@
+npm i thunder033/pulsar-lib#%1 --save

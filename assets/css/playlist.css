@@ -1,0 +1,85 @@
+.playlist {
+    overflow-y: scroll;
+    max-height: 13em;
+}
+
+.playlist ul {
+    padding: 0;
+}
+
+.playlist li,
+.play-queue li {
+    list-style: none;
+    padding: .3em;
+    border-bottom: 1px #333 solid;
+    position: relative;
+    text-align: left;
+}
+
+.playlist li:hover,
+.play-queue li:hover {
+    cursor: pointer;
+    background: #555;
+}
+
+.playlist li .track-title {
+    display: inline-block;
+    width: 16em;
+    padding: .2em;
+    vertical-align: top;
+}
+
+.playlist li .track-length {
+    display: inline-block;
+    padding: .2em;
+}
+
+.playlist .track-info {
+    display: block;
+    font-size: .8em;
+    padding-left: .3em;
+}
+
+.playlist li.playing {
+    font-weight: bold;
+    color: #ccffcc;
+}
+
+.playlist li.playing span.track-title:after {
+    content: '';
+    height: 0;
+    width: 0;
+    border-left: 10px #ccffcc solid;
+    border-top: 8px transparent solid;
+    border-bottom: 8px transparent solid;
+    margin-left: .5em;
+    line-height: 0;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.playlist li img.source-icon {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    float: right;
+}
+
+.playlist li.Error {
+    color: #aaa;
+}
+
+.playlist li.Error span.track-title:after {
+    content: " [error]";
+    color: #d55;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: top;
+    padding-left: .5em;
+}
+
+.playlist li.Error:hover {
+    cursor: not-allowed;
+    background: #2a2a2a;
+}
+

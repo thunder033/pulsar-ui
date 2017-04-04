@@ -1,0 +1,212 @@
+html, body {
+    overflow: hidden;
+}
+
+.control-panel {
+    float: left;
+    width: 25em;
+    background: #333333;
+    height: 100%;
+    color: #eee;
+    padding: 1em;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.control-panel .ps-logo {
+    position: fixed;
+    transform: translate(12.5em, 0);
+    margin: -3em 0 0 -11em;
+    top: 50%;
+    left: 50%;
+    height: 6em;
+    width: 22em;
+    text-align: center;
+    opacity: 0;
+    transition: opacity .75s;
+}
+
+.ps-logo.visible {
+    opacity: 1;
+    transition: opacity .25s;
+}
+
+.ps-logo h2 {
+    font-size: 6em;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: baseline;
+    margin-left: .03em;
+    text-shadow: 0 0 1px #555;
+}
+
+.ps-logo img {
+    vertical-align: baseline;
+    height: 4.8em;
+    width: 4.8em;
+    background: #ddd;
+    box-sizing: border-box;
+    position: relative;
+    top: .15em;
+    border-radius: .3em;
+    border: .2em #ddd solid;
+    box-shadow: 0 0 1px #555;
+}
+
+.control-panel h4 .fa {
+    margin-right: .5em;
+}
+
+.toggleButton span {
+    margin: .5em .25em .5em 0;
+    padding: .5em;
+    border: 1px #aaa solid;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.cp-notification {
+    font-size: .8em;
+    font-weight: normal;
+    opacity: 0;
+    transition: all .3s;
+}
+
+.cp-notification.active {
+    opacity: 1;
+    transition: all .3s;
+}
+
+.toggleButton span:hover {
+    background: #999;
+}
+
+.toggleButton input {
+    height: 0;
+    width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.toggleButton input:checked + span {
+    background: #222;
+}
+.color-input, .select-box {
+    background: #222;
+    padding: .5em;
+    margin: 0 0 .25em;
+    display: block;
+}
+
+.select-box select, .select-box input {
+    border: 0;
+    padding: .25em;
+    margin: -.25em 0 -.25em .5em;
+    vertical-align: middle;
+}
+
+.color-input .strip {
+    width: 12em;
+    margin: 0 0 -1.5em .4em;
+    height: 2em;
+    background: linear-gradient(to right,
+    rgba(255, 0, 0, 1),
+    rgba(255, 255, 0, 1),
+    rgba(0, 255, 0, 1),
+    rgba(0, 255, 255, 1),
+    rgba(0, 0, 255, 1),
+    rgba(255, 0, 255, 1),
+    rgba(255, 0, 0, 1));
+}
+
+.color-input input {
+    width: 15em;
+    height: 1em;
+    padding: 0;
+    margin-bottom: .5em;
+}
+
+.cp-container {
+    margin-top: .5em;
+}
+
+.cp-container ul {
+    background: #2a2a2a;
+}
+
+.cp-button {
+    box-sizing: border-box;
+    border: 1px #eee solid;
+    position: relative;
+    background: #555;
+    box-shadow: 0 0 1px #bbb;
+    color: #fff;
+    font-family: 'Cuprum', "Century Gothic", sans-serif;
+}
+
+.cp-button-md {
+    padding: .4em;
+    border-radius: .25em;
+}
+
+.cp-button-round-sm {
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 1.25em;
+}
+
+.cp-button,
+.cp-button:active {
+    outline: none;
+}
+
+.cp-button:hover {
+    background: #666;
+    cursor: pointer;
+}
+
+.ps-accordion-tab.expanded {
+    transition: max-height .2s;
+    max-height: 20em;
+    overflow: hidden;
+}
+
+.ps-accordion-tab.collapsed {
+    max-height: 2.4em;
+    overflow: hidden;
+    transition: max-height .2s;
+}
+
+.ps-accordion-tab.collapsed .ps-accordion-header:hover {
+    cursor: pointer;
+    background: #555;
+}
+
+.ps-accordion-icon {
+    float: right;
+}
+
+.cp-control-title {
+    font-weight: bold;
+    margin-right: .3em;
+}
+
+.control-panel.collapsed {
+    margin-left: -27em;
+}
+
+.control-panel.collapsed .audio-player {
+    position: relative;
+    left: 27em;
+}
+
+.cp-expand-ctrl {
+    position: absolute;
+    top: 1em;
+    right: -1em;
+    z-index: 10;
+}
+
+.control-panel.collapsed .cp-expand-ctrl {
+    right: -32.5em;
+}

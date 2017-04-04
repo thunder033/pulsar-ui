@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Groove Authenticate</title>
+    <script>
+        function getUrlParams(){
+            var params = {};
+            var hash = window.location.hash.replace('#', '');
+            hash.split('&').forEach(param => {
+                var kvp = param.split('=');
+                params[kvp[0]] = kvp[1];
+            });
+            return params;
+        }
+
+        if(parent){
+            var params = getUrlParams();
+            params._message = 'grooveAuth';
+            window.opener.postMessage(params, window.location.origin);
+            self.close();
+        }
+    </script>
+</head>
+<body>
+<h2 style="font-family: Arial, sans-serif">Authenticating...</h2>
+</body>
+</html>

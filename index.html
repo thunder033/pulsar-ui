@@ -1,45 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Greg Rozmarynowycz - IGME 330</title>
+    <meta charset="UTF-8">
+    <title>Pulsar</title>
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
 
-    <link href="home/theme.css" rel="stylesheet" type="text/css">
-    <link href="home/nav.css" rel="stylesheet" type="text/css">
+    <meta name="description" content="Engaging audio-visual experiences.">
 
-    <script src="https://momentjs.com/downloads/moment.min.js"></script>
-    <script src="https://code.jquery.com/jquery.min.js"></script>
-    <script src="js/canvas.lib.js"></script>
-    <script src="home/header.js"></script>
-    <script src="js/gitStatus.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Cuprum" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet">
+
+    <link rel="stylesheet" href="dist/css/release.css" type="text/css">
+
+    <script src="dist/bundle.js"></script>
 </head>
 <body>
-<header>
-    <canvas id="header"></canvas>
-</header>
-<nav>
-    <button class="link"><div class="transformer"></div><a href="SG1/smiley.html"><span>Smiley ICE</span></a></button>
-    <button class="link"><div class="transformer"></div><a href="pulsar/index.html"><span>Audio Visualizer</span></a></button>
-    <button class="link"><div class="transformer"></div><a href="pulsar/index.html#/warp"><span>Warp</span></a></button>
-    <button class="link"><div class="transformer"></div><a href=""><span>Web Service</span></a></button>
-    <button class="link"><div class="transformer"></div><a href=""><span>Cloud Service</span></a></button>
-</nav>
-<main>
-    <img src="https://thunderlab.net/images/greg3.jpg" alt="Greg" id="portrait">
-    <p id="bio">
-        I've been working in web design and application development for over 7 years, and am studying Game Design and Development at Rochester Institute of Technology, with a minor in Software Engineering.
-        While I'm most experienced in MEAN stack development, I've worked heavily with .NET development and including technologies LAMP, Ratpack, and Ruby on Rails.
-        I recently completed a Software Engineering internship with Target, supporting Target.com, and previously worked at EnerNOC developing and testing MEAN web applications.
-        I will be starting as a software engineering specalist at GE Digital in summer 2017.
-    </p>
-    <div id="lastCommit">
-        <a class="commit-link" href="#" target="_blank">
-            Last Update: <span class="date"></span>
-            <p class="message"></p>
-        </a>
-    </div>
-</main>
-<footer>
-    &copy; 2016 Greg Rozmarynowycz | <a href="https://thunderlab.net">ThunderLab</a> | <a target="_blank" href="https://github.com/thunder033/RMWA"><img src="http://thunderlab.net/images/github.png" alt="GitHub">Site GitHub Repo</a>
-</footer>
+<div class="wrapper" ng-app="pulsar">
+    <div id="loadError" class="es6-warning-banner"></div>
+    <div class="wrapper" ui-view></div>
+</div>
+<footer class="pulsar-footer">&copy; 2016 &ndash; Thunderlab</footer>
 </body>
 </html>

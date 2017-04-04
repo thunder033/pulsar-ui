@@ -48,7 +48,7 @@ function PathProvider(Env) {
 
     function getPathBase(env){
         switch(env){
-            case Environment.DEV: return '/';
+            case Environment.DEV: return '/pulsar-ui';
             case Environment.STAGE: return '/pulsar-stage';
             case Environment.PROD: return '/pulsar';
         }

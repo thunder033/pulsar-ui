@@ -110,10 +110,11 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
                 color = MM.vec3(100 + sliceValue * 110, 255 - sliceValue * 45, 255 - sliceValue * 45);
             }
 
-            const depth = Bar.scale.z * 0.95; // Level.barQueue[i].speed;
+            const slice = warpDrive.getSlice(i);
+            const depth = Bar.scale.z * slice.speed; // Level.barQueue[i].speed;
             const zOffset = drawOffset - barOffset;
 
-            tBar.scale.x = Bar.scale.x * 2;
+            tBar.scale.x = Bar.scale.x * slice.loudness;
             tBar.scale.z = depth;
 
             tBar.position.set(Track.POSITION_X, 0, zOffset);
@@ -124,7 +125,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             tBar.rotation.z = zRot;
             Camera.render(meshes.XZQuad, tBar, color);
 
-            const sliceGems = (Level.warpField[sliceIndex + i] || {}).gems || [];
+            const sliceGems = slice.gems || [];
             gems[i].scale.set(0);
 
             if((sliceIndex + i) % 2 === 0){

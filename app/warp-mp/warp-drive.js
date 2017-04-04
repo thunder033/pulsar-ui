@@ -14,6 +14,7 @@ resolve: ADT => [
     warpDriveFactory]};
 
 function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
+    const EMPTY_SLICE = {speed: 1, loudness: 0, gems: [0, 0, 0]};
 
     class WarpDrive extends LerpedEntity {
         constructor(params, id) {
@@ -35,12 +36,12 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
 
             this.warpField = null;
             this.level = [];
+            this.velocity = 0;
         }
 
         load(warpField) {
             this.warpField = warpField;
             this.level = warpField.getLevel();
-            this.velocity = (0.95 * Bar.scale.z + Bar.margin) / this.warpField.getTimeStep();
             console.log(this.level);
         }
 
@@ -71,12 +72,26 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
             return this.curBarOffset;
         }
 
+        /**
+         * Get slice at offset from current index
+         * @param offset
+         * @returns {{speed, loudness, gems}}
+         */
+        getSlice(offset = 0) {
+            if(this.curSliceIndex + offset < this.level.length) {
+                return this.level[this.curSliceIndex + offset];
+            } else {
+                return EMPTY_SLICE;
+            }
+        }
+
         update(dt) {
             super.update(dt);
 
             if(this.lerpPct > this.sliceEndPct && this.curSliceIndex === this.prevSliceIndex) {
                 this.curSliceIndex = this.sliceIndex;
                 this.curBarOffset = 0;
+                this.velocity = (this.getSlice(2).speed * Bar.scale.z + Bar.margin) / this.warpField.getTimeStep();
             }
 
             if(!this.level.length) {

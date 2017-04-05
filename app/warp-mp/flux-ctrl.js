@@ -110,7 +110,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             }
 
             const slice = warpDrive.getSlice(i);
-            const depth = SliceBar.scaleZ * slice.speed; // Level.barQueue[i].speed;
+            const depth = SliceBar.scaleZ * slice.speed;
             const zOffset = drawOffset - barOffset;
 
             tBar.scale.x = SliceBar.scaleX * slice.loudness;
@@ -204,9 +204,6 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             }
             return player.getShip();
         });
-
-        Level.reset();
-        Level.load($scope.warpGame.getWarpField());
 
         warpDrive = $scope.warpGame.getWarpDrive();
         console.log(State);

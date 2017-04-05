@@ -316,7 +316,6 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
     NetworkEntity.pendingRequests  = new Map(); // Map of pending sync requests
     NetworkEntity.typeNames        = new Map(); // Type names are minified so we have to look up references
 
-    // noinspection JSAnnotator
     NetworkEntity.ID_LENGTH = 36;
 
     NetworkEntity.utf8Decoder = new TextDecoder('utf-8');

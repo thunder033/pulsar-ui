@@ -24,11 +24,11 @@ function playerFactory(NetworkEntity, Color) {
             this.hue = 0;
             this.score = 0;
 
-            this.color = Color.hslToRgb(this.hue, 80, 85);
+            this.color = Color.hslToRgb(this.hue, 85, 75);
         }
 
         sync(params) {
-            this.color = Color.hslToRgb(params.hue, 80, 85);
+            this.color = Color.hslToRgb(params.hue, 85, 75);
             super.sync(params);
         }
 

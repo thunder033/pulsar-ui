@@ -43,7 +43,6 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
         load(warpField) {
             this.warpField = warpField;
             this.level = warpField.getLevel();
-            console.log(this.level);
         }
 
         sync(buffer, bufferString) {
@@ -61,7 +60,6 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
             if(this.sliceIndexDelta > 0) {
                 const switchTime = Math.abs(this.barOffset / this.velocity); //this.level[this.sliceIndex].speed;
                 this.sliceEndPct = (this.syncElapsed - switchTime) / this.syncElapsed;
-                console.log(this.level[this.sliceIndex]);
             }
         }
 

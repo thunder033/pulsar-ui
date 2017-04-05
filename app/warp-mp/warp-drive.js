@@ -79,8 +79,9 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
          * @returns {{speed, loudness, gems}}
          */
         getSlice(offset = 0) {
-            if(this.curSliceIndex + offset < this.level.length) {
-                return this.level[this.curSliceIndex + offset];
+            const index = this.curSliceIndex + offset;
+            if(index < this.level.length && index >= 0) {
+                return this.level[index];
             } else {
                 return EMPTY_SLICE;
             }

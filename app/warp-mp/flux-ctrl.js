@@ -5,6 +5,7 @@
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const GameEvent = require('event-types').GameEvent;
 const Track = require('game-params').Track;
+const SliceBar = require('game-params').SliceBar;
 
 module.exports = {FluxCtrl,
 resolve: ADT => [
@@ -16,7 +17,6 @@ resolve: ADT => [
     MDT.Keyboard,
     MDT.const.Keys,
     ADT.warp.Level,
-    ADT.warp.Bar,
     ADT.warp.State,
     FluxCtrl]};
 
@@ -30,11 +30,10 @@ resolve: ADT => [
  * @param Keyboard
  * @param Keys
  * @param Level {Level}
- * @param Bar
  * @param State
  * @constructor
  */
-function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, Bar, State) {
+function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State) {
     const meshes = Geometry.meshes;
     const mLanePadding = 0.01; //padding on edge of each lane
 
@@ -73,7 +72,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
         let startOffset = 6;
         const sliceOffset = 3;
         for(let i = 0; i < sliceOffset; i++){
-            startOffset += barBuffer[i].speed * Bar.scale.z + Bar.margin;
+            startOffset += barBuffer[i].speed * SliceBar.scaleZ + SliceBar.margin;
         }
 
         return startOffset;
@@ -111,10 +110,10 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             }
 
             const slice = warpDrive.getSlice(i);
-            const depth = Bar.scale.z * slice.speed; // Level.barQueue[i].speed;
+            const depth = SliceBar.scaleZ * slice.speed; // Level.barQueue[i].speed;
             const zOffset = drawOffset - barOffset;
 
-            tBar.scale.x = Bar.scale.x * slice.loudness;
+            tBar.scale.x = SliceBar.scaleX * slice.loudness;
             tBar.scale.z = depth;
 
             tBar.position.set(Track.POSITION_X, 0, zOffset);
@@ -149,7 +148,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
                 }
             }
 
-            drawOffset -= depth + Bar.margin; //add the width the current bar (each bar has a different width)
+            drawOffset -= depth + SliceBar.margin; //add the width the current bar (each bar has a different width)
         }
 
 

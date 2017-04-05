@@ -4,6 +4,7 @@
 
 const DataFormat = require('game-params').DataFormat;
 const EntityType = require('entity-types').EntityType;
+const DriveParams = require('game-params').DriveParams;
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports =  {warpDriveFactory,
@@ -91,7 +92,8 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
             if(this.lerpPct > this.sliceEndPct && this.curSliceIndex === this.prevSliceIndex) {
                 this.curSliceIndex = this.sliceIndex;
                 this.curBarOffset = 0;
-                this.velocity = (this.getSlice(2).speed * Bar.scale.z + Bar.margin) / this.warpField.getTimeStep();
+                const sliceSpeed = this.getSlice(DriveParams.RENDER_OFFSER).speed;
+                this.velocity = (sliceSpeed * Bar.scale.z + Bar.margin) / this.warpField.getTimeStep();
             }
 
             if(!this.level.length) {

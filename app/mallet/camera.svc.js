@@ -21,13 +21,13 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
 
     this.renderRatio = 100;
 
-    let hasBadZ = false;
-
     this.getLensAngle = () => {
         return (3 / 5) * Math.PI;
         // const focalLength = 70;
         // return Math.atan(1 / focalLength);
     };
+
+    this.imageScale = 1 / Math.tan(self.getLensAngle() / 2);
 
     this.getImageDistance = () => {
         return 35;
@@ -42,10 +42,6 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
 
     this.getPos = () => {
         return tCamera.position;
-    };
-
-    this.hasBadZ = () => {
-        return hasBadZ;
     };
 
     this.toVertexBuffer = (verts) => {
@@ -171,27 +167,19 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
         /* eslint-enable*/
     };
 
-    this.projectPoint = (buffer) => {
-        /* eslint-disable */
-        const tanLensAngle = Math.tan(self.getLensAngle() / 2),
-            ctx = MEasel.context,
-            viewport = MM.vec2(ctx.canvas.height, ctx.canvas.height),
-            screenCenter = MM.vec2(ctx.canvas.width / 2, viewport.y / 2); // center of the viewport
+    /**
+     * Projects a point in camera space on to the render plane
+     * @param pointBuffer {Float32Array}
+     * @returns {[*,*,*]}
+     */
+    this.projectPoint = (pointBuffer) => {
+        // The size of the field of view at the distance of the point
+        const n = 1 / (-pointBuffer[2]);
 
-        // Get the displacement of the vertex
-        const dispX = buffer[0] - tCamera.position.x,
-            // negative because screen space is inverted
-            dispY = -(buffer[1] - tCamera.position.y),
-            dispZ = tCamera.position.z - buffer[2];
+        const screenX = (pointBuffer[0] * n * this.imageScale) * this.viewport.x + this.screenCenter.x;
+        const screenY = (-pointBuffer[1] * n * this.imageScale) * this.viewport.y + this.screenCenter.y;
 
-        // TODO PROJECT POINT
-        // Transform the vertex into screen space
-        const distance = Math.sqrt(dispX * dispX + dispY * dispY + dispZ * dispZ);
-        const fieldScale = Math.abs(1 / (distance / 5 * tanLensAngle)),
-            screenX = (dispX * fieldScale * viewport.x) + screenCenter.x,
-            screenY = (dispY * fieldScale * viewport.y) + screenCenter.y;
-
-        return [screenX, screenY, fieldScale];
+        return [screenX, screenY, this.imageScale];
     };
 
     /**
@@ -205,15 +193,27 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
         return disp.dot(self.forward) > 0;
     };
 
+    this.calculateViewport = function(ctx) {
+        this.viewport = MM.vec2(ctx.canvas.height, ctx.canvas.height);
+        this.screenCenter = MM.vec2(ctx.canvas.width / 2, this.viewport.y / 2); // center of the viewport
+        // this.aspectRatio = 1; TODO: Implement aspect ratio
+    };
+
+    /**
+     * Projects a vertex buffer in camera space onto the render plane, and queues up the corresponding
+     * draw commands.
+     * @param buffer {Float32Array}
+     * @param culledFaces {Int8Array}
+     * @param normals {Float32Array}
+     * @param indices {Int32Array}
+     * @param drawQueue {PriorityQueue}
+     * @param color {Vector3}
+     * @returns {*|PriorityQueue}
+     */
     this.projectBuffer = (buffer, culledFaces, normals, indices, drawQueue, color) => {
         /* eslint-disable */
-        const tanLensAngle = Math.tan(self.getLensAngle() / 2),
-            ctx = MEasel.context,
-            viewport = MM.vec2(ctx.canvas.height, ctx.canvas.height),
-            screenCenter = MM.vec2(ctx.canvas.width / 2, viewport.y / 2); // center of the viewport
-
-        let faceBufferIndex = 0,
-            faceIndex = 0;
+        let faceBufferIndex = 0;
+        let faceIndex = 0;
         // Each 2D project face will have 6 coordinates
         const faceBuffer = new Float32Array(6);
 
@@ -235,16 +235,26 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
             const pZ = buffer[b + 2];
 
             // The size of the field of view at the distance of the point
-            const fieldScale = Math.abs(1 / tanLensAngle);
-            const n = 1 / (-pZ);
+            let n = 1 / (-pZ);
 
-            if(n < 0) { // final fail-out for stuff behind the camera
-                // i += (2 - (i % 3));
-                // continue;
+            const clipDist = 0.25;
+            if(pZ > -clipDist) {
+                // For faces that are extremely close to or behind the camera, stretch
+                // them out to the sides at a linear rate tangent to the scale curve
+                // calculated above: (d ^ 2) * (d + |-d - z|)
+                //
+                // For large faces near the camera, this creates an effect of being
+                // pulled inwards. The farther the clipping distance from the camera,
+                // the more pronounced this effected will be.
+                //
+                // The corollary to this calculation is the clipping of all tris with
+                // a centroid behind the camera (otherwise they would just extend across
+                // the entire viewport)
+                n = Math.pow(1 / clipDist, 2) * (clipDist + Math.abs(-clipDist - pZ));
             }
 
-            const screenX = (pX * n * fieldScale) * viewport.x + screenCenter.x;
-            const screenY = (pY * n * fieldScale) * viewport.y + screenCenter.y;
+            const screenX = (pX * n * this.imageScale) * this.viewport.x + this.screenCenter.x;
+            const screenY = (pY * n * this.imageScale) * this.viewport.y + this.screenCenter.y;
 
             avgDist += (-pZ) / faceSize;
 
@@ -254,6 +264,12 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
 
             // Push the vertices into face buffer
             if ((i + 1) % faceSize === 0){
+                if(avgDist < 0) {
+                    avgDist = 0;
+                    faceBufferIndex = 0;
+                    continue;
+                }
+
                 faceIndex = (i - (i % faceSize)) / faceSize;
 
                 const normalX = normals[faceIndex * 3],
@@ -427,7 +443,7 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
     };
 
     MScheduler.schedule(() => {
-        hasBadZ = false;
+        self.calculateViewport(MEasel.context);
         MScheduler.draw(self.present, 0);
     });
 

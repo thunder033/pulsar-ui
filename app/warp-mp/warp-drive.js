@@ -87,6 +87,10 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
         }
 
         update(dt) {
+            if(this.warpField === null) {
+                return;
+            }
+
             super.update(dt);
 
             if(this.lerpPct > this.sliceEndPct && this.curSliceIndex === this.prevSliceIndex) {

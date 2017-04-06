@@ -237,7 +237,7 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
             // The size of the field of view at the distance of the point
             let n = 1 / (-pZ);
 
-            const clipDist = 0.25;
+            const clipDist = 0.125;
             if(pZ > -clipDist) {
                 // For faces that are extremely close to or behind the camera, stretch
                 // them out to the sides at a linear rate tangent to the scale curve

@@ -103,6 +103,6 @@
         /**
          * Update the various properties of the game level
          */
-        MScheduler.schedule((dt) => this.update(dt));
+        // MScheduler.schedule((dt) => this.update(dt));
     }
 })();

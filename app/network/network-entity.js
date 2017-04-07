@@ -124,7 +124,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                     this.format.set(fieldName, type);
                     this.format.delete(field);
                 } else {
-                    sizes[field] = ByteSizes.get(type);
+                    sizes[field] = type instanceof Array ? ByteSizes.get(type[0]) * type[1] : ByteSizes.get(type);
                 }
             });
 

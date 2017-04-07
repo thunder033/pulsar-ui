@@ -38,7 +38,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
     const mLanePadding = 0.01; //padding on edge of each lane
 
     const tLane = new Geometry.Transform()
-        .scaleBy(Track.LANE_WIDTH - mLanePadding, 1, 60)
+        .scaleBy(Track.LANE_WIDTH - mLanePadding, 1, 150)
         .translate(0, -0.1, 2.3);
     tLane.origin.z = 1;
     const grey = MM.vec3(225,225,225);
@@ -68,11 +68,11 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
         if (Keyboard.isKeyDown(67 /*C*/)) { Camera.timeTranslate(MM.vec3(0, 0, -cameraSpeed), dt); }
     }
 
-    function getStartOffset(barBuffer){
-        let startOffset = 6;
-        const sliceOffset = 3;
+    function getStartOffset(){
+        let startOffset = 0;
+        const sliceOffset = 2;
         for(let i = 0; i < sliceOffset; i++){
-            startOffset += barBuffer[i].speed * SliceBar.scaleZ + SliceBar.margin;
+            startOffset += (warpDrive.getSlice(i).speed * SliceBar.scaleZ + SliceBar.margin) || 0;
         }
 
         return startOffset;
@@ -100,7 +100,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
         const barOffset = warpDrive.getBarOffset();
         const sliceIndex = warpDrive.getSliceIndex();
 
-        let drawOffset = 2 * 0.95 * 0.9; // getStartOffset(Level.barQueue); //this spaces the bars correctly across the screen, based on how far above the plane the camera is
+        let drawOffset = getStartOffset(); //this spaces the bars correctly across the screen, based on how far above the plane the camera is
 
         const blackGems = [];
         for(let i = 0; i < Level.barsVisible; i++){

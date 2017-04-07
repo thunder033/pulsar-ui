@@ -18,6 +18,7 @@ resolve: ADT => [
     MDT.const.Keys,
     ADT.warp.Level,
     ADT.warp.State,
+    MDT.Color,
     FluxCtrl]};
 
 /**
@@ -31,9 +32,10 @@ resolve: ADT => [
  * @param Keys
  * @param Level {Level}
  * @param State
+ * @param Color
  * @constructor
  */
-function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State) {
+function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color) {
     const meshes = Geometry.meshes;
     const mLanePadding = 0.01; //padding on edge of each lane
 
@@ -197,10 +199,15 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
         const players = $scope.warpGame.getPlayers();
         let clientShip = null;
         console.log($scope.clientUser);
+        let clientPlayer = null;
         const ships = players.map((player) => {
             console.log('check user', player.getUser());
             if (player.getUser() === $scope.clientUser) {
+                clientPlayer = player;
                 clientShip = player.getShip();
+
+                const color = player.getColor();
+                $scope.clientColor = Color.rgba(color.x, color.y, color.z, 1);
             }
             return player.getShip();
         });
@@ -228,9 +235,10 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
         Keyboard.onKeyUp(Keys.Right, sendKeysReleased);
 
         MScheduler.schedule((dt, tt) => {
-            $scope.posX = clientShip.getTransform().position.toString();
+            $scope.posX = clientShip.getTransform().position.toString(3);
             $scope.updateTime = clientShip.getUpdateTime();
             $scope.tCamera = Camera.getPos().toString();
+            $scope.clientScore = clientPlayer.getScore();
             $scope.sliceIndex = warpDrive.getSliceIndex() + ' ' + warpDrive.getBarOffset().toFixed(2);
 
             processCameraInput(dt);

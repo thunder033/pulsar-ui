@@ -12,11 +12,11 @@ resolve: ADT => [
     ADT.network.NetworkEntity,
     ADT.ng.$scope,
     ADT.ng.$timeout,
-    ADT.network.ClientRoom,
     ADT.ng.$state,
     ADT.network.Client,
     ADT.network.Clock,
     ADT.game.WarpGame,
+    ADT.network.Connection,
     PlayCtrl]};
 
 /**
@@ -25,14 +25,14 @@ resolve: ADT => [
  * @param NetworkEntity {NetworkEntity}
  * @param $scope
  * @param $timeout
- * @param ClientRoom {ClientRoom}
  * @param $state
  * @param Client {Client}
  * @param Clock {Clock}
  * @param WarpGame {WarpGame}
+ * @param Connection
  * @constructor
  */
-function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, ClientRoom, $state, Client, Clock, WarpGame) {
+function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection) {
     if (Client.getUser() === null) {
        return $state.go('lobby');
     }
@@ -66,6 +66,14 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, ClientRoom, $st
     Client.addEventListener(MatchEvent.matchEnded, () => {
         $state.go('results', {matchId: $scope.match.getId()});
     });
+
+    $scope.getPlayerInfo = () => {
+        if($scope.clientUser === null) {
+            return '-';
+        }
+
+        return `${$scope.clientUser.getName()} (${Connection.getPing()} ms)`;
+    };
 
     NetworkEntity.getById(WarpGame, $stateParams.gameId)
         .then((game) => {

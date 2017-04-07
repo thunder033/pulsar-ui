@@ -99,3 +99,12 @@
     right: 1em;
     z-index: 100;
 }
+
+.player-color {
+    display: inline-block;
+    box-sizing: border-box;
+    height: .7em;
+    width: .7em;
+    vertical-align: middle;
+    margin-right: .3em;
+}

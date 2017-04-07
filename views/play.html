@@ -12,11 +12,13 @@
 
     <div ng-controller="game.WarpCtrl" class="warp-wrapper" ng-show="state === states.PLAYING">
         <div class="debug-stats">
-            <span ng-bind="posX"></span><span> </span>
+            <span class="player-color" ng-style="{'background-color': clientColor}"></span><span ng-bind="getPlayerInfo()"></span><br>
+            Ship: <span ng-bind="posX"></span><span> </span>
             <!--<span ng-bind="lossPct + '%'"></span>-->
             <span ng-bind="updateTime"></span><br>
-            <span ng-bind="tCamera"></span> <span style="color: red" ng-if="hasBadZ">Bad Z</span><br>
-            <span ng-bind="sliceIndex"></span>
+            Camera: <span ng-bind="tCamera"></span><br>
+            Slice Index: <span ng-bind="sliceIndex"></span><br>
+            Score: <span ng-bind="clientScore"></span>
         </div>
 
         <m-easel id="game"></m-easel>

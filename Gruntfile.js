@@ -86,6 +86,7 @@ module.exports = function(grunt){
                     '!assets/js/**',
 
                     'LICENSE',
+                    '.htaccess',
                     'package.json'
                 ], dest: '.tmp'}]
             },

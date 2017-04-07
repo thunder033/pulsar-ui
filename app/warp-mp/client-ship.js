@@ -73,7 +73,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
             super.update(dt);
             this.tRender.position.set(LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct));
             this.tRender.position.y = 0.2;
-            this.tRender.position.z = 1.3;
+            this.tRender.position.z = 0.8;
         }
 
         getTransform() {

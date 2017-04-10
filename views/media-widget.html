@@ -11,6 +11,7 @@
         <div class="mw-sources">
             <div class="mw-source"
                  ng-repeat="source in sources"
+                 ng-if="displaySource(source)"
                  ng-class="[{inactive: !source.isActive()}]"
                  ng-click="toggleActive(source)"
                  title="{{source.getName()}} [{{source.isActive() ? 'Active' : 'Inactive'}}]">
@@ -44,7 +45,7 @@
         </div>
     </div>
 
-    <button ng-click="playUserStream()" class="cp-button cp-button-md" title="Visualize Microphone Audio">
+    <button ng-if="displaySource('UserStream')" ng-click="playUserStream()" class="cp-button cp-button-md" title="Visualize Microphone Audio">
         <span class="fa fa-lg fa-microphone"></span>
     </button>
 

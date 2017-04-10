@@ -144,6 +144,16 @@ html, body {
     font-family: 'Cuprum', "Century Gothic", sans-serif;
 }
 
+.cp-button:disabled {
+    background: #666;
+    color: #aaa;
+}
+
+.cp-button:disabled:hover {
+    background: #666;
+    cursor: default;
+}
+
 .cp-button-md {
     padding: .4em;
     border-radius: .25em;

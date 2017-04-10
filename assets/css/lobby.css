@@ -1,9 +1,18 @@
-#lobby input[type='text'] {
-    padding: .3em;
+#lobby header {
+    background: #333;
+    padding: .5em;
+    margin: 0;
 }
 
-#lobby button {
-    padding: .3em;
+#lobby header .ps-logo {
+    font-size: .5em;
+    color: #fff;
+}
+
+#lobby header .ps-logo h2 {
+    margin-left: 1rem;
+    font-size: 5em;
+    vertical-align: bottom;
 }
 
 #lobby .wrapper {
@@ -40,13 +49,16 @@
 
 #lobby .staging-panel {
     padding: 1em;
-    border-left: 1px #ccc solid;
-    box-sizing: border-box;
     height: 100%;
 }
 
 #lobby .match-list {
     width: 8em;
+}
+
+#lobby h3 {
+    font-size: 1.3em;
+    padding: .2em;
 }
 
 #lobby select {
@@ -56,6 +68,20 @@
 
 #lobby select option {
     padding: .5em;
+}
+
+#lobby .match-list table {
+    width: 30em;
+}
+
+#lobby .match-list thead td {
+    background: #333;
+    color: #eee;
+    border-bottom: 1px #4488dd solid;
+}
+
+#lobby .match-list table td {
+    padding: .3em;
 }
 
 #game-wrapper .warp-wrapper {

@@ -14,6 +14,7 @@
     border-bottom: 1px #333 solid;
     position: relative;
     text-align: left;
+    color: #eee;
 }
 
 .playlist li:hover,

@@ -2,7 +2,7 @@
 /**
  * Created by Greg on 12/1/2016.
  */
-var EventTarget = require('eventtarget');
+const EventTarget = require('eventtarget');
 
 require('angular')
     .module('pulsar.media')
@@ -28,7 +28,7 @@ function playQueueFactory(MediaState, IPlayable) {
             this._player = audioPlayer;
 
             audioPlayer.addEventListener('ended', ()=>{
-                var next = this.getNext();
+                const next = this.getNext();
                 if(next !== null){
                     this._player.playClip(next);
                 }

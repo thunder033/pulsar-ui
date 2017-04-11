@@ -3,6 +3,15 @@
         <span ng-bind="match.getLabel()"></span>
         <span ng-if="match.hasStarted()">(In Progress)</span>
     </h3>
+
+    <div class="song">
+        <div ng-bind="song.getName()"></div>
+        <div ng-bind="song.getInfo()"></div>
+        <span class="track-length" ng-if="song.getDuration()">{{ song.getDuration() | secondsToDate | date:'m:ss' }}</span>
+    </div>
+
+    <ps-media-widget avail-sources="['SoundCloud','Flare']" action-override="1"></ps-media-widget>
+
     <ul class="staging-match-user-list">
         <li ng-repeat="i in getMaxSize() track by $index">
             <span ng-bind="match.getUsers()[$index].getName()"></span>

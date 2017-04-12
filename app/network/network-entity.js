@@ -5,10 +5,36 @@
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const IOEvent = require('pulsar-lib').EventTypes.IOEvent;
 const DataType = require('game-params').DataType;
-const ByteSizes = require('game-params').ByteSizes;
+const getFieldSize = require('game-params').getFieldSize;
+const getPrimitiveType = require('game-params').getPrimitiveType;
+const DataFormat = require('game-params').DataFormat;
 const EventTarget = require('eventtarget');
+require('buffer/');
 
-console.log(ByteSizes);
+function getFormatSize(format) {
+    let size = 0;
+    format.forEach((type) => {
+        size += getFieldSize(type);
+    });
+    return size;
+}
+
+function getFieldPosition(field, format) {
+    let position = 0;
+    const it = format.entries();
+
+    let item = it.next();
+    while (item.done === false) {
+        if(item.key === field) {
+            break;
+        }
+
+        position += getFieldSize(item.value);
+        item = it.next();
+    }
+
+    return position;
+}
 
 module.exports = {networkEntityFactory,
     resolve: ADT => [
@@ -35,16 +61,44 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             }
             super();
             this.id = id.id || id;
+
+            if (typeof this.id !== 'string' && typeof this.id !== 'number') {
+                throw new TypeError(`${typeof this.id} is not valid a valid Network ID type. Must be string or number.`);
+            }
+
             this.syncTime = 0;
             this.format = format;
 
-            Object.defineProperty(this, 'timestamp', {
-                writeable: true,
-                set(value) {this.syncTime = value;}
-            });
-
             if (format instanceof Map) {
                 this.parseFieldSizes();
+                this.buffer = Buffer.alloc(getFormatSize(format));
+                this.syncOps = [];
+
+                // Bind a method for retrieving the timestamp from the buffer
+                const tsReadMethod = NetworkEntity.readMethods.get(DataType.Double);
+                const tsPosition = getFieldPosition('timestamp', DataFormat.NETWORK_ENTITY);
+                this.getTimeStamp = this.buffer[tsReadMethod].bind(this.buffer, tsPosition);
+
+                // Bind methods for setting each field from the buffer
+                let position = NetworkEntity.entityOffset;
+                format.forEach((type, field) => {
+                    const primitiveType = getPrimitiveType(type);
+                    const size = this.sizes[field];
+                    // Strings are read with different arguments than other types, so handle them separately
+                    if (primitiveType === DataType.String) {
+                        const method = this.buffer.toString.bind(this.buffer, 'utf8', position, position + size);
+                        this.syncOps.push(((m, f) => {
+                            return () => this[f] = m();
+                        })(method, field));
+                    } else {
+                        const method = NetworkEntity.readMethods.get(primitiveType);
+                        this.syncOps.push(((p, m, f) => {
+                            return () => this[f] = this.buffer[m](p);
+                        })(position, method, field));
+                    }
+
+                    position += size;
+                });
             }
 
             NetworkEntity.putEntity(this.getType(), this);
@@ -58,43 +112,38 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             return this.id;
         }
 
-        sync(params, bufferString, storesValuesCB) {
+        /**
+         * Set all values in a response on the entity
+         * @param params {Object|ArrayBuffer}
+         * @param view {Uint8Array}
+         * @param storeValuesCB {Function}
+         */
+        sync(params, view, storeValuesCB) {
             if(params instanceof ArrayBuffer) {
                 if(!(this.format instanceof Map)) {
                     const type = NetworkEntity.getName(this.getType());
                     throw new ReferenceError(`${type} cannot sync a binary response without a format set`);
                 }
 
-                const view = new DataView(params);
-
-                const tsReadMethod = NetworkEntity.readMethods.get(DataType.Double);
-                const timeStamp = view[tsReadMethod](NetworkEntity.entityOffset);
+                this.buffer.set(view);
+                const timeStamp = this.getTimeStamp();
 
                 // throw out the update if it's older than anything we already got
                 if (timeStamp <= this.syncTime) {
                     return;
                 }
 
+                this.syncTime = timeStamp;
+
                 // allow the entity to store any values it will need after the update
-                if(storesValuesCB instanceof Function) {
-                    storesValuesCB();
+                if(storeValuesCB instanceof Function) {
+                    storeValuesCB();
                 }
 
-                // parse the buffer according the format set for this entity
-                let position = NetworkEntity.entityOffset;
-
-                this.format.forEach((type, field) => {
-                    const size = this.sizes[field];
-                    if(type === DataType.String) {
-                        this[field] = bufferString.substr(position, size);
-                    } else {
-                        const method = NetworkEntity.readMethods.get(type);
-                        this[field] = view[method](position);
-                    }
-                    position += size;
-                });
-
-                return view;
+                const l = this.syncOps.length;
+                for (let i = 0; i < l; i++) {
+                    this.syncOps[i]();
+                }
             } else {
                 Object.assign(this, params);
                 this.syncTime = ~~performance.now();
@@ -118,14 +167,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
         parseFieldSizes() {
             const sizes = {};
             this.format.forEach((type, field) => {
-                if (field.indexOf(':') > 0) {
-                    const [fieldName, size] = field.split(':');
-                    sizes[fieldName] = parseInt(size, 10);
-                    this.format.set(fieldName, type);
-                    this.format.delete(field);
-                } else {
-                    sizes[field] = type instanceof Array ? ByteSizes.get(type[0]) * type[1] : ByteSizes.get(type);
-                }
+                sizes[field] = getFieldSize(type);
             });
 
             this.sizes = sizes;
@@ -273,14 +315,12 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             let entity = null;
             let id = '';
             let serverTypeCode;
-            let bufferString = '';
+            let view = '';
 
             if(data instanceof ArrayBuffer) {
-                const view = new DataView(data);
-                bufferString = NetworkEntity.utf8Decoder.decode(view);
-
-                id = bufferString.substr(0, NetworkEntity.ID_LENGTH);
-                serverTypeCode = view.getInt8(NetworkEntity.ID_LENGTH);
+                view = new Uint8Array(data);
+                id = String.fromCharCode.apply(null, view.subarray(0, NetworkEntity.ID_LENGTH));
+                serverTypeCode = view[NetworkEntity.ID_LENGTH];
                 syncParams = data;
             } else {
                 id = data.id;
@@ -306,7 +346,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                 NetworkEntity.pendingRequests.delete(typeName + entity.id);
             }
 
-            return $q.when(entity.sync(syncParams, bufferString)).then(() => entity);
+            return $q.when(entity.sync(syncParams, view)).then(() => entity);
         }
     }
 
@@ -319,14 +359,14 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
     NetworkEntity.ID_LENGTH = 36;
 
     NetworkEntity.utf8Decoder = new TextDecoder('utf-8');
-    NetworkEntity.entityOffset = NetworkEntity.ID_LENGTH + ByteSizes.get(DataType.Int8);
+    NetworkEntity.entityOffset = getFormatSize(DataFormat.NETWORK_ENTITY);
 
     NetworkEntity.readMethods = new Map([
-        [DataType.Float, 'getFloat32'],
-        [DataType.Double, 'getFloat64'],
-        [DataType.Int8, 'getInt8'],
-        [DataType.Int16, 'getInt16'],
-        [DataType.Int32, 'getInt32'],
+        [DataType.Float, 'readFloatBE'],
+        [DataType.Double, 'readDoubleBE'],
+        [DataType.Int8, 'readInt8'],
+        [DataType.Int16, 'readInt16BE'],
+        [DataType.Int32, 'readInt32BE'],
     ]);
 
     Connection.ready().then((socket) => {

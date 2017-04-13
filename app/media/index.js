@@ -16,6 +16,7 @@ const media = require('angular').module('pulsar.media', [
 
 ADT.media = {
     IPlayable: 'media.IPlayable',
+    Playlist: 'media.Playlist',
     PlayQueue: 'media.PlayQueue',
 };
 

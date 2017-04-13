@@ -1,21 +1,31 @@
 <div class="staging-match">
+    <div class="control-panel">
+        <div ng-if="isHost()">
+            <h3>Choose A Song</h3>
+            <ps-media-widget queue="playQueue" avail-sources="['SoundCloud','Flare']" action-override="0"></ps-media-widget>
+        </div>
+
+        <div ng-if="!isHost()">
+            <span>Host <b>{{ match.getHost().getName() }}</b> is choosing the song</span>
+        </div>
+    </div>
+
     <h3>
         <span ng-bind="match.getLabel()"></span>
         <span ng-if="match.hasStarted()">(In Progress)</span>
     </h3>
 
     <div class="song">
-        <div ng-bind="song.getName()"></div>
-        <div ng-bind="song.getInfo()"></div>
-        <span class="track-length" ng-if="song.getDuration()">{{ song.getDuration() | secondsToDate | date:'m:ss' }}</span>
+        <div ng-if="!match.getSong()">No Song Chosen</div>
+        <div ng-bind="match.getSong().getName()"></div>
+        <div ng-bind="match.getSong().getInfo()"></div>
+        <span class="track-length" ng-if="match.getSong().getDuration()">{{ match.getSong().getDuration() | secondsToDate | date:'m:ss' }}</span>
     </div>
-
-    <ps-media-widget avail-sources="['SoundCloud','Flare']" action-override="1"></ps-media-widget>
 
     <ul class="staging-match-user-list">
         <li ng-repeat="i in getMaxSize() track by $index">
             <span ng-bind="match.getUsers()[$index].getName()"></span>
-            <span ng-if="isHost(match.getUsers()[$index])">(Host)</span>
+            <span ng-if="isHost(match.getUsers()[$index]) && match.getUsers()[$index]">(Host)</span>
         </li>
     </ul>
 

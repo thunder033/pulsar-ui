@@ -13,9 +13,10 @@ resolve: ADT => [
     ADT.network.User,
     ADT.network.NetworkEntity,
     ADT.ng.$rootScope,
+    ADT.media.IPlayable,
     matchFactory]};
 
-function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
+function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable) {
     const matches = new Map();
     const matchList = [];
 
@@ -24,6 +25,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
         constructor(params) {
             super(params);
             this.host = null;
+            this.song = null;
             this.started = false;
             this.startTime = NaN;
         }
@@ -32,6 +34,14 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
             NetworkEntity.getById(User, data.host).then(user => this.host = user);
             delete data.host;
             super.sync(data);
+        }
+
+        setSong(song) {
+            this.song = song;
+        }
+
+        getSong() {
+            return this.song;
         }
 
         isOpen() {
@@ -47,7 +57,9 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
         }
 
         canStart() {
-            return this.users.size >= ClientMatch.MIN_START_USERS && this.started === false;
+            return this.users.size >= ClientMatch.MIN_START_USERS &&
+                this.started === false &&
+                this.song instanceof IPlayable;
         }
 
         onStart(startTime, gameId) {

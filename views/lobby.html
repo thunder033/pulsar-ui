@@ -7,7 +7,7 @@
             <img src="assets/images/warp-icon.png" alt="Warp Logo">
             <h2>Warp</h2>
         </div>
-        <input type="text" placeholder="Name" ng-model="fields.username">
+        <input class="cp-text-input" type="text" placeholder="Name" ng-model="fields.username">
         <button class="cp-button cp-button-md" ng-click="authenticate(fields.username)">Join Lobby</button>
     </div>
 
@@ -31,7 +31,7 @@
                 <span ng-bind="user.getName()"></span> (<span ng-bind="getPing() || '--'"></span> ms) <br>
             </div>
 
-            <input type="text" ng-model="fields.matchLabel" placeholder="Match Name">
+            <input class="cp-text-input" type="text" ng-model="fields.matchLabel" placeholder="Match Name">
             <button class="cp-button cp-button-md" ng-disabled="matches.length === 5" ng-click="createMatch(fields.matchLabel)">Create Match</button>
 
             <div class="match-list">

@@ -134,3 +134,17 @@
     vertical-align: middle;
     margin-right: .3em;
 }
+
+.staging-match .control-panel {
+    padding: .5em;
+    margin-right: 1em;
+    min-height: 10em;
+}
+
+.staging-match .mw-search-icon {
+    right: 4.2em;
+}
+
+#lobby .cp-button-md {
+    font-size: 1.2em;
+}

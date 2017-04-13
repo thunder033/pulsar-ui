@@ -32,8 +32,8 @@ function lerpedEntityFactory(NetworkEntity, Scheduler, Clock, MM) {
             Scheduler.schedule(this.update.bind(this));
         }
 
-        sync(buffer, bufferString, storesValuesCB) {
-            super.sync(buffer, bufferString, storesValuesCB);
+        sync(buffer, view, storesValuesCB) {
+            super.sync(buffer, view, storesValuesCB);
 
             const updateTime = Clock.getNow();
             this.syncElapsed = updateTime - this.lastUpdate;

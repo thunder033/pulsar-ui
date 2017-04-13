@@ -45,8 +45,8 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
             this.level = warpField.getLevel();
         }
 
-        sync(buffer, bufferString) {
-            super.sync(buffer, bufferString, () => {
+        sync(buffer, view) {
+            super.sync(buffer, view, () => {
                 this.prevBarOffset = this.barOffset;
                 this.prevSliceIndex = this.sliceIndex;
             });

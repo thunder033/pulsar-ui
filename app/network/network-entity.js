@@ -25,11 +25,11 @@ function getFieldPosition(field, format) {
 
     let item = it.next();
     while (item.done === false) {
-        if(item.key === field) {
+        if(item.value[0] === field) {
             break;
         }
 
-        position += getFieldSize(item.value);
+        position += getFieldSize(item.value[1]);
         item = it.next();
     }
 
@@ -71,7 +71,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
 
             if (format instanceof Map) {
                 this.parseFieldSizes();
-                this.buffer = Buffer.alloc(getFormatSize(format));
+                this.buffer = Buffer.alloc(getFormatSize(DataFormat.NETWORK_ENTITY) + getFormatSize(format));
                 this.syncOps = [];
 
                 // Bind a method for retrieving the timestamp from the buffer
@@ -84,6 +84,11 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                 format.forEach((type, field) => {
                     const primitiveType = getPrimitiveType(type);
                     const size = this.sizes[field];
+
+                    if(isNaN(size)) {
+                        throw new Error(`Failed to read size for field ${field}`);
+                    }
+
                     // Strings are read with different arguments than other types, so handle them separately
                     if (primitiveType === DataType.String) {
                         const method = this.buffer.toString.bind(this.buffer, 'utf8', position, position + size);
@@ -125,7 +130,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                     throw new ReferenceError(`${type} cannot sync a binary response without a format set`);
                 }
 
-                this.buffer.set(view);
+                this.buffer.set(view.subarray(0, this.buffer.length));
                 const timeStamp = this.getTimeStamp();
 
                 // throw out the update if it's older than anything we already got
@@ -315,7 +320,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             let entity = null;
             let id = '';
             let serverTypeCode;
-            let view = '';
+            let view = null;
 
             if(data instanceof ArrayBuffer) {
                 view = new Uint8Array(data);

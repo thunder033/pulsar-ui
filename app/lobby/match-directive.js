@@ -9,10 +9,9 @@ resolve: ADT => [
     ADT.game.ClientMatch,
     ADT.media.PlayQueue,
     ADT.audio.Player,
-    ADT.media.Playlist,
     matchDirective]};
 
-function matchDirective(ClientMatch, PlayQueue, AudioPlayer, Playlist) {
+function matchDirective(ClientMatch, PlayQueue, AudioPlayer) {
     return {
         restrict: 'E',
         scope: {
@@ -20,12 +19,11 @@ function matchDirective(ClientMatch, PlayQueue, AudioPlayer, Playlist) {
         },
         templateUrl: 'views/staging-match.html',
         controller: ['$scope', 'network.Client', function StagingMatchCtrl($scope, Client) {
-
-            $scope.playlist = new Playlist();
             $scope.playQueue = new PlayQueue(AudioPlayer);
 
             $scope.playQueue.addEventListener('itemAdded', () => {
-                $scope.match.setSong($scope.playQueue.getNext());
+                const song = $scope.playQueue.getNext();
+                Client.emit(MatchEvent.setSong, {matchId: $scope.match.getId(), song: song.getParams()});
             });
 
             $scope.isHost = function isHost(user = Client.getUser()) {

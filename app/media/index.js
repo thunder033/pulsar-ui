@@ -15,9 +15,11 @@ const media = require('angular').module('pulsar.media', [
 ]);
 
 ADT.media = {
+    AudioClip: 'media.AudioClip',
     IPlayable: 'media.IPlayable',
     Playlist: 'media.Playlist',
     PlayQueue: 'media.PlayQueue',
+    Source: 'media.Source',
 };
 
 require('./media.constants');

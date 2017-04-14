@@ -14,9 +14,10 @@ resolve: ADT => [
     ADT.network.NetworkEntity,
     ADT.ng.$rootScope,
     ADT.media.IPlayable,
+    ADT.game.MatchLoader,
     matchFactory]};
 
-function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable) {
+function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader) {
     const matches = new Map();
     const matchList = [];
 
@@ -127,12 +128,20 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
         matches.get(data.matchId).onEnd();
     }
 
+    function setMatchSong(data) {
+        MatchLoader.reconstructSong(data.song).then((song) => {
+            console.log(song);
+            matches.get(data.matchId).setSong(song);
+        });
+    }
+
     NetworkEntity.registerType(ClientMatch, EntityType.Match);
     Connection.ready().then((socket) => {
         socket.get().on(MatchEvent.matchCreated, data => addMatch(data.matchId));
         socket.get().on(MatchEvent.matchListUpdate, parseMatchIds);
         socket.get().on(MatchEvent.matchStarted, triggerMatchStart);
         socket.get().on(MatchEvent.matchEnded, triggerMatchEnd);
+        socket.get().on(MatchEvent.setSong, setMatchSong);
     });
 
     return ClientMatch;

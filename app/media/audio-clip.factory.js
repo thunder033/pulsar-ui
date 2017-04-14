@@ -76,6 +76,14 @@
                     this.album = params.album || '';
 
                     this.state = MediaState.Ready;
+
+                    if (params.source !== null) {
+                        // Store the parameters used to create the clip in serializable format
+                        params.sourceName = params.source.getName();
+                        delete params.source;
+                    }
+
+                    this.params = params;
                 }
                 else {
                     throw new ReferenceError('Cached Clips not yet supported');
@@ -90,11 +98,15 @@
                 return this.duration || NaN;
             }
 
+            getParams() {
+                return this.params;
+            }
+
             /**
              * Returns a string with the artist and album
              */
             getInfo(){
-                var info = '';
+                let info = '';
                 info += this.artist ? this.artist : '';
                 info += this.artist && this.album ? ' - ' : '';
                 info += this.album ? this.album : '';

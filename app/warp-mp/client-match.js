@@ -63,19 +63,17 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
                 this.song instanceof IPlayable;
         }
 
-        onStart(startTime, gameId) {
+        onStart(gameId) {
             this.started = true;
-            this.startTime = startTime;
+            if(Connection.getUser() === this.getHost()) {
+                MatchLoader.loadMatch(this);
+            }
             updateMatchList();
             $rootScope.$broadcast(MatchEvent.matchStarted, {match: this, gameId, clientEvent: true});
         }
 
         onEnd() {
             $rootScope.$broadcast(MatchEvent.matchEnded, {match: this, clientEvent: true});
-        }
-
-        getStartTime() {
-            return this.startTime + Connection.getTimeDifference();
         }
 
         getLabel() {
@@ -100,8 +98,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
             }
 
             item = it.next();
-        }
-    }
+        }   }
 
     function addMatch(matchId) {
         if (!matchId) {
@@ -121,7 +118,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
     }
 
     function triggerMatchStart(data) {
-        matches.get(data.matchId).onStart(data.startTime, data.gameId);
+        matches.get(data.matchId).onStart(data.gameId);
     }
 
     function triggerMatchEnd(data) {

@@ -19,10 +19,10 @@
          * A WarpField defines a level in Warp, generated from an audio file
          * @constructor
          */
-        function WarpField(){
+        function WarpField(version = 'v1.39'){
             //Defining a version as a key so that the 'signature' of the object
             //can be compared without analyzing any specific property
-            Object.defineProperty(this, 'v1.39', {configurable: false, value: 1, enumerable: true});
+            Object.defineProperty(this, version, {configurable: false, value: 1, enumerable: true});
             this.duration = 0;
             this.timeStep = NaN;
             this.level = null;
@@ -31,9 +31,10 @@
         /**
          * Performs analysis to generate "audio field" and then begins play
          * @param clip
+         * @param [version {string}]
          */
-        WarpField.generate = (clip) => {
-            var warpField = new WarpField();
+        WarpField.generate = (clip, version) => {
+            const warpField = new WarpField(version);
             //This function renders all of the PCM data for the entire clip into series of buffers
             //The result thousands of buckets of 1024 samples (~800 per minute of play w/ current config)
             return DataUtils.renderFrameBuffers(clip)

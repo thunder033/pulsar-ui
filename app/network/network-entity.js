@@ -124,7 +124,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
          * @param storeValuesCB {Function}
          */
         sync(params, view, storeValuesCB) {
-            if(params instanceof ArrayBuffer) {
+            if(params instanceof ArrayBuffer && view !== null) {
                 if(!(this.format instanceof Map)) {
                     const type = NetworkEntity.getName(this.getType());
                     throw new ReferenceError(`${type} cannot sync a binary response without a format set`);

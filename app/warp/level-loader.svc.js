@@ -17,7 +17,7 @@
 
     function LevelLoader(Level, State, MState, MediaStates, AudioPlayer, FieldCache, $q, WarpField) {
 
-        function getWarpField(clip) {
+        this.getWarpField = function getWarpField(clip) {
             const cachedField = FieldCache.retrieve(clip);
             if(cachedField){
                 return $q.when(cachedField);
@@ -28,8 +28,7 @@
                     return warpField;
                 });
             }
-
-        }
+        };
 
         this.playClip = function(clip){
 
@@ -43,7 +42,7 @@
             //Stop any song that's playing
             AudioPlayer.stop();
 
-            getWarpField(clip).then(function(warpField){
+            this.getWarpField(clip).then(function(warpField){
                 Level.load(warpField);
 
                 //Play the clip - this can take time to initialize

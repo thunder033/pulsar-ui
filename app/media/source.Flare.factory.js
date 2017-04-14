@@ -43,9 +43,10 @@
                 })).then(trackList => {
                     //Parse each track in the list
                     return $q.all(trackList.map(track => {
-                        var type = track.type || MediaType.Song,
-                            fileName = track.name || track,
-                            url = Path.media[type] + fileName;
+                        const type = track.type || MediaType.Song;
+                        const fileName = track.name || track;
+                        const url = Path.media[type] + fileName;
+                        const sourceId = track.id;
 
                         //ensure the track exists before loading it
                         return this.queueRequest(new HttpConfig({
@@ -54,9 +55,10 @@
                         })).then(()=>{
                             //Load the local track into the cache
                             this._cachedTracks.push(new AudioClip({
+                                sourceId,
                                 source: this,
                                 name: fileName,
-                                type: type,
+                                type,
                                 uri: url
                             }));
                         }, err => {

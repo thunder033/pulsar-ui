@@ -41,6 +41,10 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
         }
 
         load(warpField) {
+            if (warpField === null) {
+                return null;
+            }
+
             this.warpField = warpField;
             this.level = warpField.getLevel();
         }

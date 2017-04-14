@@ -6,6 +6,8 @@ const EntityType = require('entity-types').EntityType;
 const DataFormat = require('game-params').DataFormat;
 const ByteSizes = require('game-params').ByteSizes;
 const Track = require('game-params').Track;
+const getPrimitiveType = require('game-params').getPrimitiveType;
+const getFieldSize = require('game-params').getFieldSize;
 
 module.exports = {warpFieldFactory,
 resolve: ADT => [
@@ -34,19 +36,22 @@ function warpFieldFactory(NetworkEntity) {
         }
 
         sync(params) {
-            if(params instanceof ArrayBuffer) {
-                const view = new DataView(params);
+            if (params instanceof ArrayBuffer) {
+                const view = Buffer.from(params);
 
                 // We would normally check for a timestamp here, but we don't care because a slice will
                 // only ever be updated in irreversible manner
+                // TODO Cache all of these parameters
+                const sliceType = getPrimitiveType(this.format.get('sliceIndex'));
+                const gemType = getPrimitiveType(this.format.get('gems'));
 
-                let position = NetworkEntity.entityOffset + this.sizes.timestamp;
-                const sliceIndexMethod = NetworkEntity.readMethods.get(this.format.get('sliceIndex'));
-                const sliceIndex = view[sliceIndexMethod](position);
-                position += this.sizes[sliceIndex];
-                
-                const gemMethod = NetworkEntity.readMethods.get(this.format.get('gems')[0]);
-                const gemSize = ByteSizes.get(this.format.get('gems')[0]);
+                let position           = NetworkEntity.entityOffset;
+                const sliceIndexMethod = NetworkEntity.readMethods.get(sliceType);
+                const sliceIndex       = view[sliceIndexMethod](position);
+                position += getFieldSize(sliceType);
+
+                const gemMethod = NetworkEntity.readMethods.get(gemType);
+                const gemSize   = ByteSizes.get(gemType);
                 for (let i = 0; i < Track.NUM_LANES; i++) {
                     this.level[sliceIndex].gems[i] = view[gemMethod](position);
                     position += gemSize;

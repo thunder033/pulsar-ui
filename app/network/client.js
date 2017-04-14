@@ -5,6 +5,7 @@
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const IOEvent = require('pulsar-lib').EventTypes.IOEvent;
 const MatchEvent = require('pulsar-lib').EventTypes.MatchEvent;
+const GameEvent = require('event-types').GameEvent;
 
 module.exports = {clientFactory,
 resolve: ADT => [
@@ -28,6 +29,7 @@ function clientFactory(Connection, $rootScope, AsyncInitializer, Log) {
                 IOEvent.leftRoom,
                 MatchEvent.matchStarted,
                 MatchEvent.matchEnded,
+                GameEvent.clientsReady,
             ].forEach(e => $rootScope.$on(e, forward));
         }
 

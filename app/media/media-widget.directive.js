@@ -16,9 +16,28 @@ function mediaWidgetDirective(){
         scope: {
             queue: '=',
             actionOverride: '=',
+            availSources: '@',
             player: '='
         },
         controller: ['$scope', 'media.PlayQueue', 'media.Playlist', 'media.const.Type', 'media.Library', 'media.Source', function ($scope, PlayQueue, Playlist, MediaType, MediaLibrary, Source) {
+
+            const availSources = $scope.availSources || [];
+
+            $scope.displaySource = (source) => {
+                if (availSources.length === 0) {
+                    return true;
+                }
+
+                if (!(source.getName instanceof Function)) {
+                    return false;
+                }
+
+                if(source === 'UserStream') {
+                    return availSources.indexOf('UserStream') > -1;
+                }
+
+                return availSources.indexOf(source.getName()) > -1;
+            };
 
             $scope.playlist = new Playlist();
             $scope.sources = Source.getSources();

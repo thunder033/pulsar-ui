@@ -7,9 +7,11 @@ const MatchEvent = require('event-types').MatchEvent;
 module.exports = {matchDirective,
 resolve: ADT => [
     ADT.game.ClientMatch,
+    ADT.media.PlayQueue,
+    ADT.audio.Player,
     matchDirective]};
 
-function matchDirective(ClientMatch) {
+function matchDirective(ClientMatch, PlayQueue, AudioPlayer) {
     return {
         restrict: 'E',
         scope: {
@@ -17,8 +19,14 @@ function matchDirective(ClientMatch) {
         },
         templateUrl: 'views/staging-match.html',
         controller: ['$scope', 'network.Client', function StagingMatchCtrl($scope, Client) {
+            $scope.playQueue = new PlayQueue(AudioPlayer);
 
-            $scope.isHost = function isHost(user) {
+            $scope.playQueue.addEventListener('itemAdded', () => {
+                const song = $scope.playQueue.getNext();
+                Client.emit(MatchEvent.setSong, {matchId: $scope.match.getId(), song: song.getParams()});
+            });
+
+            $scope.isHost = function isHost(user = Client.getUser()) {
                 return $scope.match.getHost() === user;
             };
 

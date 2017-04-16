@@ -41,12 +41,16 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
         }
 
         load(warpField) {
+            if (warpField === null) {
+                return null;
+            }
+
             this.warpField = warpField;
             this.level = warpField.getLevel();
         }
 
-        sync(buffer, bufferString) {
-            super.sync(buffer, bufferString, () => {
+        sync(buffer, view) {
+            super.sync(buffer, view, () => {
                 this.prevBarOffset = this.barOffset;
                 this.prevSliceIndex = this.sliceIndex;
             });

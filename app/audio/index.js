@@ -1,13 +1,17 @@
 /**
  * Created by Greg on 11/27/2016.
  */
-
+const ADT = require('../app.dependency-tree.js').ADT;
 /**
  * Utilities and services for playback and analysis of audio
  * @module pulsar.audio
  */
 var audio = require('angular')
     .module('pulsar.audio', []);
+
+ADT.audio = {
+    'Player': 'audio.Player',
+};
 
 require('./audio.constants');
 require('./audio-fx.svc');

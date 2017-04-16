@@ -7,10 +7,20 @@
  * @ngdoc module
  * @name pulsar.media
  */
-var media = require('angular').module('pulsar.media', [
+const ADT = require('../app.dependency-tree.js').ADT;
+
+const media = require('angular').module('pulsar.media', [
     require('../config.module').name,
     require('angular-cookies')
 ]);
+
+ADT.media = {
+    AudioClip: 'media.AudioClip',
+    IPlayable: 'media.IPlayable',
+    Playlist: 'media.Playlist',
+    PlayQueue: 'media.PlayQueue',
+    Source: 'media.Source',
+};
 
 require('./media.constants');
 

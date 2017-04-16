@@ -13,9 +13,11 @@ resolve: ADT => [
     ADT.network.User,
     ADT.network.NetworkEntity,
     ADT.ng.$rootScope,
+    ADT.media.IPlayable,
+    ADT.game.MatchLoader,
     matchFactory]};
 
-function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
+function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader) {
     const matches = new Map();
     const matchList = [];
 
@@ -24,6 +26,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
         constructor(params) {
             super(params);
             this.host = null;
+            this.song = null;
             this.started = false;
             this.startTime = NaN;
         }
@@ -32,6 +35,14 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
             NetworkEntity.getById(User, data.host).then(user => this.host = user);
             delete data.host;
             super.sync(data);
+        }
+
+        setSong(song) {
+            this.song = song;
+        }
+
+        getSong() {
+            return this.song;
         }
 
         isOpen() {
@@ -47,22 +58,22 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
         }
 
         canStart() {
-            return this.users.size >= ClientMatch.MIN_START_USERS && this.started === false;
+            return this.users.size >= ClientMatch.MIN_START_USERS &&
+                this.started === false &&
+                this.song instanceof IPlayable;
         }
 
-        onStart(startTime, gameId) {
+        onStart(gameId) {
             this.started = true;
-            this.startTime = startTime;
+            if(Connection.getUser() === this.getHost()) {
+                MatchLoader.loadMatch(this);
+            }
             updateMatchList();
             $rootScope.$broadcast(MatchEvent.matchStarted, {match: this, gameId, clientEvent: true});
         }
 
         onEnd() {
             $rootScope.$broadcast(MatchEvent.matchEnded, {match: this, clientEvent: true});
-        }
-
-        getStartTime() {
-            return this.startTime + Connection.getTimeDifference();
         }
 
         getLabel() {
@@ -87,8 +98,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
             }
 
             item = it.next();
-        }
-    }
+        }   }
 
     function addMatch(matchId) {
         if (!matchId) {
@@ -108,11 +118,18 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
     }
 
     function triggerMatchStart(data) {
-        matches.get(data.matchId).onStart(data.startTime, data.gameId);
+        matches.get(data.matchId).onStart(data.gameId);
     }
 
     function triggerMatchEnd(data) {
         matches.get(data.matchId).onEnd();
+    }
+
+    function setMatchSong(data) {
+        MatchLoader.reconstructSong(data.song).then((song) => {
+            console.log(song);
+            matches.get(data.matchId).setSong(song);
+        });
     }
 
     NetworkEntity.registerType(ClientMatch, EntityType.Match);
@@ -121,6 +138,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
         socket.get().on(MatchEvent.matchListUpdate, parseMatchIds);
         socket.get().on(MatchEvent.matchStarted, triggerMatchStart);
         socket.get().on(MatchEvent.matchEnded, triggerMatchEnd);
+        socket.get().on(MatchEvent.setSong, setMatchSong);
     });
 
     return ClientMatch;

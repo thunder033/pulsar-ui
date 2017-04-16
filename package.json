@@ -1,6 +1,6 @@
 {
   "name": "pulsar-ui",
-  "version": "1.0.10",
+  "version": "1.0.15",
   "description": "Pulsar Client",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec test/*.js",
@@ -26,10 +26,11 @@
     "angular": "1.5.8",
     "angular-cookies": "1.6.0",
     "angular-ui-router": "^0.3.1",
+    "buffer": "^5.0.6",
     "checklist-model": "^0.10.0",
     "eventtarget": "^0.1.0",
     "modular-adal-angular": "^1.0.4",
-    "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.16"
+    "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.22"
   },
   "devDependencies": {
     "angular-q-spread": "^1.1.0",

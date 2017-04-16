@@ -3,6 +3,7 @@
  */
 
 const EntityType = require('entity-types').EntityType;
+const GameEvent = require('event-types').GameEvent;
 module.exports = {warpGameFactory,
 resolve: ADT => [
     ADT.game.Player,
@@ -13,9 +14,11 @@ resolve: ADT => [
     ADT.network.ClientRoom,
     ADT.game.WarpField,
     ADT.game.WarpDrive,
+    ADT.network.Connection,
+    ADT.ng.$rootScope,
     warpGameFactory]};
 
-function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom, WarpField, WarpDrive) {
+function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom, WarpField, WarpDrive, Connection, $rootScope) {
     const utf8Decoder = new TextDecoder('utf-8');
     function createPlayers(buffer, match) {
         const players = [];
@@ -63,7 +66,8 @@ function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom
          */
         sync(params) {
             const getMatch = NetworkEntity.getById(ClientRoom, params.matchId);
-            const getWarpField = NetworkEntity.getById(WarpField, params.warpFieldId);
+            // The warp field might be undefined, just return null
+            const getWarpField = NetworkEntity.getById(WarpField, params.warpFieldId).catch(e => null);
             const getWarpDrive = NetworkEntity.getById(WarpDrive, params.warpDriveId);
 
             return $q.all([getMatch, getWarpField, getWarpDrive]).spread((match, warpField, warpDrive) => {
@@ -71,12 +75,20 @@ function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom
                 this.warpField = warpField;
                 this.warpDrive = warpDrive;
                 this.warpDrive.load(this.warpField);
-                return createPlayers(params.shipIds, match).then((players) => { this.players = players; });
+
+                if (this.players.length === 0) {
+                    return createPlayers(params.shipIds, match).then((players) => { this.players = players; });
+                }
             }).finally(() => {
                 delete params.matchId;
                 delete params.shipIds;
                 super.sync(params);
             });
+        }
+
+        onClientsReady(startTime) {
+            this.startTime = startTime;
+            $rootScope.$broadcast(GameEvent.clientsReady, {clientEvent: true});
         }
 
         getWarpDrive() {
@@ -94,7 +106,20 @@ function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom
         getMatch() {
             return this.match;
         }
+
+        getStartTime() {
+            return this.startTime + Connection.getTimeDifference();
+        }
     }
+
+    function onGameClientsReady(data) {
+        NetworkEntity.getById(ClientSimulation, data.gameId)
+            .then(game => game.onClientsReady(data.startTime));
+    }
+
+    Connection.ready().then((socket) => {
+        socket.get().on(GameEvent.clientsReady, onGameClientsReady);
+    });
 
     NetworkEntity.registerType(ClientSimulation, EntityType.Simulation);
 

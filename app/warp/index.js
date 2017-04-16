@@ -12,9 +12,11 @@ const ADT = require('../app.dependency-tree.js').ADT;
 
 ADT.warp = {
     Level: 'warp.Level',
+    LevelLoader: 'warp.LevelLoader',
     WarpField: 'warp.WarpField',
     Bar: 'warp.Bar',
     State: 'warp.State',
+    WarpFieldCache: 'warp.WarpFieldCache',
 };
 
 require('./bar.factory');

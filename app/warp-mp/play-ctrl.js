@@ -26,7 +26,7 @@ resolve: ADT => [
  * @param $scope
  * @param $timeout
  * @param $state
- * @param Client {Client}
+ * @param Client
  * @param Clock {Clock}
  * @param WarpGame {WarpGame}
  * @param Connection
@@ -75,7 +75,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
         return `${$scope.clientUser.getName()} (${Connection.getPing()} ms)`;
     };
 
-    NetworkEntity.getById(WarpGame, $stateParams.gameId)
+    const loadedGame = NetworkEntity.getById(WarpGame, $stateParams.gameId)
         .then((game) => {
             if (!game) {
                 console.error(`No game was found with game id: ${$stateParams.gameId}`);
@@ -86,8 +86,19 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
             $scope.warpGame = game;
             $scope.clientUser = Client.getUser();
             $scope.match = game.getMatch();
+            // TODO this will be called after the song has been buffered
+            // Currently ignored by server (just waits for host to send level)
+            Client.emit(GameEvent.clientLoaded);
+        }).catch((e) => {
+        console.error(e);
+        $state.go('lobby');
+    });
+
+    // The game countdown will begin when all clients have loaded
+    Client.addEventListener(GameEvent.clientsReady, () => {
+        loadedGame.then(() => {
             $scope.state = gameState.SYNCING;
-            const remainingStartTime = $scope.match.getStartTime() - Clock.getNow();
+            const remainingStartTime = $scope.warpGame.getStartTime() - Clock.getNow();
             console.log(`start match in ${remainingStartTime}`);
 
             $scope.secondsToStart = ~~(remainingStartTime / 1000);
@@ -99,8 +110,6 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
                 startGame();
                 clearInterval(countdownInterval);
             }, remainingStartTime);
-        }).catch((e) => {
-        console.error(e);
-        $state.go('lobby');
+        });
     });
 }

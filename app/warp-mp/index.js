@@ -16,6 +16,7 @@ ADT.game = {
     WarpField: 'game.WarpField',
     LerpedEntity: 'game.LerpedEntity',
     WarpDrive: 'game.WarpDrive',
+    MatchLoader: 'game.MatchLoader',
 };
 
 const game = require('angular')
@@ -23,6 +24,7 @@ const game = require('angular')
         require('../network').name,
     ]);
 
+game.service(ADT.game.MatchLoader, require('./match-loader').resolve(ADT));
 game.factory(ADT.game.ClientMatch, require('./client-match').resolve(ADT));
 game.controller(ADT.game.PlayCtrl, require('./play-ctrl').resolve(ADT));
 game.controller(ADT.game.ResultsCtrl, require('./results-ctrl').resolve(ADT));

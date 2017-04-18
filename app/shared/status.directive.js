@@ -32,7 +32,5 @@ function statusDirective(ADT, MDT) {
             MDT.Log,
             ADT.shared.Status,
             StatusController]
-    }
+    };
 }
-
-

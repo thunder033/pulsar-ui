@@ -95,6 +95,18 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock) {
                 .catch(e => console.error('Failed to establish Connection: ', e));
         }
 
+        onDisconnect() {
+            console.log('disconnected');
+            const disconnectEvt = new Event(IOEvent.disconnect);
+            this.dispatchEvent(disconnectEvt);
+        }
+
+        onReconnect() {
+            console.log('reconnected');
+            const disconnectEvt = new Event('reconnect');
+            this.dispatchEvent(disconnectEvt);
+        }
+
         /**
          * Authenticates with the given credientials and retrieves the user
          * @param credentials
@@ -105,6 +117,8 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock) {
             // Set up events
             this.socket.get().on(IOEvent.connect, deferConnected.resolve);
             this.socket.get().on(IOEvent.joinServer, deferJoined.resolve);
+            this.socket.get().on(IOEvent.disconnect, () => this.onDisconnect());
+            this.socket.get().on('reconnect', () => this.onReconnect());
 
             this.socket.get().on(IOEvent.serverPing, (timestamp) => this.pong(timestamp));
             this.socket.get().on(IOEvent.clientPong, (timestamp) => this.calculatePing(timestamp));

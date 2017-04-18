@@ -6,6 +6,8 @@
 'use strict';
 
 const ADT = {
+    inject(){ return 'ADT'; },
+    MDT: 'MDT',
     ng: {
         $scope: '$scope',
         $rootScope: '$rootScope',

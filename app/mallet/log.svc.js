@@ -93,7 +93,7 @@ function Log(StateMachine) {
         for (let i = 0, l = loggers.length; i < l; i++) {
             const loggerLevel = Number.isInteger(loggers[i].level) ? loggers[i].level : level;
             if(msgLevel <= loggerLevel) {
-                loggers[i][func].api(...args);
+                loggers[i].api[func](...args);
             }
         }
     }

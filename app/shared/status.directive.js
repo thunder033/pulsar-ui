@@ -3,23 +3,34 @@
  */
 module.exports = {resolve: ADT => [
     ADT.inject(),
-    ADT.MDT,
     statusDirective
     ]};
 
-function statusDirective(ADT, MDT) {
+function statusDirective(ADT) {
     class StatusController {
-        constructor($scope, Status, Log) {
-            this.messages = [];
-
+        constructor($scope, Status, $timeout) {
             $scope.activeMessage = null;
-            $scope.class = '';
 
-            Log.addLogger(this, Log.levels.Error);
-        }
+            window.testStatus = () => {
+                Status.display('This is a test message');
+            };
 
-        error() {
-            // TODO: handle error display
+            $scope.displayNextStatus = () => {
+                $scope.setActiveStatus(Status.getNextStatus());
+            };
+
+            Status.addEventListener('displayStatus', $scope.displayNextStatus);
+
+            $scope.setActiveStatus = (msg)=> {
+                $scope.activeMessage = msg;
+                if (msg !== null) {
+                    $timeout($scope.displayNextStatus, msg.getDuration());
+                }
+            };
+
+            $scope.dismissStatus = () => {
+                $scope.displayNextStatus();
+            };
         }
     }
 
@@ -29,8 +40,8 @@ function statusDirective(ADT, MDT) {
         templateUrl: 'views/status.html',
         controller: [
             ADT.ng.$scope,
-            MDT.Log,
             ADT.shared.Status,
+            ADT.ng.$timeout,
             StatusController]
     };
 }

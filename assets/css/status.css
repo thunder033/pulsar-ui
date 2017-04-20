@@ -1,0 +1,62 @@
+.pulsar-status {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    width: 40em;
+    height: 3em;
+    box-sizing: border-box;
+    margin: -1.5em 0 0 -20em;
+}
+
+.pulsar-status .status-message.persist .dismiss-status {
+    display: none;
+}
+
+.pulsar-status .dismiss-status {
+    font-size: .9em;
+    float: right;
+    width: 1.7em;
+    height: 1.7em;
+    padding: 0 .2em .6em .4em;
+    border-radius: 1em;
+    background: transparent;
+    transition: all .4s;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+    color: #333;
+    margin-top: -.3em;
+}
+
+.pulsar-status .dismiss-status:before {
+    content: '\00D7';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: -.52em 0 0 -.25em;
+}
+
+.pulsar-status .dismiss-status:hover {
+    background: #955;
+    color: #eee;
+    transition: all .4s;
+}
+
+.pulsar-status .status-message {
+    background: rgba(255, 255, 255, .5);
+    border-radius: .5em;
+    padding: .5em;
+    font-size: 1.2em;
+}
+
+.pulsar-status .status-message.error {
+    background: #c77;
+    color: #400;
+}
+
+.pulsar-status .status-message.warn {
+    background: #da4;
+}
+

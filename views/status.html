@@ -1,7 +1,7 @@
 <div class="pulsar-status">
-    <div ng-if="activeMessage !== null">
+    <div class="status-message" ng-class="[msgStyle]" ng-if="activeMessage !== null">
+        <button ng-click="dismissStatus()" class="dismiss-status"></button>
         <span ng-bind="activeMessage.getMessage()"
               ng-class="activeMessage.getLevel()"></span>
-        <button ng-click="dismissStatus()" class="dismiss-status">x</button>
     </div>
 </div>

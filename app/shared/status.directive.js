@@ -10,6 +10,7 @@ function statusDirective(ADT) {
     class StatusController {
         constructor($scope, Status, $timeout) {
             $scope.activeMessage = null;
+            $scope.msgStyle = '';
 
             window.testStatus = () => {
                 Status.display('This is a test message');
@@ -23,8 +24,11 @@ function statusDirective(ADT) {
 
             $scope.setActiveStatus = (msg)=> {
                 $scope.activeMessage = msg;
-                if (msg !== null) {
+                if (msg !== null && Number.isFinite(msg.getDuration())) {
+                    $scope.msgStyle = msg.getLevel();
                     $timeout($scope.displayNextStatus, msg.getDuration());
+                } else {
+                    $scope.msgStyle = 'persist';
                 }
             };
 

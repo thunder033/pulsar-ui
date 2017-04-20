@@ -16,6 +16,16 @@ class StatusMessage {
         this.message = message;
         this.level = level;
         this.duration = duration;
+        this.persistent = false;
+    }
+
+    persist() {
+        this.persistent = true;
+        this.duration = false;
+    }
+
+    isPersistent() {
+        return this.persistent;
     }
 
     getMessage() {
@@ -42,16 +52,33 @@ class StatusService extends EventTarget {
         Log.addLogger(this, Log.levels.Error);
     }
 
+    /**
+     *
+     * @param message
+     * @param level
+     * @returns {function()}: Callback to remove the conditional status
+     */
+    displayConditional(message, level) {
+        const status = new StatusMessage(message, level, NaN);
+        status.persist();
+        this.dispatchStatus(status);
+        return () => {this.statuses.remove(status);};
+    }
+
     error() {
         this.display('An unexpected error has been encountered', 'error');
     }
 
-    display(message, level) {
-        const status = new StatusMessage(message, level);
-        this.statuses.enqueue(this.priorities[level], status);
+    dispatchStatus(status) {
+        this.statuses.enqueue(this.priorities[status.getLevel()], status);
         const evt = new Event('displayStatus');
         evt.status = status;
         this.dispatchEvent(evt);
+    }
+
+    display(message, level) {
+        const status = new StatusMessage(message, level);
+        this.dispatchStatus(status);
     }
 
     getNextStatus() {

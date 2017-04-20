@@ -11,6 +11,7 @@ resolve: ADT => [
     ADT.network.Socket,
     ADT.network.AsyncInitializer,
     ADT.network.Clock,
+    ADT.shared.Status,
     connectionFactory]};
 
 /**
@@ -21,7 +22,7 @@ resolve: ADT => [
  * @param Clock {Clock}
  * @returns {ClientConnection}
  */
-function connectionFactory($q, Socket, AsyncInitializer, Clock) {
+function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
     const deferConnected = $q.defer();
     const deferJoined = $q.defer();
 
@@ -96,15 +97,15 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock) {
         }
 
         onDisconnect() {
-            console.log('disconnected');
+            Status.displayConditional('Disconnected from Server...', 'error');
             const disconnectEvt = new Event(IOEvent.disconnect);
             this.dispatchEvent(disconnectEvt);
         }
 
         onReconnect() {
-            console.log('reconnected');
             const disconnectEvt = new Event('reconnect');
             this.dispatchEvent(disconnectEvt);
+            Status.display('Connected!');
         }
 
         /**

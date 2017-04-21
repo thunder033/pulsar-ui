@@ -11,6 +11,7 @@ resolve: ADT => [
     ADT.network.Socket,
     ADT.network.AsyncInitializer,
     ADT.network.Clock,
+    ADT.shared.Status,
     connectionFactory]};
 
 /**
@@ -21,7 +22,7 @@ resolve: ADT => [
  * @param Clock {Clock}
  * @returns {ClientConnection}
  */
-function connectionFactory($q, Socket, AsyncInitializer, Clock) {
+function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
     const deferConnected = $q.defer();
     const deferJoined = $q.defer();
 
@@ -95,6 +96,18 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock) {
                 .catch(e => console.error('Failed to establish Connection: ', e));
         }
 
+        onDisconnect() {
+            Status.displayConditional('Disconnected from Server...', 'error');
+            const disconnectEvt = new Event(IOEvent.disconnect);
+            this.dispatchEvent(disconnectEvt);
+        }
+
+        onReconnect() {
+            const disconnectEvt = new Event('reconnect');
+            this.dispatchEvent(disconnectEvt);
+            Status.display('Connected!');
+        }
+
         /**
          * Authenticates with the given credientials and retrieves the user
          * @param credentials
@@ -105,6 +118,8 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock) {
             // Set up events
             this.socket.get().on(IOEvent.connect, deferConnected.resolve);
             this.socket.get().on(IOEvent.joinServer, deferJoined.resolve);
+            this.socket.get().on(IOEvent.disconnect, () => this.onDisconnect());
+            this.socket.get().on('reconnect', () => this.onReconnect());
 
             this.socket.get().on(IOEvent.serverPing, (timestamp) => this.pong(timestamp));
             this.socket.get().on(IOEvent.clientPong, (timestamp) => this.calculatePing(timestamp));

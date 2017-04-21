@@ -16,6 +16,7 @@ const browserify = {
             'event-types': './node_modules/pulsar-lib/dist/src/event-types',
             'game-params': './node_modules/pulsar-lib/dist/src/game-params',
             'entity-types': './node_modules/pulsar-lib/dist/src/entity-types',
+            'priority-queue': './node_modules/pulsar-lib/dist/src/priority-queue',
         }
     }
 };

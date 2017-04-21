@@ -43,9 +43,8 @@ function Log(StateMachine) {
     //     console.log(sourceMap);
     // });
 
-    const loggers = [console];
-    
     const logState = new StateMachine(levels);
+    const loggers = [{level: logState.Info, api: console}];
     let level = logState.Info;
     /* eslint no-restricted-properties: "off" */
     const allStates = Math.pow(2, levels.length - 1) - 1;
@@ -60,6 +59,10 @@ function Log(StateMachine) {
     
     this.config = (params) => {
         logState.setState(typeof (params.level) !== 'undefined' ? params.level : logState.Error);
+    };
+
+    this.addLogger = (logger, loggerLevel) => {
+        loggers.push({api: logger, level: loggerLevel});
     };
     
     /**
@@ -88,7 +91,10 @@ function Log(StateMachine) {
         // args[0] = `${trace} ${args[0]}`;
         args.unshift(trace);
         for (let i = 0, l = loggers.length; i < l; i++) {
-            loggers[i][func](...args);
+            const loggerLevel = Number.isInteger(loggers[i].level) ? loggers[i].level : level;
+            if(msgLevel <= loggerLevel) {
+                loggers[i].api[func](...args);
+            }
         }
     }
     

@@ -5,7 +5,7 @@
 const MDT = require('./mallet/mallet.dependency-tree').MDT;
 const ADT = require('./app.dependency-tree').ADT;
 // misc local dependencies
-require('../assets/js/priorityQueue');
+window.PriorityQueue = require('priority-queue').PriorityQueue;
 require('../assets/js/load-error');
 
 // external dependencies

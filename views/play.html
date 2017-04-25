@@ -18,7 +18,7 @@
             <span ng-bind="updateTime"></span><br>
             Camera: <span ng-bind="tCamera"></span><br>
             Slice Index: <span ng-bind="sliceIndex"></span><br>
-            Score: <span ng-bind="clientScore"></span>
+            Score: <span>{{clientScore | number: 0}}</span>
         </div>
 
         <m-easel id="game"></m-easel>

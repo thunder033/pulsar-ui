@@ -446,11 +446,13 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
             // Draw the face
             self.drawFace(MEasel.context, face.buffer, face.end);
         }
-    };
+   };
 
-    MScheduler.schedule(() => {
-        self.calculateViewport(MEasel.context);
-        MScheduler.draw(self.present, 0);
-    });
-
+   this.init = () => {
+       MScheduler.schedule(() => {
+           console.log('do camera things');
+           self.calculateViewport(MEasel.context);
+           MScheduler.draw(self.present, 0);
+       });
+   };
 }

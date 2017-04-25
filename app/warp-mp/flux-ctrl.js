@@ -168,42 +168,12 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
     }
 
     function init() {
-        // const tCube = new Geometry.Transform()
-        //     .scaleBy(0.5)
-        //     .translate(0, 0, -5);
-        //
-        // const tCube2 = new Geometry.Transform()
-        //     .scaleBy(0.5)
-        //     .translate(0, 0, -15);
-        //
-        // const tCube3 = new Geometry.Transform()
-        //     .scaleBy(0.5)
-        //     .translate(0, -5, -5);
-        //
-        // const tCube4 = new Geometry.Transform()
-        //     .scaleBy(0.5)
-        //     .translate(0, 5, -15);
-        //
-        // const tCube5 = new Geometry.Transform()
-        //     .scaleBy(0.5, 0.5, 11)
-        //     .translate(0, 0.5, -10);
-        //
-        // const tLane = new Geometry.Transform()
-        //     .scaleBy(1.15, 1, 50)
-        //     .translate(0, 0, -5);
-        //
-        // const tCube6 = new Geometry.Transform()
-        //     .scaleBy(0.5)
-        //     .translate(0, 0.5, -50);
-        //
-        // tLane.origin.z  = 1;
+        Camera.init();
 
         const players = $scope.warpGame.getPlayers();
         let clientShip = null;
-        console.log($scope.clientUser);
         let clientPlayer = null;
-        const ships = players.map((player) => {
-            console.log('check user', player.getUser());
+        players.forEach((player) => {
             if (player.getUser() === $scope.clientUser) {
                 clientPlayer = player;
                 clientShip = player.getShip();
@@ -215,15 +185,11 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
         });
 
         warpDrive = $scope.warpGame.getWarpDrive();
-        console.log(State);
         State.current = State.Playing;
-
-        console.log(ships);
-        console.log(clientShip);
         $scope.posX = 0;
 
         function sendKeysReleased() {
-            if(!Keyboard.isKeyDown(Keys.Left) && !Keyboard.isKeyDown(Keys.Right)) {
+            if (!Keyboard.isKeyDown(Keys.Left) && !Keyboard.isKeyDown(Keys.Right)) {
                 clientShip.strafe(0);
             } else {
                 clientShip.strafe(Keyboard.isKeyDown(Keys.Left) ? -1 : 1);
@@ -239,7 +205,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
         MScheduler.schedule((dt, tt) => {
             $scope.posX = clientShip.getTransform().position.toString(3);
             $scope.updateTime = clientShip.getUpdateTime();
-            $scope.tCamera = Camera.getPos().toString();
+            $scope.tCamera = Camera.getPos().toString(3);
             $scope.clientScore = clientPlayer.getScore();
             $scope.sliceIndex = warpDrive.getSliceIndex() + ' ' + warpDrive.getBarOffset().toFixed(2);
 
@@ -251,21 +217,13 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
 
             MScheduler.draw(() => {
                 drawLanes(Camera);
-
+                drawGems(dt, tt);
+                Camera.present();
                 players.forEach(player => Camera.render(
                     Geometry.meshes.Ship,
                     player.getShip().getTransform(),
                     player.getColor()));
-
-                // Camera.render(Geometry.meshes.Cube, [tCube], MM.vec3(255, 0, 0));
-                // Camera.render(Geometry.meshes.Cube, [tCube2], MM.vec3(0, 255, 0));
-                // Camera.render(Geometry.meshes.Cube, [tCube3], MM.vec3(255, 255, 0));
-                // Camera.render(Geometry.meshes.Cube, [tCube4], MM.vec3(0, 255, 255));
-                // Camera.render(Geometry.meshes.Cube, [tCube5], MM.vec3(255, 0, 255));
-                // Camera.render(Geometry.meshes.XZQuad, [tLane], MM.vec3(255, 125, 0));
-                // Camera.render(Geometry.meshes.Cube, [tCube6], MM.vec3(255, 255, 255));
                 Camera.present();
-                drawGems(dt, tt);
             });
         });
     }

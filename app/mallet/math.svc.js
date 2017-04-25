@@ -162,8 +162,8 @@ function MathService(){
      * Create a string representation of the vector
      * @returns {string}
      */
-    Vector3.prototype.toString = function(){
-        return '{' + this.x + ', ' + this.y + ', ' + this.z + '}';
+    Vector3.prototype.toString = function(length = 3){
+        return `{${this.x.toFixed(length)}, ${this.y.toFixed(length)}, ${this.z.toFixed(length)}}`;
     };
 
     Vector3.prototype.toBuffer = function(){
@@ -228,6 +228,24 @@ function MathService(){
     }
 
     /**
+     * Set the vector components to those provided
+     * @param {number|Vector3} x
+     * @param {number} [y]
+     * @returns {Vector3}
+     */
+    Vector2.prototype.set = function(x, y){
+        if(x instanceof Vector3){
+            this.x = x.x;
+            this.y = x.y;
+        }
+        else {
+            this.x = x;
+            this.y = typeof y === 'number' ? y : x;
+        }
+        return this;
+    };
+
+    /**
      * Adds the given Vector2
      * @param addend {Vector2}
      */
@@ -267,6 +285,10 @@ function MathService(){
      */
     Vector2.add = (a, b) => {
         return new Vector2(a.x + b.x, a.y + b.y);
+    };
+
+    Vector2.prototype.toString = function(length = 3){
+        return `{${this.x.toFixed(length)}, ${this.y.toFixed(length)}}`;
     };
 
     this.Vector2 = Vector2;

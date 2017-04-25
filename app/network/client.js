@@ -13,9 +13,10 @@ resolve: ADT => [
     ADT.ng.$rootScope,
     ADT.network.AsyncInitializer,
     MDT.Log,
+    ADT.shared.Status,
     clientFactory]};
 
-function clientFactory(Connection, $rootScope, AsyncInitializer, Log) {
+function clientFactory(Connection, $rootScope, AsyncInitializer, Log, Status) {
     class Client extends AsyncInitializer {
 
         constructor() {
@@ -31,6 +32,21 @@ function clientFactory(Connection, $rootScope, AsyncInitializer, Log) {
                 MatchEvent.matchEnded,
                 GameEvent.clientsReady,
             ].forEach(e => $rootScope.$on(e, forward));
+
+            $rootScope.$on(IOEvent.joinedRoom, (e, args) => this.onRoomJoin(e, args));
+            $rootScope.$on(IOEvent.leftRoom, (e, args) => this.onLeftRoom(e, args));
+        }
+
+        onRoomJoin(e, args) {
+            if(args.room.contains(this.user) && args.user !== this.user) {
+                Status.display(`${args.user.getName()} joined ${args.room.getLabel()}`);
+            }
+        }
+
+        onLeftRoom(e, args) {
+            if(args.room.contains(this.user) && args.user !== this.user) {
+                Status.display(`${args.user.getName()} left ${args.room.getLabel()}`);
+            }
         }
 
         getUser() {
@@ -43,7 +59,6 @@ function clientFactory(Connection, $rootScope, AsyncInitializer, Log) {
 
         forwardClientEvent(evt, args) {
             Log.out('client recieved evt ', evt.name);
-            Log.out(args);
             if ((args.user && args.user === this.user) || args.clientEvent === true) {
                 const e = new Event(evt.name);
                 Object.assign(e, args);

@@ -28,6 +28,27 @@ resolve: ADT => [
  * @returns {ClientShip}
  */
 function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
+    /**
+     * Ramp the ship up the side of the lanes
+     * @param x
+     */
+    function getYPos(x) {
+        const rampLBound = Track.POSITION_X + Track.LANE_WIDTH / 2;
+        const rampRBound = Track.POSITION_X + Track.WIDTH - Track.LANE_WIDTH / 2;
+
+        if (x >= rampLBound || x <= rampRBound) {
+            return 0.2;
+        } else {
+            const flatWidth = Track.WIDTH - Track.LANE_WIDTH;
+            const trackCenter = Track.POSITION_X + Track.WIDTH / 2;
+            const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
+
+            const r = Track.LANE_WIDTH; // arc radius
+            return 0.1;
+            // return 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
+        }
+    }
+
     class ClientShip extends LerpedEntity {
         constructor(params, id) {
             super(id, DataFormat.SHIP);
@@ -72,7 +93,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
         update(dt) {
             super.update(dt);
             this.tRender.position.set(LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct));
-            this.tRender.position.y = 0.2;
+            this.tRender.position.y = getYPos(this.tRender.position.x);
             this.tRender.position.z = 0.8;
         }
 

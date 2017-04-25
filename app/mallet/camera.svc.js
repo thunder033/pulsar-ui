@@ -19,8 +19,6 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
     const drawCalls = new PriorityQueue();
     const self = this;
 
-    this.renderRatio = 100;
-
     this.getLensAngle = () => {
         return (3 / 5) * Math.PI;
         // const focalLength = 70;
@@ -28,9 +26,23 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
     };
 
     this.imageScale = 1 / Math.tan(self.getLensAngle() / 2);
+    this.xFactor = 1;
+    this.yFactor = 1;
 
-    this.getImageDistance = () => {
-        return 35;
+    this.viewport = MM.vec2();
+    this.screenCenter = MM.vec2();
+    this.image = MM.vec2();
+
+    this.calculateViewport = function(ctx) {
+        this.aspectRatio = 16 / 9;
+        // y is negative because screen space is inverted
+        this.image.set(1 / this.aspectRatio, -1);
+
+        this.viewport.set(ctx.canvas.width, ctx.canvas.height);
+        this.screenCenter.set(this.viewport.x / 2, this.viewport.y / 2); // center of the viewport
+
+        this.xFactor = this.image.x * this.viewport.x * this.imageScale;
+        this.yFactor = this.image.y * this.viewport.y * this.imageScale;
     };
 
     const tCamera = new Geometry.Transform()
@@ -176,8 +188,8 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
         // The size of the field of view at the distance of the point
         const n = 1 / (-pointBuffer[2]);
 
-        const screenX = (pointBuffer[0] * n * this.imageScale) * this.viewport.x + this.screenCenter.x;
-        const screenY = (-pointBuffer[1] * n * this.imageScale) * this.viewport.y + this.screenCenter.y;
+        const screenX = (pointBuffer[0] * n * this.xFactor) + this.screenCenter.x;
+        const screenY = (pointBuffer[1] * n * this.yFactor) + this.screenCenter.y;
 
         return [screenX, screenY, this.imageScale];
     };
@@ -191,12 +203,6 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
         const disp = MM.Vector3.subtract(tCamera.position, position);
         // check if the object is in front of the camera
         return disp.dot(self.forward) > 0;
-    };
-
-    this.calculateViewport = function(ctx) {
-        this.viewport = MM.vec2(ctx.canvas.height, ctx.canvas.height);
-        this.screenCenter = MM.vec2(ctx.canvas.width / 2, this.viewport.y / 2); // center of the viewport
-        // this.aspectRatio = 1; TODO: Implement aspect ratio
     };
 
     /**
@@ -231,7 +237,7 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
             const b = indices[i] * Mesh.VERT_SIZE;
             // Get the displacement of the vertex
             const pX = buffer[b];
-            const pY = -buffer[b + 1]; // negative because screen space is inverted
+            const pY = buffer[b + 1];
             const pZ = buffer[b + 2];
 
             // The size of the field of view at the distance of the point
@@ -253,8 +259,8 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
                 n = Math.pow(1 / clipDist, 2) * (clipDist + Math.abs(-clipDist - pZ));
             }
 
-            const screenX = (pX * n * this.imageScale) * this.viewport.x + this.screenCenter.x;
-            const screenY = (pY * n * this.imageScale) * this.viewport.y + this.screenCenter.y;
+            const screenX = (pX * n * this.xFactor) + this.screenCenter.x;
+            const screenY = (pY * n * this.yFactor) + this.screenCenter.y;
 
             avgDist += (-pZ) / faceSize;
 

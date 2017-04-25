@@ -6,6 +6,7 @@ const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const GameEvent = require('event-types').GameEvent;
 const Track = require('game-params').Track;
 const SliceBar = require('game-params').SliceBar;
+const DriveParams = require('game-params').DriveParams;
 
 module.exports = {FluxCtrl,
 resolve: ADT => [
@@ -19,6 +20,7 @@ resolve: ADT => [
     ADT.warp.Level,
     ADT.warp.State,
     MDT.Color,
+    ADT.audio.Player,
     FluxCtrl]};
 
 /**
@@ -35,7 +37,7 @@ resolve: ADT => [
  * @param Color
  * @constructor
  */
-function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color) {
+function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color, Player) {
     const meshes = Geometry.meshes;
     const mLanePadding = 0.01; //padding on edge of each lane
 
@@ -240,6 +242,10 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             $scope.tCamera = Camera.getPos().toString();
             $scope.clientScore = clientPlayer.getScore();
             $scope.sliceIndex = warpDrive.getSliceIndex() + ' ' + warpDrive.getBarOffset().toFixed(2);
+
+            if(warpDrive.getSliceIndex() === -DriveParams.RENDER_OFFSET && Player.state !== Player.states.Playing) {
+                $scope.match.getSong().then(Player.playClip);
+            }
 
             processCameraInput(dt);
 

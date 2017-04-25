@@ -21,7 +21,7 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
         constructor(params, id) {
             super(id, DataFormat.WARP_DRIVE);
 
-            this.sliceIndex = 0;
+            this.sliceIndex = -1;
             this.barOffset = 0;
 
             this.prevSliceIndex = 0;
@@ -32,7 +32,7 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
 
             this.sliceEndPct = 0;
 
-            this.curSliceIndex = 0;
+            this.curSliceIndex = -1;
             this.curBarOffset = 0;
 
             this.warpField = null;
@@ -99,7 +99,7 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
             if(this.lerpPct > this.sliceEndPct && this.curSliceIndex === this.prevSliceIndex) {
                 this.curSliceIndex = this.sliceIndex;
                 this.curBarOffset = 0;
-                const sliceSpeed = this.getSlice(DriveParams.RENDER_OFFSER).speed;
+                const sliceSpeed = this.getSlice(DriveParams.RENDER_OFFSET).speed;
                 this.velocity = (sliceSpeed * Bar.scale.z + Bar.margin) / this.warpField.getTimeStep();
             }
 

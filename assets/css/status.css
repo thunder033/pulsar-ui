@@ -6,6 +6,7 @@
     height: 3em;
     box-sizing: border-box;
     margin: -1.5em 0 0 -20em;
+    z-index: 100;
 }
 
 .pulsar-status .status-message.persist .dismiss-status {

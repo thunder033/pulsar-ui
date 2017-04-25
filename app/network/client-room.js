@@ -28,6 +28,10 @@ function roomFactory(Connection, NetworkEntity, User, $rootScope, $q) {
             this.capacity = NaN;
         }
 
+        contains(user) {
+            return this.users.has(user.getId());
+        }
+
         add(user) {
             if (this.users.has(user.getId()) === true) {
                 return;
@@ -57,6 +61,10 @@ function roomFactory(Connection, NetworkEntity, User, $rootScope, $q) {
         }
 
         getName() {
+            return this.name;
+        }
+
+        getLabel() {
             return this.name;
         }
 

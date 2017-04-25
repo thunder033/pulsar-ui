@@ -15,9 +15,10 @@ resolve: ADT => [
     ADT.ng.$rootScope,
     ADT.media.IPlayable,
     ADT.game.MatchLoader,
+    ADT.ng.$q,
     matchFactory]};
 
-function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader) {
+function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader, $q) {
     const matches = new Map();
     const matchList = [];
 
@@ -29,6 +30,8 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
             this.song = null;
             this.started = false;
             this.startTime = NaN;
+
+            this.defer = $q.defer();
         }
 
         sync(data) {
@@ -39,10 +42,11 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
 
         setSong(song) {
             this.song = song;
+            this.defer.resolve(song);
         }
 
         getSong() {
-            return this.song;
+            return $q.when(this.song || this.defer.promise);
         }
 
         isOpen() {

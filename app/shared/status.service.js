@@ -50,6 +50,9 @@ class StatusService extends EventTarget {
         this.statuses = new PriorityQueue();
         this.priorities = Log.levels;
         Log.addLogger(this, Log.levels.Error);
+
+        this.error = this.error.bind(this);
+        this.display = this.display.bind(this);
     }
 
     /**

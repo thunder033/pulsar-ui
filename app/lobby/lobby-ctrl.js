@@ -13,12 +13,12 @@ resolve: ADT => [
     ADT.game.ClientMatch,
     ADT.network.Client,
     ADT.ng.$state,
-    ADT.ng.$q,
     ADT.network.NetworkEntity,
     ADT.network.ClientRoom,
+    ADT.shared.Status,
     LobbyCtrl]};
 
-function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, $q, NetworkEntity, ClientRoom) {
+function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntity, ClientRoom, Status) {
 
     const status = {
         LOADING        : 0,
@@ -100,8 +100,7 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, $q, NetworkE
     Connection.ready().then(() => {
         $scope.curStatus = status.READY;
 
-        Connection.getSocket().get().on(IOEvent.serverError,
-            (err) => { $scope.errorMessage = `Error: ${err.message || err}`; });
+        Connection.getSocket().get().on(IOEvent.serverError, Status.error);
 
         Connection.getSocket().request('requestRooms').then((rooms) => {
             $scope.rooms.length = 0;

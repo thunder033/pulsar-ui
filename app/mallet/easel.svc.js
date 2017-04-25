@@ -7,15 +7,15 @@ require('angular').module('mallet').service(MDT.Easel, [Easel]);
 
 function Easel() {
 
-    var contexts = {},
-        defaultKey = 'default';
+    const contexts = {};
+    const defaultKey = 'default';
 
     return {
         get context() {
             return contexts[defaultKey];
         },
         createNewCanvas(contextKey, width, height){
-            var canvas = document.createElement('canvas');
+            const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
 
@@ -24,6 +24,9 @@ function Easel() {
         },
         getContext(contextKey){
             return contexts[contextKey];
+        },
+        removeContext(contextKey) {
+            delete contexts[contextKey];
         },
         /**
          * Use a symmetric quarter render to fill canvas
@@ -53,17 +56,18 @@ function Easel() {
         resizeCanvas(canvas, ctx, scale){
             scale = scale || 1;
             // finally query the various pixel ratios
-            var devicePixelRatio = window.devicePixelRatio || 1,
-                backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+            const devicePixelRatio = window.devicePixelRatio || 1;
+            const backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
                     ctx.mozBackingStorePixelRatio ||
                     ctx.msBackingStorePixelRatio ||
                     ctx.oBackingStorePixelRatio ||
-                    ctx.backingStorePixelRatio || 1,
+                    ctx.backingStorePixelRatio || 1;
 
-                ratio = devicePixelRatio / backingStoreRatio;
+            const ratio = devicePixelRatio / backingStoreRatio;
 
-            var oldWidth = canvas.clientWidth,
-                oldHeight = canvas.clientHeight;
+            const oldWidth = canvas.clientWidth;
+            const oldHeight = canvas.clientHeight;
+
 
             canvas.width = canvas.clientWidth * scale;
             canvas.height = canvas.clientHeight * scale;

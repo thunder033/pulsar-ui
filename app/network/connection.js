@@ -20,6 +20,7 @@ resolve: ADT => [
  * @param Socket
  * @param AsyncInitializer
  * @param Clock {Clock}
+ * @param Status
  * @returns {ClientConnection}
  */
 function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
@@ -75,27 +76,6 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
             return this.ping;
         }
 
-        /**
-         * Add an operation to be resolved before the connection is ready to be used
-         * @param promise
-         */
-        deferReady(promise) {
-            this.readyAwait.push(promise);
-            // short circuit the ready chain and replace it with a new promise
-            this.readyHandle.resolve($q.all(this.readyAwait));
-        }
-
-        /**
-         * Wait for any operations to complete that allow the connection to be used
-         * @returns {Promise<void|T>|Promise<U>|*|Promise.<T>|Promise<void>}
-         */
-        ready() {
-            console.log(`await ${this.readyAwait.length} operations...`);
-            return this.readyChain
-                .then(() => this.socket)
-                .catch(e => console.error('Failed to establish Connection: ', e));
-        }
-
         onDisconnect() {
             Status.displayConditional('Disconnected from Server...', 'error');
             const disconnectEvt = new Event(IOEvent.disconnect);
@@ -103,13 +83,13 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
         }
 
         onReconnect() {
-            const disconnectEvt = new Event('reconnect');
+            const disconnectEvt = new Event(IOEvent.reconnect);
             this.dispatchEvent(disconnectEvt);
             Status.display('Connected!');
         }
 
         /**
-         * Authenticates with the given credientials and retrieves the user
+         * Authenticates with the given credentials and retrieves the user
          * @param credentials
          */
         authenticate(credentials) {
@@ -119,7 +99,7 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
             this.socket.get().on(IOEvent.connect, deferConnected.resolve);
             this.socket.get().on(IOEvent.joinServer, deferJoined.resolve);
             this.socket.get().on(IOEvent.disconnect, () => this.onDisconnect());
-            this.socket.get().on('reconnect', () => this.onReconnect());
+            this.socket.get().on(IOEvent.reconnect, () => this.onReconnect());
 
             this.socket.get().on(IOEvent.serverPing, (timestamp) => this.pong(timestamp));
             this.socket.get().on(IOEvent.clientPong, (timestamp) => this.calculatePing(timestamp));

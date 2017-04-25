@@ -34,7 +34,9 @@ function MatchLoader(LevelLoader, Client, Source, AudioClip) {
         // The level is generated on the host because the it is a processor
         // intensive task and all of the code already exists and work correctly
         // as is w/o transcribing to server code
-        return LevelLoader.getWarpField(match.getSong()).then((warpField) => {
+        return match.getSong()
+            .then(LevelLoader.getWarpField)
+            .then((warpField) => {
             Client.emit(MatchEvent.uploadLevel, warpField);
         });
     };
@@ -44,7 +46,7 @@ function MatchLoader(LevelLoader, Client, Source, AudioClip) {
         params.source = source;
 
         return source.getCachedTracks().then((tracks) => {
-            //TODO probably want to cache the new track in the source somehow...
+            // TODO probably want to cache the new track in the source somehow...
             return tracks[params.sourceId] || new AudioClip(params);
         });
     };

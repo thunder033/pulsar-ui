@@ -5,6 +5,7 @@
 
 const GameEvent = require('event-types').GameEvent;
 const MatchEvent = require('event-types').MatchEvent;
+const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports = {PlayCtrl,
 resolve: ADT => [
@@ -17,6 +18,7 @@ resolve: ADT => [
     ADT.network.Clock,
     ADT.game.WarpGame,
     ADT.network.Connection,
+    MDT.Log,
     PlayCtrl]};
 
 /**
@@ -32,7 +34,7 @@ resolve: ADT => [
  * @param Connection
  * @constructor
  */
-function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection) {
+function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection, Log) {
     if (Client.getUser() === null) {
        return $state.go('lobby');
     }
@@ -86,11 +88,15 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
             $scope.warpGame = game;
             $scope.clientUser = Client.getUser();
             $scope.match = game.getMatch();
-            // TODO this will be called after the song has been buffered
-            // Currently ignored by server (just waits for host to send level)
-            Client.emit(GameEvent.clientLoaded);
+
+            return $scope.match.getSong()
+                .then(song => song.getBuffer())
+                .then(() => {
+                // Currently ignored by server (just waits for host to send level)
+                Client.emit(GameEvent.clientLoaded);
+            });
         }).catch((e) => {
-        console.error(e);
+        Log.error(e);
         $state.go('lobby');
     });
 

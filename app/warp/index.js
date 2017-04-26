@@ -1,12 +1,10 @@
 /**
  * Created by gjrwcs on 10/25/2016.
- */
-'use strict';
-/**
+ *
  * Game Behavior and Logic for Warp
  * @module pulsar.warp
  */
-var warp = require('angular').module('pulsar.warp', []);
+const warp = require('angular').module('pulsar.warp', []);
 
 const ADT = require('../app.dependency-tree.js').ADT;
 
@@ -32,7 +30,4 @@ require('./warp-field-cache.svc');
 require('./warp-field-draw.svc');
 require('./state.svc');
 
-module.exports = warp;
-    
-    
-    
+module.exports = warp.name;

@@ -9,14 +9,15 @@ module.exports = {playerFactory,
 resolve: ADT => [
     ADT.network.NetworkEntity,
     MDT.Color,
+    MDT.Log,
     playerFactory]};
 
-function playerFactory(NetworkEntity, Color) {
+function playerFactory(NetworkEntity, Color, Log) {
     class Player extends NetworkEntity {
 
         constructor(user, match, ship) {
             super(user.getId());
-            console.log(`create player for ${user.getId()}`);
+            Log.debug(`create player for ${user.getId()}`);
             this.user = user;
             this.ship = ship;
             this.match = match;

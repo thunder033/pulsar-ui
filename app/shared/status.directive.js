@@ -3,7 +3,7 @@
  */
 module.exports = {resolve: ADT => [
     ADT.inject(),
-    statusDirective
+    statusDirective,
     ]};
 
 function statusDirective(ADT) {
@@ -22,7 +22,7 @@ function statusDirective(ADT) {
 
             Status.addEventListener('displayStatus', $scope.displayNextStatus);
 
-            $scope.setActiveStatus = (msg)=> {
+            $scope.setActiveStatus = (msg) => {
                 $scope.activeMessage = msg;
                 if (msg !== null && Number.isFinite(msg.getDuration())) {
                     $scope.msgStyle = msg.getLevel();
@@ -46,6 +46,6 @@ function statusDirective(ADT) {
             ADT.ng.$scope,
             ADT.shared.Status,
             ADT.ng.$timeout,
-            StatusController]
+            StatusController],
     };
 }

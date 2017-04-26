@@ -65,7 +65,7 @@ class StatusService extends EventTarget {
         const status = new StatusMessage(message, level, NaN);
         status.persist();
         this.dispatchStatus(status);
-        return () => {this.statuses.remove(status);};
+        return () => { this.statuses.remove(status); };
     }
 
     error() {
@@ -94,7 +94,8 @@ class StatusService extends EventTarget {
 }
 
 module.exports = {StatusService,
+// eslint-disable-next-line
 resolve: ADT => [
     MDT.Log,
-    StatusService
+    StatusService,
 ]};

@@ -1,10 +1,10 @@
-'use strict';
 /**
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
 
 const MatchEvent = require('event-types').MatchEvent;
 const EntityType = require('entity-types').EntityType;
+const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports = {matchFactory,
 resolve: ADT => [
@@ -16,9 +16,10 @@ resolve: ADT => [
     ADT.media.IPlayable,
     ADT.game.MatchLoader,
     ADT.ng.$q,
+    MDT.Log,
     matchFactory]};
 
-function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader, $q) {
+function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader, $q, Log) {
     const matches = new Map();
     const matchList = [];
 
@@ -35,7 +36,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
         }
 
         sync(data) {
-            NetworkEntity.getById(User, data.host).then(user => this.host = user);
+            NetworkEntity.getById(User, data.host).then((user) => { this.host = user; });
             delete data.host;
             super.sync(data);
         }
@@ -69,7 +70,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
 
         onStart(gameId) {
             this.started = true;
-            if(Connection.getUser() === this.getHost()) {
+            if (Connection.getUser() === this.getHost()) {
                 MatchLoader.loadMatch(this);
             }
             updateMatchList();
@@ -102,7 +103,8 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
             }
 
             item = it.next();
-        }   }
+        }
+    }
 
     function addMatch(matchId) {
         if (!matchId) {
@@ -131,7 +133,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
 
     function setMatchSong(data) {
         MatchLoader.reconstructSong(data.song).then((song) => {
-            console.log(song);
+            Log.debug(song);
             matches.get(data.matchId).setSong(song);
         });
     }

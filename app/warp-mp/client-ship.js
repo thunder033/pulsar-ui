@@ -5,7 +5,6 @@
 const GameEvent = require('event-types').GameEvent;
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const Track = require('game-params').Track;
-const ShipEngine = require('game-params').ShipEngine;
 const DataFormat = require('game-params').DataFormat;
 const EntityType = require('entity-types').EntityType;
 
@@ -38,15 +37,14 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
 
         if (x >= rampLBound || x <= rampRBound) {
             return 0.2;
-        } else {
-            const flatWidth = Track.WIDTH - Track.LANE_WIDTH;
-            const trackCenter = Track.POSITION_X + Track.WIDTH / 2;
-            const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
-
-            const r = Track.LANE_WIDTH; // arc radius
-            return 0.1;
-            // return 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
         }
+
+        const flatWidth = Track.WIDTH - Track.LANE_WIDTH;
+        const trackCenter = Track.POSITION_X + Track.WIDTH / 2;
+        const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
+
+        const r = Track.LANE_WIDTH; // arc radius
+        return 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
     }
 
     class ClientShip extends LerpedEntity {
@@ -69,7 +67,8 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
                 writeable: true,
                 set(value) {
                     this.tPrev.position.x = this.tDest.position.x;
-                    this.tDest.position.x = value;},
+                    this.tDest.position.x = value;
+                    },
             });
         }
 
@@ -86,6 +85,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
             return this.syncTime;
         }
 
+        // eslint-disable-next-line
         strafe(direction) {
             Connection.getSocket().get().emit(GameEvent.command, direction);
         }

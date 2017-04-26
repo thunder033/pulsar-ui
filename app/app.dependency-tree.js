@@ -3,10 +3,9 @@
  * to full module dependency names. This speeds typing and ensures accuracy.
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
-'use strict';
 
 const ADT = {
-    inject(){ return 'ADT'; },
+    inject() { return 'ADT'; },
     MDT: 'MDT',
     ng: {
         $scope: '$scope',
@@ -20,7 +19,7 @@ const ADT = {
         $locationProvider: '$locationProvider',
         $urlRouterProvider: '$urlRouterProvider',
     },
-    config: 'config'
+    config: 'config',
 };
 
 /** @type MDT **/

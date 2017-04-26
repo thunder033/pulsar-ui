@@ -1,40 +1,35 @@
 /**
  * Created by Greg on 11/27/2016.
  */
-(()=>{
-    'use strict';
+require('angular').module('pulsar.warp').service('warp.WarpFieldCache', [
+    'warp.WarpField',
+    WarpFieldCache]);
 
-    angular.module('pulsar.warp').service('warp.WarpFieldCache', [
-        'warp.WarpField',
-        WarpFieldCache]);
+function WarpFieldCache(WarpField) {
+    function getObjectSignature(obj) {
+        return Object.keys(obj).join();
+    }
 
-    function WarpFieldCache(WarpField){
+    this.store = (clip, field) => {
+        localStorage.setItem(clip.name, JSON.stringify(field));
+    };
 
-        function getObjectSignature(obj){
-            return Object.keys(obj).join();
+    this.retrieve = (clip) => {
+        let warpField;
+        let signature;
+
+        try {
+            warpField = JSON.parse(localStorage.getItem(clip.name));
+            signature = getObjectSignature(warpField || {});
+        } catch (e) {
+            return null;
         }
 
-        this.store = (clip, field) => {
-            localStorage.setItem(clip.name, JSON.stringify(field));
-        };
+        if (signature !== getObjectSignature(new WarpField())) {
+            localStorage.setItem(clip.name, 'null');
+            return null;
+        }
 
-        this.retrieve = (clip) => {
-            var warpField, signature;
-
-            try {
-                warpField = JSON.parse(localStorage.getItem(clip.name));
-                signature = getObjectSignature(warpField || {});
-            }
-            catch(e){
-                return null;
-            }
-
-            if(signature !== getObjectSignature(new WarpField())){
-                localStorage.setItem(clip.name, 'null');
-                return null;
-            }
-
-            return warpField;
-        };
-    }
-})();
+        return warpField;
+    };
+}

@@ -5,7 +5,6 @@
 const DataFormat = require('game-params').DataFormat;
 const EntityType = require('entity-types').EntityType;
 const DriveParams = require('game-params').DriveParams;
-const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports =  {warpDriveFactory,
 resolve: ADT => [
@@ -42,7 +41,7 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
 
         load(warpField) {
             if (warpField === null) {
-                return null;
+                return;
             }
 
             this.warpField = warpField;
@@ -61,8 +60,8 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
             this.sliceEndPct = NaN;
 
             // were assuming there can only be a slice index change of 1
-            if(this.sliceIndexDelta > 0) {
-                const switchTime = Math.abs(this.barOffset / this.velocity); //this.level[this.sliceIndex].speed;
+            if (this.sliceIndexDelta > 0) {
+                const switchTime = Math.abs(this.barOffset / this.velocity); // this.level[this.sliceIndex].speed;
                 this.sliceEndPct = (this.syncElapsed - switchTime) / this.syncElapsed;
             }
         }
@@ -82,28 +81,28 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
          */
         getSlice(offset = 0) {
             const index = this.curSliceIndex + offset;
-            if(index < this.level.length && index >= 0) {
+            if (index < this.level.length && index >= 0) {
                 return this.level[index];
-            } else {
-                return EMPTY_SLICE;
             }
+
+            return EMPTY_SLICE;
         }
 
         update(dt) {
-            if(this.warpField === null) {
+            if (this.warpField === null) {
                 return;
             }
 
             super.update(dt);
 
-            if(this.lerpPct > this.sliceEndPct && this.curSliceIndex === this.prevSliceIndex) {
+            if (this.lerpPct > this.sliceEndPct && this.curSliceIndex === this.prevSliceIndex) {
                 this.curSliceIndex = this.sliceIndex;
                 this.curBarOffset = 0;
                 const sliceSpeed = this.getSlice(DriveParams.RENDER_OFFSET).speed;
                 this.velocity = (sliceSpeed * Bar.scale.z + Bar.margin) / this.warpField.getTimeStep();
             }
 
-            if(!this.level.length) {
+            if (!this.level.length) {
                 return;
             }
 

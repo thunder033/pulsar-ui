@@ -31,7 +31,7 @@ function Color(MM) {
          * @returns {string}
          */
         hsla(hue, saturation, lightness, alpha) {
-            return `hsla(${hue},${saturation},${lightness},${alpha})`;
+            return `hsla(${hue},${saturation}%,${lightness}%,${alpha})`;
         },
 
         /**

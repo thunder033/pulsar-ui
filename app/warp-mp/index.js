@@ -36,5 +36,21 @@ game.factory(ADT.game.WarpField, require('./warp-field').resolve(ADT));
 game.factory(ADT.game.WarpGame, require('./warp-game').resolve(ADT));
 game.factory(ADT.game.WarpDrive, require('./warp-drive').resolve(ADT));
 
+game.directive('numbersOnly', () => ({
+    restrict: 'A',
+    require: 'ngModel',
+    link: (scope, elem, attr, ngModel) => {
+        ngModel.$parsers.push((inputVal) => {
+            const value = /\d*\.?\d{0,2}/.exec(inputVal)[0];
 
-module.exports = game;
+            if (inputVal !== value) {
+                ngModel.$setViewValue(value);
+                ngModel.$render();
+            }
+
+            return value;
+        });
+    },
+}));
+
+module.exports = game.name;

@@ -1,4 +1,3 @@
-'use strict';
 /**
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
@@ -32,6 +31,7 @@ resolve: ADT => [
  * @param Clock {Clock}
  * @param WarpGame {WarpGame}
  * @param Connection
+ * @param Log
  * @constructor
  */
 function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection, Log) {
@@ -57,7 +57,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
         $timeout(() => $scope.$broadcast(GameEvent.playStarted));
 
         const startTime = Clock.getNow();
-        console.log(`start play at ${startTime}`);
+        Log.out(`start play at ${startTime}`);
     }
 
     $scope.endGame =  function endGame() {
@@ -70,7 +70,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
     });
 
     $scope.getPlayerInfo = () => {
-        if($scope.clientUser === null) {
+        if ($scope.clientUser === null) {
             return '-';
         }
 
@@ -80,9 +80,9 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
     const loadedGame = NetworkEntity.getById(WarpGame, $stateParams.gameId)
         .then((game) => {
             if (!game) {
-                console.error(`No game was found with game id: ${$stateParams.gameId}`);
+                Log.error(`No game was found with game id: ${$stateParams.gameId}`);
                 $state.go('lobby');
-                return;
+                return null;
             }
 
             $scope.warpGame = game;
@@ -105,7 +105,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
         loadedGame.then(() => {
             $scope.state = gameState.SYNCING;
             const remainingStartTime = $scope.warpGame.getStartTime() - Clock.getNow();
-            console.log(`start match in ${remainingStartTime}`);
+            Log.out(`start match in ${remainingStartTime}`);
 
             $scope.secondsToStart = ~~(remainingStartTime / 1000);
             const countdownInterval = setInterval(() => {

@@ -1,27 +1,25 @@
 /**
  * Created by Greg on 11/27/2016.
  */
-'use strict';
-
 const browserify = {
     files: {
         'dist/bundle.js': 'app/app.module.js',
         'dist/asyncHttpRequest.js': 'assets/js/workers/asyncHttpRequest.js',
-        'dist/generateAudioField.js': 'assets/js/workers/generateAudioField.js'
+        'dist/generateAudioField.js': 'assets/js/workers/generateAudioField.js',
     },
     options: {
         alias: {
-            'angular': './scripts/angular.min.proxy.js',
+            angular: './scripts/angular.min.proxy.js',
             'angular-ui-router': './node_modules/angular-ui-router/release/angular-ui-router.min.js',
             'event-types': './node_modules/pulsar-lib/dist/src/event-types',
             'game-params': './node_modules/pulsar-lib/dist/src/game-params',
             'entity-types': './node_modules/pulsar-lib/dist/src/entity-types',
             'priority-queue': './node_modules/pulsar-lib/dist/src/priority-queue',
-        }
-    }
+        },
+    },
 };
 
-module.exports = function(grunt){
+module.exports = (grunt) => {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         browserify: {
@@ -30,48 +28,48 @@ module.exports = function(grunt){
                 options: {
                     alias: browserify.options.alias,
                     browserifyOptions: {
-                        debug: true
-                    }
-                }
+                        debug: true,
+                    },
+                },
             },
-            dist: browserify
-        },
-        jshint: {
-            options: {
-                jshintrc: true,
-                reporter: require('jshint-stylish')
-            },
-            all: ['app/**/*.js']
+            dist: browserify,
         },
         clean: {
             all: ['dist/*', '.tmp/*'],
             dist: ['dist/*'],
-            tmp: ['.tmp/*']
+            tmp: ['.tmp/*'],
+        },
+        eslint: {
+            options: {},
+            app: {
+                src: ['Gruntfile.js', 'app/**/*.js'],
+            },
         },
         cssmin: {
             options: {
                 sourceMap: true,
-                report: 'min'
+                report: 'min',
             },
             target: {
                 files: {
-                    //Only include font-awesome.min
-                    'dist/css/release.css': ['assets/css/**/*.css', '!assets/css/font-awesome.css']
-                }
-            }
+                    // Only include font-awesome.min
+                    'dist/css/release.css': ['assets/css/**/*.css', '!assets/css/font-awesome.css'],
+                },
+            },
         },
         copy: {
             prod: {
                 options: {
-                    process: function (content, srcpath) {
-                        if(srcpath.indexOf('index.html') > -1){
+                    process(content, srcpath) {
+                        if (srcpath.indexOf('index.html') > -1) {
                             content = content.replace('bundle.js', 'bundle.min.js');
                         }
                         return content;
                     },
-                    noProcess: ['assets/**/*','dist/**/*']
+                    noProcess: ['assets/**/*', 'dist/**/*'],
                 },
-                files: [{expand: true, src: [
+                files: [{expand: true,
+                    src: [
                     // Pulsar
                     'dist/**/*.gz',
                     'dist/fonts/*',
@@ -88,59 +86,60 @@ module.exports = function(grunt){
 
                     'LICENSE',
                     '.htaccess',
-                    'package.json'
-                ], dest: '.tmp'}]
+                    'package.json',
+                ],
+                    dest: '.tmp'}],
             },
             assets: {
                 files: [
-                    { expand: true, cwd: 'assets/fonts', src: ['*'], dest: 'dist/fonts/'}
-                ]
-            }
+                    { expand: true, cwd: 'assets/fonts', src: ['*'], dest: 'dist/fonts/'},
+                ],
+            },
         },
         uglify: {
             dist: {
                 files: {
                     'dist/bundle.min.js': ['dist/bundle.js'],
                     'dist/asyncHttpRequest.min.js': ['dist/asyncHttpRequest.js'],
-                    'dist/generateAudioField.min.js': ['dist/generateAudioField.js']
-                }
-            }
+                    'dist/generateAudioField.min.js': ['dist/generateAudioField.js'],
+                },
+            },
         },
         compress: {
             prod: {
                 options: {
-                    mode: 'gzip'
+                    mode: 'gzip',
                 },
                 files: [{
                     expand: true,
                     cwd: 'dist/',
                     src: ['**/*.min.js'],
                     dest: 'dist',
-                    ext: '.min.js.gz'
+                    ext: '.min.js.gz',
                 }, {
                     expand: true,
                     cwd: 'dist/css',
                     src: ['**/*.css'],
                     dest: 'dist/css',
-                    ext: '.css.gz'
-                }]
-            }
+                    ext: '.css.gz',
+                }],
+            },
         },
         watch: {
             css: {
                 files: ['assets/css/*.css'],
-                tasks: ['cssmin']
+                tasks: ['cssmin'],
             },
             js: {
                 files: ['app/**/*.js'],
-                tasks: ['jshint:all','browserify:dev']
-            }
-        }
+                tasks: ['jshint:all', 'browserify:dev'],
+            },
+        },
     });
 
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-eslint');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -150,15 +149,15 @@ module.exports = function(grunt){
     grunt.registerTask('default', ['build-dev']);
 
     grunt.registerTask('build-dev', [
-        'jshint:all',
+        'eslint',
         'clean:dist',
         'browserify:dev',
         'cssmin',
-        'copy:assets'
+        'copy:assets',
     ]);
 
     grunt.registerTask('build-prod', [
-        'jshint:all',
+        'eslint',
         'clean:dist',
         'clean:tmp',
         'browserify:dist',
@@ -167,6 +166,6 @@ module.exports = function(grunt){
         'compress:prod',
         'copy:assets',
         'copy:prod',
-        'clean:dist'
+        'clean:dist',
     ]);
-};
+}

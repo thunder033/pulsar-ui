@@ -9,15 +9,10 @@ window.PriorityQueue = require('priority-queue').PriorityQueue;
 require('../assets/js/load-error');
 
 // external dependencies
-const angular = require('angular'),
-    simpleRequest = require('./network/simple-request'),
-
-    // Pulsar modules
-    media = require('./media'),
-
+const angular = require('angular');
 require('angular-q-spread');
 
-const app = angular.module('pulsar', [
+angular.module('pulsar', [
     require('./config.module'),
     require('./app.constants'),
     require('./shared'),
@@ -27,7 +22,7 @@ const app = angular.module('pulsar', [
     require('./audio'),
     require('./warp'),
     require('./media'),
-    simpleRequest.name,
+    require('./network/simple-request'),
     require('./lobby'),
     require('./network'),
     require('./warp-mp'),
@@ -69,11 +64,11 @@ function configuration($stateProvider, $urlRouterProvider, $locationProvider) {
         url: '/lobby',
         templateUrl: 'views/lobby.html',
         controller: ADT.lobby.LobbyCtrl,
-    }).state('play', {
+    }).state('play', { // eslint-disable-line
         url: '/play/:gameId',
         templateUrl: 'views/play.html',
         controller: ADT.game.PlayCtrl,
-    }).state('results', {
+    }).state('results', { // eslint-disable-line
         url: '/results/:matchId',
         templateUrl: 'views/results.html',
         controller: ADT.game.ResultsCtrl,

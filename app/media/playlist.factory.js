@@ -111,7 +111,7 @@ function playlistFactory(MediaState, IPlayable) {
             // clear the clip list
             clipList.length = 0;
             // return an empty array if given an invalid page
-            if (!this._queue || typeof page !== 'number'){
+            if (!this._queue || typeof page !== 'number') {
                 return clipList;
             }
 

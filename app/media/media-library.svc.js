@@ -51,9 +51,7 @@ function Library($q, MediaType, Source, Sources, $injector) {
             if (typeof id === 'number') {
                 return clips[id];
             } else if (typeof id === 'string') {
-                return clipList.reduce((clip, curClip) => {
-                    return !clip && curClip.name === id ? curClip : clip;
-                }, null);
+                return clipList.reduce((clip, curClip) => (!clip && curClip.name === id ? curClip : clip), null);
             }
 
             return null;

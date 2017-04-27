@@ -432,7 +432,6 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
         ctx.lineWidth = 1;
         // Execute each draw call to display the scene
         while (drawCalls.peek() !== null) {
-            callCount++;
             face = drawCalls.dequeue();
             // Apply lighting calculations to the mesh color
             ctx.fillStyle = Color.rgbaFromVector(face.color);

@@ -35,7 +35,7 @@ class IPlayable {
     /**
      * Get info about the item such as artist and album
      */
-    getInfo() {
+    getInfo() { // eslint-disable-line
         throw new Error('not implemented');
     }
 

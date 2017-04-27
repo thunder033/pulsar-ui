@@ -40,7 +40,7 @@ function playQueueFactory(MediaState, IPlayable) {
         getNext() {
             let next = null;
             do {
-                if (this._queue.length === 0){
+                if (this._queue.length === 0) {
                     break;
                 }
 

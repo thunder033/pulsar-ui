@@ -86,7 +86,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                     const primitiveType = getPrimitiveType(type);
                     const size = this.sizes[field];
 
-                    if(isNaN(size)) {
+                    if (isNaN(size)) {
                         throw new Error(`Failed to read size for field ${field}`);
                     }
 
@@ -140,7 +140,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                 this.syncTime = timeStamp;
 
                 // allow the entity to store any values it will need after the update
-                if(storeValuesCB instanceof Function) {
+                if (storeValuesCB instanceof Function) {
                     storeValuesCB();
                 }
 
@@ -323,7 +323,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             let serverTypeCode;
             let view = null;
 
-            if(data instanceof ArrayBuffer) {
+            if (data instanceof ArrayBuffer) {
                 view = new Uint8Array(data);
                 id = String.fromCharCode.apply(null, view.subarray(0, NetworkEntity.ID_LENGTH));
                 serverTypeCode = view[NetworkEntity.ID_LENGTH];

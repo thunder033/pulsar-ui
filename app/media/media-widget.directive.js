@@ -41,7 +41,7 @@ function MediaWidgetController($scope, PlayQueue, Playlist, MediaType, MediaLibr
             return false;
         }
 
-        if(source === 'UserStream') {
+        if (source === 'UserStream') {
             return availSources.indexOf('UserStream') > -1;
         }
 

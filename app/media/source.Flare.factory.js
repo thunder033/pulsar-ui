@@ -31,7 +31,7 @@ function sourcePulsarFactory(Source, AsyncRequest, HttpConfig, AudioClip, MediaT
          */
         getCachedTracks() {
             // If there's already tracks in the local cache don't load everything
-            if (this._cachedTracks.length > 0){
+            if (this._cachedTracks.length > 0) {
                 return $q.when(this._cachedTracks);
             }
 

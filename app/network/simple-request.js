@@ -123,4 +123,4 @@ function SimpleHttp($http, $q) {
     };
 }
 
-module.exports = simpleRequest;
+module.exports = simpleRequest.name;

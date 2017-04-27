@@ -14,16 +14,13 @@ require('angular').module('mallet').service(MDT.Camera, [
     Camera]);
 
 function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
-
     const Mesh = Geometry.Mesh;
     const drawCalls = new PriorityQueue();
     const self = this;
 
-    this.getLensAngle = () => {
-        return (3 / 5) * Math.PI;
+    this.getLensAngle = () => (3 / 5) * Math.PI;
         // const focalLength = 70;
         // return Math.atan(1 / focalLength);
-    };
 
     this.imageScale = 1 / Math.tan(self.getLensAngle() / 2);
     this.xFactor = 1;
@@ -33,7 +30,7 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
     this.screenCenter = MM.vec2();
     this.image = MM.vec2();
 
-    this.calculateViewport = function(ctx) {
+    this.calculateViewport = function calculateViewport(ctx) {
         this.aspectRatio = 16 / 9;
         // y is negative because screen space is inverted
         this.image.set(1 / this.aspectRatio, -1);
@@ -52,9 +49,7 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
     this.forward = MM.vec3(0, 0, 1).normalize();
     const light = MM.vec3(-1, -1, -1).normalize();
 
-    this.getPos = () => {
-        return tCamera.position;
-    };
+    this.getPos = () => tCamera.position;
 
     this.toVertexBuffer = (verts) => {
         const vertSize = Mesh.VERT_SIZE;
@@ -199,7 +194,7 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
      * @param position
      * @returns {boolean}
      */
-    this.isVisible = function(position) {
+    this.isVisible = (position) => {
         const disp = MM.Vector3.subtract(tCamera.position, position);
         // check if the object is in front of the camera
         return disp.dot(self.forward) > 0;
@@ -434,7 +429,6 @@ function Camera(MM, MEasel, Geometry, Color, MScheduler, MState) {
    this.present = () => {
         const ctx = MEasel.context;
         let face;
-        let callCount = 0;
         ctx.lineWidth = 1;
         // Execute each draw call to display the scene
         while (drawCalls.peek() !== null) {

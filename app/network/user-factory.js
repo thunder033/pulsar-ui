@@ -2,8 +2,6 @@
  * Maintains state of the user's connection to the server
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
-'use strict';
-
 const IOEvent = require('pulsar-lib').EventTypes.IOEvent;
 const EntityType = require('entity-types').EntityType;
 

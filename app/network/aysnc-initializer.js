@@ -1,4 +1,3 @@
-'use strict';
 /**
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */

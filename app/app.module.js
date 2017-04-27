@@ -10,14 +10,10 @@ require('../assets/js/load-error');
 
 // external dependencies
 const angular = require('angular'),
-
-    mallet = require('./mallet'),
     simpleRequest = require('./network/simple-request'),
 
     // Pulsar modules
     media = require('./media'),
-    lobby = require('./lobby'),
-    network = require('./network');
 
 require('angular-q-spread');
 
@@ -25,15 +21,15 @@ const app = angular.module('pulsar', [
     require('./config.module'),
     require('./app.constants'),
     require('./shared'),
-    mallet.name,
+    require('./mallet'),
     require('./home'),
     require('./flare'),
     require('./audio'),
     require('./warp'),
-    media.name,
+    require('./media'),
     simpleRequest.name,
-    lobby.name,
-    network.name,
+    require('./lobby'),
+    require('./network'),
     require('./warp-mp'),
     '$q-spread',
     require('checklist-model'),

@@ -1,12 +1,11 @@
 /**
  * Created by gjrwcs on 9/15/2016.
  */
-'use strict';
+
 const MDT = require('./mallet.dependency-tree').MDT;
 require('angular').module('mallet').service(MDT.Easel, [Easel]);
 
 function Easel() {
-
     const contexts = {};
     const defaultKey = 'default';
 
@@ -14,7 +13,7 @@ function Easel() {
         get context() {
             return contexts[defaultKey];
         },
-        createNewCanvas(contextKey, width, height){
+        createNewCanvas(contextKey, width, height) {
             const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
@@ -22,7 +21,7 @@ function Easel() {
             contexts[contextKey] = canvas.getContext('2d');
             return canvas;
         },
-        getContext(contextKey){
+        getContext(contextKey) {
             return contexts[contextKey];
         },
         removeContext(contextKey) {
@@ -34,7 +33,7 @@ function Easel() {
          * @param image
          * @param origin
          */
-        drawQuarterRender(ctx, image, origin){
+        drawQuarterRender(ctx, image, origin) {
             ctx.drawImage(image, origin.x, origin.y);
 
             ctx.save();
@@ -47,13 +46,13 @@ function Easel() {
             ctx.drawImage(image, 0, 0);
             ctx.restore();
         },
-        setActiveContext(newContext){
+        setActiveContext(newContext) {
             contexts[defaultKey] = newContext;
         },
-        clearCanvas(ctx){
+        clearCanvas(ctx) {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         },
-        resizeCanvas(canvas, ctx, scale){
+        resizeCanvas(canvas, ctx, scale) {
             scale = scale || 1;
             // finally query the various pixel ratios
             const devicePixelRatio = window.devicePixelRatio || 1;
@@ -72,19 +71,18 @@ function Easel() {
             canvas.width = canvas.clientWidth * scale;
             canvas.height = canvas.clientHeight * scale;
 
-            if(devicePixelRatio !== backingStoreRatio || scale !== 1 ) {
-
+            if (devicePixelRatio !== backingStoreRatio || scale !== 1) {
                 canvas.width *= ratio;
                 canvas.height *= ratio;
 
-                canvas.style.width = oldWidth + 'px';
-                canvas.style.height = oldHeight + 'px';
+                canvas.style.width = `${oldWidth}px`;
+                canvas.style.height = `${oldHeight}px`;
                 
-                //We don't appear to need this working w/ relative sizes
-                //ctx.scale(ratio, ratio);
+                // We don't appear to need this working w/ relative sizes
+                // ctx.scale(ratio, ratio);
 
                 ctx = canvas.getContext('2d');
             }
-        }
+        },
     };
 }

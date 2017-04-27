@@ -1,17 +1,14 @@
 /**
  * Created by gjrwcs on 9/15/2016.
  */
-'use strict';
 const MDT = require('./mallet.dependency-tree').MDT;
-
 require('angular').module('mallet').directive('mEasel', [
     MDT.Easel,
     MDT.Scheduler,
     MDT.State,
     easelDirective]);
 
-function easelDirective(MEasel, Scheduler, MState){
-
+function easelDirective(MEasel, Scheduler, MState) {
     let canvas;
     let ctx;
     let scale = 1;
@@ -19,11 +16,11 @@ function easelDirective(MEasel, Scheduler, MState){
     return {
         restrict: 'E',
         scope: {
-            context: '&'
+            context: '&',
         },
         replace: true,
         template: '<div class="easel"><canvas>Your browser does not support canvas</canvas></div>',
-        link: function(scope, elem, attr) {
+        link(scope, elem, attr) {
             canvas = elem[0].querySelector('canvas');
             canvas.style.background = '#000';
             ctx = canvas.getContext(attr.context || '2d');
@@ -37,8 +34,8 @@ function easelDirective(MEasel, Scheduler, MState){
 
             const onResize = () => {
                 MEasel.resizeCanvas(canvas, ctx);
-                const baseCanvas =  MEasel.context.canvas;
-                MEasel.createNewCanvas('quarterRender', baseCanvas.width / 2, baseCanvas.height / 2);
+                const resizedCanvas =  MEasel.context.canvas;
+                MEasel.createNewCanvas('quarterRender', resizedCanvas.width / 2, resizedCanvas.height / 2);
             };
 
             window.addEventListener('resize', onResize);
@@ -56,7 +53,7 @@ function easelDirective(MEasel, Scheduler, MState){
                 if (Scheduler.FPS < 30 && scale === 1) {
                     scale = lowResScale;
                     MEasel.resizeCanvas(canvas, ctx, scale);
-                } else if(Scheduler.FPS > 40 && scale === lowResScale) {
+                } else if (Scheduler.FPS > 40 && scale === lowResScale) {
                     scale = 1;
                     MEasel.resizeCanvas(canvas, ctx, scale);
                 }
@@ -67,7 +64,7 @@ function easelDirective(MEasel, Scheduler, MState){
                 if (MState.is(MState.Debug)) {
                     Scheduler.draw(() => {
                         ctx.fillStyle = '#fff';
-                        ctx.fillText('FPS: ' + (~~Scheduler.FPS), 25, 25);
+                        ctx.fillText(`FPS: ${~~Scheduler.FPS}`, 25, 25);
                     }, 1);
                 }
             });

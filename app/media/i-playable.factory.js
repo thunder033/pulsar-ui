@@ -1,12 +1,10 @@
 /**
  * Created by gjrwcs on 11/29/2016.
  */
-'use strict';
-
 require('angular')
     .module('pulsar.media')
     .factory('media.IPlayable', [
-        iPlayableFactory
+        iPlayableFactory,
     ]);
 
 /**
@@ -18,19 +16,19 @@ class IPlayable {
     /**
      * Construct an IPlayable instance
      */
-    constructor(){}
+    constructor(){} // eslint-disable-line
 
     /**
      * @returns {string} the name of the item
      */
-    getName() {
+    getName() { // eslint-disable-line
         throw new Error('not implemented');
     }
 
     /**
      * Get the duration of the item in seconds
      */
-    getDuration() {
+    getDuration() { // eslint-disable-line
         throw new Error('not implemented');
     }
 
@@ -44,14 +42,14 @@ class IPlayable {
     /**
      * @returns {IPromise<AudioBuffer>|Promise} an audio buffer to play
      */
-    getBuffer() {
+    getBuffer() { // eslint-disable-line
         throw new Error('not implemented');
     }
 
     /**
      * @returns {media.State|string} the media state of the playable
      */
-    getState() {
+    getState() { // eslint-disable-line
         throw new Error('not implemented');
     }
 }
@@ -59,6 +57,6 @@ class IPlayable {
 /**
  * @returns {IPlayable}
  */
-function iPlayableFactory(){
+function iPlayableFactory() {
     return IPlayable;
 }

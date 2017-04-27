@@ -17,4 +17,4 @@ const lobby = require('angular')
 lobby.controller(ADT.lobby.LobbyCtrl, require('./lobby-ctrl').resolve(ADT));
 lobby.directive(ADT.lobby.stagingMatch, require('./match-directive').resolve(ADT));
 
-module.exports = lobby;
+module.exports = lobby.name;

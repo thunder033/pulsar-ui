@@ -38,13 +38,13 @@ function clientFactory(Connection, $rootScope, AsyncInitializer, Log, Status) {
         }
 
         onRoomJoin(e, args) {
-            if(args.room.contains(this.user) && args.user !== this.user) {
+            if (args.room.contains(this.user) && args.user !== this.user) {
                 Status.display(`${args.user.getName()} joined ${args.room.getLabel()}`);
             }
         }
 
         onLeftRoom(e, args) {
-            if(args.room.contains(this.user) && args.user !== this.user) {
+            if (args.room.contains(this.user) && args.user !== this.user) {
                 Status.display(`${args.user.getName()} left ${args.room.getLabel()}`);
             }
         }

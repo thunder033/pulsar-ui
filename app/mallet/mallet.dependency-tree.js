@@ -2,7 +2,7 @@
  * Provide accurate, quick access to full list of mallet dependencies
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
-'use strict';
+
 
 const MDT = {
     ng: {
@@ -11,10 +11,10 @@ const MDT = {
         $rootScope: '$rootScope',
         $q: '$q',
         $state: '$state',
-        $socket: 'socketFactory'
+        $socket: 'socketFactory',
     },
     config: {
-        Path: 'config.Path'
+        Path: 'config.Path',
     },
     const: {
         ScaleFactor: 'mallet.const.ScaleFactor',
@@ -39,6 +39,5 @@ const MDT = {
     StateMachine:'mallet.StateMachine',
     Thread: 'mallet.Thread',
 };
-const mallet = MDT;
 
 module.exports = {MDT};

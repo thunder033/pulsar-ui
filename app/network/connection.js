@@ -62,7 +62,7 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
         }
 
         calculatePing(buffer) {
-            if(buffer instanceof ArrayBuffer) {
+            if (buffer instanceof ArrayBuffer) {
                 const timestamp = new DataView(buffer).getFloat64(0);
                 this.ping = Clock.getNow() - timestamp;
             }
@@ -101,8 +101,8 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
             this.socket.get().on(IOEvent.disconnect, () => this.onDisconnect());
             this.socket.get().on(IOEvent.reconnect, () => this.onReconnect());
 
-            this.socket.get().on(IOEvent.serverPing, (timestamp) => this.pong(timestamp));
-            this.socket.get().on(IOEvent.clientPong, (timestamp) => this.calculatePing(timestamp));
+            this.socket.get().on(IOEvent.serverPing, timestamp => this.pong(timestamp));
+            this.socket.get().on(IOEvent.clientPong, timestamp => this.calculatePing(timestamp));
 
             return this.ready().then(() => {
                 this.pingInterval = setInterval(() => this.sendPing(), this.pingIntervalTime);

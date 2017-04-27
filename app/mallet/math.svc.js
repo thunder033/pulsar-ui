@@ -1,305 +1,301 @@
 /**
  * Created by gjrwcs on 10/27/2016.
  */
-'use strict';
 const MDT = require('./mallet.dependency-tree').MDT;
 const math = require('angular').module('mallet-math', []).service(MDT.Math, [MathService]);
 
-function MathService(){
-
-    /**
-     * A simple vector class
-     * @param x
-     * @param y
-     * @param z
-     * @constructor
-     */
-    function Vector3(x, y, z){
-        this.x = x;
-        this.y = typeof y !== 'undefined' ? y : x;
-        this.z = typeof z !== 'undefined' ? z : x;
-        Object.seal(this);
-    }
-
-    /**
-     * Creates a shallow copy of the vector
-     * @returns {Vector3}
-     */
-    Vector3.prototype.clone = function () {
-        return new Vector3(this.x, this.y, this.z);
-    };
-
-    /**
-     * Set the vector components to those provided
-     * @param {number|Vector3} x
-     * @param {number} [y]
-     * @param {number} [z]
-     * @returns {Vector3}
-     */
-    Vector3.prototype.set = function(x, y, z){
-        if(x instanceof Vector3){
-            this.x = x.x;
-            this.y = x.y;
-            this.z = x.z;
-        }
-        else {
+function MathService() {
+    class Vector3 {
+        /**
+         * A simple vector class
+         * @param x
+         * @param y
+         * @param z
+         * @constructor
+         */
+        constructor(x, y, z) {
             this.x = x;
-            this.y = typeof y === 'number' ? y : x;
-            this.z = typeof z === 'number' ? z : x;
+            this.y = typeof y !== 'undefined' ? y : x;
+            this.z = typeof z !== 'undefined' ? z : x;
+            Object.seal(this);
         }
-        return this;
-    };
 
-    /**
-     * Add the given vector to this one
-     * @param addend {Vector3}
-     */
-    Vector3.prototype.add = function(addend) {
-        this.x += addend.x;
-        this.y += addend.y;
-        this.z += addend.z;
-        return this;
-    };
+        /**
+         * Creates a shallow copy of the vector
+         * @returns {Vector3}
+         */
+        clone() {
+            return new Vector3(this.x, this.y, this.z);
+        }
 
-    /**
-     * Subtract the given vector to this one
-     * @param addend {Vector3}
-     */
-    Vector3.prototype.subtract = function(addend) {
-        this.x -= addend.x;
-        this.y -= addend.y;
-        this.z -= addend.z;
-        return this;
-    };
+        /**
+         * Set the vector components to those provided
+         * @param {number|Vector3} x
+         * @param {number} [y]
+         * @param {number} [z]
+         * @returns {Vector3}
+         */
+        set(x, y, z) {
+            if (x instanceof Vector3) {
+                this.x = x.x;
+                this.y = x.y;
+                this.z = x.z;
+            }        else {
+                this.x = x;
+                this.y = typeof y === 'number' ? y : x;
+                this.z = typeof z === 'number' ? z : x;
+            }
+            return this;
+        }
 
-    /**
-     * Scale the vector by the scalar
-     * @param scalar
-     * @returns {*}
-     */
-    Vector3.prototype.scale = function(scalar) {
-        this.x *= scalar;
-        this.y *= scalar;
-        this.z *= scalar;
-        return this;
-    };
+        /**
+         * Add the given vector to this one
+         * @param addend {Vector3}
+         */
+        add(addend) {
+            this.x += addend.x;
+            this.y += addend.y;
+            this.z += addend.z;
+            return this;
+        }
 
-    /**
-     * Multiplies each component of the 2 vectors
-     * @param factor
-     * @returns {*}
-     */
-    Vector3.prototype.mult = function (factor) {
-        this.x *= factor.x;
-        this.y *= factor.y;
-        this.z *= factor.z;
-        return this;
-    };
+        /**
+         * Subtract the given vector to this one
+         * @param addend {Vector3}
+         */
+        subtract(addend) {
+            this.x -= addend.x;
+            this.y -= addend.y;
+            this.z -= addend.z;
+            return this;
+        }
 
-    /**
-     * Calculates the cross produce of the vector and b
-     * @param b {Vector3}
-     * @returns {Vector3}
-     */
-    Vector3.prototype.cross = function(b) {
-        return new Vector3(
-            this.y * b.z - this.z * b.y,
-            this.z * b.x - this.x * b.z,
-            this.x * b.y - this.y * b.x
-        );
-    };
+        /**
+         * Scale the vector by the scalar
+         * @param scalar
+         * @returns {*}
+         */
+        scale(scalar) {
+            this.x *= scalar;
+            this.y *= scalar;
+            this.z *= scalar;
+            return this;
+        }
 
-    /**
-     * Calcuate the dot product of the vector and b
-     * @param b {Vector3}
-     * @returns {number}
-     */
-    Vector3.prototype.dot = function(b) {
-        return this.x * b.x + this.y * b.y + this.z * b.z;
-    };
+        /**
+         * Multiplies each component of the 2 vectors
+         * @param factor
+         * @returns {*}
+         */
+        mult(factor) {
+            this.x *= factor.x;
+            this.y *= factor.y;
+            this.z *= factor.z;
+            return this;
+        }
 
-    /**
-     * Get the length of the vector
-     * @returns {number}
-     */
-    Vector3.prototype.len = function () {
-        return Math.sqrt(this.len2());
-    };
+        /**
+         * Calculates the cross produce of the vector and b
+         * @param b {Vector3}
+         * @returns {Vector3}
+         */
+        cross(b) {
+            return new Vector3(
+                this.y * b.z - this.z * b.y,
+                this.z * b.x - this.x * b.z,
+                this.x * b.y - this.y * b.x,
+            );
+        }
 
-    /**
-     * Get the lengths squared of the vector
-     * @returns {number}
-     */
-    Vector3.prototype.len2 = function(){
-        return this.x * this.x + this.y * this.y + this.z * this.z;
-    };
+        /**
+         * Calcuate the dot product of the vector and b
+         * @param b {Vector3}
+         * @returns {number}
+         */
+        dot(b) {
+            return this.x * b.x + this.y * b.y + this.z * b.z;
+        }
 
-    /**
-     * Normalize the vector
-     * @returns {Vector3}
-     */
-    Vector3.prototype.normalize = function(){
-        var len = this.len() || 1;
-        return new Vector3(
-            this.x / len,
-            this.y / len,
-            this.z / len);
-    };
+        /**
+         * Get the length of the vector
+         * @returns {number}
+         */
+        len() {
+            return Math.sqrt(this.len2());
+        }
 
-    /**
-     * Create a unit vector from this vector (normalized and positive)
-     * @returns {Vector3}
-     */
-    Vector3.prototype.unit = function(){
-        var len = this.len();
-        return new Vector3(
-            Math.abs(this.x / len),
-            Math.abs(this.y / len),
-            Math.abs(this.z / len));
-    };
+        /**
+         * Get the lengths squared of the vector
+         * @returns {number}
+         */
+        len2() {
+            return this.x * this.x + this.y * this.y + this.z * this.z;
+        }
 
-    /**
-     * Create a string representation of the vector
-     * @returns {string}
-     */
-    Vector3.prototype.toString = function(length = 3){
-        return `{${this.x.toFixed(length)}, ${this.y.toFixed(length)}, ${this.z.toFixed(length)}}`;
-    };
+        /**
+         * Normalize the vector
+         * @returns {Vector3}
+         */
+        normalize() {
+            const len = this.len() || 1;
+            return new Vector3(
+                this.x / len,
+                this.y / len,
+                this.z / len);
+        }
 
-    Vector3.prototype.toBuffer = function(){
-        return [this.x, this.y, this.z];
-    };
+        /**
+         * Create a unit vector from this vector (normalized and positive)
+         * @returns {Vector3}
+         */
+        unit() {
+            const len = this.len();
+            return new Vector3(
+                Math.abs(this.x / len),
+                Math.abs(this.y / len),
+                Math.abs(this.z / len));
+        }
 
-    /**
-     * Add the 2 vectors
-     * @param a {Vector3}
-     * @param b {Vector3}
-     * @returns {Vector3}
-     */
-    Vector3.add = (a, b) => {
-        return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
-    };
+        /**
+         * Create a string representation of the vector
+         * @returns {string}
+         */
+        toString(length = 3) {
+            return `{${this.x.toFixed(length)}, ${this.y.toFixed(length)}, ${this.z.toFixed(length)}}`;
+        }
 
-    /**
-     * Subtract b from a
-     * @param a {Vector3}
-     * @param b {Vector3}
-     * @returns {Vector3}
-     */
-    Vector3.subtract = (a, b) => {
-        return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
-    };
+        toBuffer() {
+            return [this.x, this.y, this.z];
+        }
 
-    /**
-     * Creates a new vector by multiplying a and b
-     * @param a {Vector3}
-     * @param b {Vector3}
-     * @returns {Vector3}
-     */
-    Vector3.mult = (a, b) => {
-        return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
-    };
+        /**
+         * Add the 2 vectors
+         * @param a {Vector3}
+         * @param b {Vector3}
+         * @returns {Vector3}
+         */
+        static add(a, b) {
+            return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+        }
 
-    /**
-     * Creates a new vector by scaling a by scalar
-     * @param a {Vector3}
-     * @param scalar {number}
-     * @returns {Vector3}
-     */
-    Vector3.scale = (a, scalar) => {
-        return new Vector3(a.x * scalar, a.y * scalar, a.z * scalar);
-    };
+        /**
+         * Subtract b from a
+         * @param a {Vector3}
+         * @param b {Vector3}
+         * @returns {Vector3}
+         */
+        static subtract(a, b) {
+            return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
+        }
+
+        /**
+         * Creates a new vector by multiplying a and b
+         * @param a {Vector3}
+         * @param b {Vector3}
+         * @returns {Vector3}
+         */
+        static mult(a, b) {
+            return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+        }
+
+        /**
+         * Creates a new vector by scaling a by scalar
+         * @param a {Vector3}
+         * @param scalar {number}
+         * @returns {Vector3}
+         */
+        static scale(a, scalar) {
+            return new Vector3(a.x * scalar, a.y * scalar, a.z * scalar);
+        }
+    }
 
     Vector3.Zero = Object.freeze(new Vector3(0));
     Vector3.One = Object.freeze(new Vector3(1));
 
     this.Vector3 = Vector3;
 
-    /**
-     * A simple vector class
-     * @param x {number}
-     * @param y {number}
-     * @constructor
-     */
-    function Vector2(x, y){
-        this.x = x;
-        this.y = typeof y !== 'undefined' ? y : x;
-        Object.seal(this);
-    }
-
-    /**
-     * Set the vector components to those provided
-     * @param {number|Vector3} x
-     * @param {number} [y]
-     * @returns {Vector3}
-     */
-    Vector2.prototype.set = function(x, y){
-        if(x instanceof Vector3){
-            this.x = x.x;
-            this.y = x.y;
-        }
-        else {
+    class Vector2 {
+        /**
+         * A simple vector class
+         * @param x {number}
+         * @param y {number}
+         * @constructor
+         */
+        constructor(x, y) {
             this.x = x;
-            this.y = typeof y === 'number' ? y : x;
+            this.y = typeof y !== 'undefined' ? y : x;
+            Object.seal(this);
         }
-        return this;
-    };
 
-    /**
-     * Adds the given Vector2
-     * @param addend {Vector2}
-     */
-    Vector2.prototype.add = function(addend) {
-        this.x += addend.x;
-        this.y += addend.y;
-        return this;
-    };
+        /**
+         * Set the vector components to those provided
+         * @param {number|Vector3} x
+         * @param {number} [y]
+         * @returns {Vector3}
+         */
+        set(x, y) {
+            if (x instanceof Vector3) {
+                this.x = x.x;
+                this.y = x.y;
+            }        else {
+                this.x = x;
+                this.y = typeof y === 'number' ? y : x;
+            }
+            return this;
+        }
 
-    /**
-     * Scales the vector by the scalar
-     * @param scalar
-     * @returns {*}
-     */
-    Vector2.prototype.scale = function(scalar) {
-        this.x *= scalar;
-        this.y *= scalar;
-        return this;
-    };
+        /**
+         * Adds the given Vector2
+         * @param addend {Vector2}
+         */
+        add(addend) {
+            this.x += addend.x;
+            this.y += addend.y;
+            return this;
+        }
 
-    /**
-     * Multiplies each component of the 2 vectors
-     * @param factor
-     * @returns {*}
-     */
-    Vector2.prototype.mult = function (factor) {
-        this.x *= factor.x;
-        this.y *= factor.y;
-        return this;
-    };
+        /**
+         * Scales the vector by the scalar
+         * @param scalar
+         * @returns {*}
+         */
+        scale(scalar) {
+            this.x *= scalar;
+            this.y *= scalar;
+            return this;
+        }
 
-    /**
-     *
-     * @param a {Vector2}
-     * @param b {Vector2}
-     * @returns {Vector2}
-     */
-    Vector2.add = (a, b) => {
-        return new Vector2(a.x + b.x, a.y + b.y);
-    };
+        /**
+         * Multiplies each component of the 2 vectors
+         * @param factor
+         * @returns {*}
+         */
+        mult(factor) {
+            this.x *= factor.x;
+            this.y *= factor.y;
+            return this;
+        }
 
-    Vector2.prototype.toString = function(length = 3){
-        return `{${this.x.toFixed(length)}, ${this.y.toFixed(length)}}`;
-    };
+        toString(length = 3) {
+            return `{${this.x.toFixed(length)}, ${this.y.toFixed(length)}}`;
+        }
+
+        /**
+         *
+         * @param a {Vector2}
+         * @param b {Vector2}
+         * @returns {Vector2}
+         */
+        static add(a, b) {
+            return new Vector2(a.x + b.x, a.y + b.y);
+        }
+    }
 
     this.Vector2 = Vector2;
 
-    this.vec2 = (x, y) => {
-        return new Vector2(x, y);
-    };
+    this.vec2 = (x, y) => new Vector2(x, y);
 
-    this.vec3 = (x, y, z) => {
-        return new Vector3(x, y, z);
-    };
+    this.vec3 = (x, y, z) => new Vector3(x, y, z);
 
     /**
      * Clamps the value between the min and max
@@ -308,26 +304,20 @@ function MathService(){
      * @param {number} max
      * @returns {number} the clamped value
      */
-    this.clamp = (value, min, max) => {
-        return Math.min(Math.max(value, min), max);
-    };
+    this.clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     /**
      * Returns the sign (1, 0, or -1) of the value
      * @param {number} value
      * @returns {*|number}
      */
-    this.sign = (value) => {
-        return value && value / Math.abs(value);
-    };
+    this.sign = value => value && value / Math.abs(value);
 
     /**
      * Finds the mean of the values and returns the result
      * @param {number[]} values
      */
-    this.average = (values) => {
-        return values.reduce((avg, value) => avg + value / values.length, 0);
-    };
+    this.average = values => values.reduce((avg, value) => avg + value / values.length, 0);
 }
 
 module.exports = math;

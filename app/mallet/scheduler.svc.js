@@ -28,37 +28,34 @@ require('angular').module('mallet').service(MDT.Scheduler, [
  * @constructor
  */
 function Scheduler(MaxFrameRate, MState, $rootScope, Log) {
-    var self = this,
-        updateOperations = new PriorityQueue(),
-        drawCommands = new PriorityQueue(),
-        postDrawCommands = new PriorityQueue(),
-
-        timestep = 1000 / MaxFrameRate,
-        fps = MaxFrameRate,
-        lastFPSUpdate = 0,
-        framesThisSecond = 0,
-
-        suspendOnBlur = false,
-        animationFrame = null,
-
-        startTime = 0,
-        deltaTime = 0,
-        elapsedTime = 0,
-        lastFrameTime = 0;
+    const self             = this;
+    const updateOperations = new PriorityQueue();
+    const drawCommands     = new PriorityQueue();
+    const postDrawCommands = new PriorityQueue();
+    const timestep         = 1000 / MaxFrameRate;
+    let fps                = MaxFrameRate;
+    let lastFPSUpdate      = 0;
+    let framesThisSecond   = 0;
+    let suspendOnBlur      = false;
+    let animationFrame     = null;
+    let startTime          = 0;
+    let deltaTime          = 0;
+    let elapsedTime        = 0;
+    let lastFrameTime      = 0;
 
     /**
      * Execute all update opeartions while preserving the queue
-     * @param deltaTime
-     * @param elapsedTime
+     * @param stepDeltaTime
+     * @param totalElapsedTime
      */
-    function update(deltaTime, elapsedTime) {
+    function update(stepDeltaTime, totalElapsedTime) {
         // reset draw commands to prevent duplicate frames being rendered
         drawCommands.clear();
         postDrawCommands.clear();
 
         const opsIterator = updateOperations.getIterator();
         while (!opsIterator.isEnd()) {
-            opsIterator.next().call(null, deltaTime, elapsedTime);
+            opsIterator.next().call(null, stepDeltaTime, totalElapsedTime);
         }
 
         // There might be a better way to do this, but not really slowing things down right now
@@ -67,29 +64,29 @@ function Scheduler(MaxFrameRate, MState, $rootScope, Log) {
 
     /**
      * Execute all draw and post-draw commands, emptying each queue
-     * @param deltaTime
-     * @param elapsedTime
+     * @param stepDeltaTime
+     * @param totalElapsedTime
      */
-    function draw(deltaTime, elapsedTime) {
+    function draw(stepDeltaTime, totalElapsedTime) {
         while (drawCommands.peek() !== null) {
-            drawCommands.dequeue().call(null, deltaTime, elapsedTime);
+            drawCommands.dequeue().call(null, stepDeltaTime, totalElapsedTime);
         }
 
         while (postDrawCommands.peek() !== null) {
-            postDrawCommands.dequeue().call(null, deltaTime, elapsedTime);
+            postDrawCommands.dequeue().call(null, stepDeltaTime, totalElapsedTime);
         }
     }
 
     /**
      * Update the FPS value
-     * @param elapsedTime
+     * @param totalElapsedTime
      */
-    function updateFPS(elapsedTime) {
+    function updateFPS(totalElapsedTime) {
         framesThisSecond++;
-        if (elapsedTime > lastFPSUpdate + 1000){
+        if (totalElapsedTime > lastFPSUpdate + 1000) {
             const weightFactor = 0.25;
             fps = (weightFactor * framesThisSecond) + ((1 - weightFactor) * fps);
-            lastFPSUpdate = elapsedTime;
+            lastFPSUpdate = totalElapsedTime;
             framesThisSecond = 0;
         }
     }
@@ -133,7 +130,7 @@ function Scheduler(MaxFrameRate, MState, $rootScope, Log) {
 
     this.resume = () => {
         Log.out('resume');
-        if (MState.is(MState.Suspended)){
+        if (MState.is(MState.Suspended)) {
             MState.setState(MState.Running);
             self.startMainLoop();
         }

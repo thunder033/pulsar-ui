@@ -1,11 +1,10 @@
 /**
  * Created by Greg on 11/27/2016.
  */
-'use strict';
-var math = require('./math.svc'),
-    config = require('../config.module'),
-    constants = require('./mallet.constants'),
-    simpleRequest = require('../network/simple-request');
+const math          = require('./math.svc');
+const config        = require('../config.module');
+const constants     = require('./mallet.constants');
+const simpleRequest = require('../network/simple-request');
 
 /**
  * Library for interactive web apps
@@ -18,7 +17,7 @@ const mallet = require('angular')
         math.name,
         simpleRequest.name]);
 
-//Core
+// Core
 require('./state-machine.factory');
 require('./log.svc');
 require('./state.svc');
@@ -26,16 +25,16 @@ require('./scheduler.svc');
 require('./thread.factory');
 require('./async-request.factory');
 
-//Input
+// Input
 require('./keyboard.svc.js');
 require('./mouse-utils.svc');
 
-//3D Rendering
+// 3D Rendering
 require('./camera.svc');
 require('./geometry.svc');
 require('./particle-emitter.factory');
 
-//Canvas Wrapper
+// Canvas Wrapper
 require('./color.svc');
 require('./easel.directive');
 require('./easel.svc');

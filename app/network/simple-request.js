@@ -1,9 +1,6 @@
 /**
  * Created by Greg on 11/20/2016.
- */
-'use strict';
-
-/**
+ *
  * Utility for making AJAX requests
  * @module simple-request
  */
@@ -20,7 +17,6 @@ simpleRequest
  * @constructor
  */
 function SimpleSocket($q) {
-
     /**
      *
      * @param socket
@@ -28,26 +24,24 @@ function SimpleSocket($q) {
      * @param message
      * @returns {Promise}
      */
-    this.request = function(socket, event, message) {
-        return $q((resolve, reject) => {
-            const id = (Math.random() * 100000) % 100000;
-            socket.emit(event, {_req_id: id, data: {message}});
+    this.request = (socket, event, message) => $q((resolve, reject) => {
+        const id = (Math.random() * 100000) % 100000;
+        socket.emit(event, {_req_id: id, data: {message}});
 
-            const timeout = setTimeout(()=>reject('Request Timed Out'), 3000);
-            const responseKey = `${event}-${id}`;
-            socket.on(responseKey, (data)=>{
-                clearTimeout(timeout);
-                socket.off(responseKey);
-                resolve(data);
-            });
+        const timeout = setTimeout(() => reject('Request Timed Out'), 3000);
+        const responseKey = `${event}-${id}`;
+        socket.on(responseKey, (data) => {
+            clearTimeout(timeout);
+            socket.off(responseKey);
+            resolve(data);
         });
-    };
+    });
 }
 
 /**
  * @returns {HttpConfig}
  */
-function httpConfigFactory(){
+function httpConfigFactory() {
     return HttpConfig;
 }
 
@@ -63,16 +57,15 @@ function httpConfigFactory(){
  * @param {Object} [params.queryParams] a set of parameters to attach to the url
  * @constructor
  */
-function HttpConfig(params)
-{
-    if(typeof params.url !== 'string'){
+function HttpConfig(params) {
+    if (typeof params.url !== 'string') {
         throw new TypeError('URL must be a string');
     }
 
     this.method = params.method || 'get';
 
-    var queryString = '';
-    if(typeof params.queryParams === 'object' && params.queryParams !== null){
+    let queryString = '';
+    if (typeof params.queryParams === 'object' && params.queryParams !== null) {
         queryString = params.url.indexOf('?') > -1 ? '&' : '?';
         queryString += HttpConfig.getQueryString(params.queryParams);
     }
@@ -86,34 +79,31 @@ function HttpConfig(params)
  * @param {Object} params
  * @returns {string} URI query string
  */
-HttpConfig.getQueryString = function(params){
-    return Object.keys(params).map(key => {
-        return `${key}=${encodeURIComponent(params[key])}`;
-    }).join('&');
-};
+HttpConfig.getQueryString = params =>
+    Object.keys(params)
+    .map(key => `${key}=${encodeURIComponent(params[key])}`)
+    .join('&');
 
 /**
  * Execute a GET request on the URL
  * @param {string} url
  * @returns {HttpConfig}
  */
-HttpConfig.get = function(url){
-    return new HttpConfig({url: url});
-};
+HttpConfig.get = url => new HttpConfig({url});
 
-function SimpleHttp($http, $q)
-{
-    function doRequest(config)
-    {
-        return $http(config).then(response => {
-            return typeof response.data !== 'undefined' ? response.data : response;
-        }, error => {
-            return $q.reject(`${error.status || error.statusCode} ${JSON.stringify(error.message || error.statusText || error.data || error)}`);
-        });
+function SimpleHttp($http, $q) {
+    function doRequest(config) {
+        return $http(config).then(
+            response => (typeof response.data !== 'undefined' ? response.data : response),
+            (error) => {
+                const status = error.status || error.statusCode;
+                const errorText = JSON.stringify(error.message || error.statusText || error.data || error);
+                return $q.reject(`${status} ${errorText}`);
+            });
     }
 
     this.request = (params) => {
-        var config = (params instanceof HttpConfig) ? params : new HttpConfig(params);
+        const config = (params instanceof HttpConfig) ? params : new HttpConfig(params);
         return doRequest(config);
     };
 
@@ -124,11 +114,10 @@ function SimpleHttp($http, $q)
      * @returns {*}
      */
     this.get = (url, params) => {
-
         params = params || {};
         params.url = url;
 
-        var config = (params instanceof HttpConfig) ? params : new HttpConfig(params);
+        const config = (params instanceof HttpConfig) ? params : new HttpConfig(params);
 
         return doRequest(config);
     };

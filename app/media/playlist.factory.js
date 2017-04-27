@@ -1,14 +1,13 @@
 /**
  * Created by gjrwcs on 11/29/2016.
  */
-'use strict';
-var EventTarget = require('eventtarget');
+const EventTarget = require('eventtarget');
 require('angular')
     .module('pulsar.media')
     .factory('media.Playlist', [
         'media.const.State',
         'media.IPlayable',
-        playlistFactory
+        playlistFactory,
     ]);
 
 /**
@@ -17,7 +16,7 @@ require('angular')
  * @param {media.IPlayable} IPlayable
  * @returns {Playlist}
  */
-function playlistFactory(MediaState, IPlayable){
+function playlistFactory(MediaState, IPlayable) {
     /**
      * @implements IPlayable
      * @extends EventTarget
@@ -46,17 +45,16 @@ function playlistFactory(MediaState, IPlayable){
             this._it = this._queue.getIterator();
         }
 
-        getDuration(){
-            return this._queue.asArray().reduce((duration, clip) => {
-                return duration + (clip.getDuration() || 0);
-            }, 0);
+        getDuration() {
+            return this._queue.asArray()
+                .reduce((duration, clip) => duration + (clip.getDuration() || 0), 0);
         }
 
-        getName() {
+        getName() { // eslint-disable-line
             return 'Playlist';
         }
 
-        getInfo() {
+        getInfo() { // eslint-disable-line
             return '';
         }
 
@@ -72,7 +70,7 @@ function playlistFactory(MediaState, IPlayable){
         /**
          * Resets the play position to the first track
          */
-        reset(){
+        reset() {
             this._it = this._queue.getIterator();
         }
 
@@ -80,7 +78,7 @@ function playlistFactory(MediaState, IPlayable){
          * Replace the items currently in the playlist with a new set
          * @param {PriorityQueue<AudioClip>} clips
          */
-        setItems(clips){
+        setItems(clips) {
             this._queue = clips;
             this.reset();
             this.dispatchEvent(new Event('itemsSet'));
@@ -91,10 +89,10 @@ function playlistFactory(MediaState, IPlayable){
          * @returns {AudioClip}
          */
         getNextPlayable() {
-            var playable = null;
-            while(!this._it.isEnd()){
+            let playable = null;
+            while (!this._it.isEnd()) {
                 playable = this._it.next();
-                if(playable.state !== MediaState.Error){
+                if (playable.state !== MediaState.Error) {
                     break;
                 }
             }
@@ -113,19 +111,18 @@ function playlistFactory(MediaState, IPlayable){
             // clear the clip list
             clipList.length = 0;
             // return an empty array if given an invalid page
-            if(!this._queue || typeof page !== 'number'){
+            if (!this._queue || typeof page !== 'number'){
                 return clipList;
             }
 
             pageSize = pageSize || 10;
-            var  pos = 0;
-            var it = this._queue.getIterator();
+            let  pos = 0;
+            const it = this._queue.getIterator();
             // iterate through queue until end or page is filled
-            while(!it.isEnd() && clipList.length < pageSize){
-                if(pos++ >= page * pageSize){
+            while (!it.isEnd() && clipList.length < pageSize) {
+                if (pos++ >= page * pageSize) {
                     clipList.push(it.next());
-                }
-                else {
+                } else {
                     it.next();
                 }
             }
@@ -136,14 +133,14 @@ function playlistFactory(MediaState, IPlayable){
         /**
          * @returns {IPromise.<AudioBuffer>|Promise}
          */
-        getBuffer(){
+        getBuffer() {
             return this.getNextPlayable().getBuffer();
         }
 
         /**
          * @returns {media.State|string}
          */
-        getState(){
+        getState() { // eslint-disable-line
             return MediaState.Ready;
         }
     }

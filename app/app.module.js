@@ -15,13 +15,9 @@ const angular = require('angular'),
     simpleRequest = require('./network/simple-request'),
 
     // Pulsar modules
-    shared = require('./shared'),
-    audio = require('./audio'),
     media = require('./media'),
-    flare = require('./flare'),
     lobby = require('./lobby'),
-    network = require('./network'),
-    home = require('./home');
+    network = require('./network');
 
 require('angular-q-spread');
 
@@ -30,9 +26,9 @@ const app = angular.module('pulsar', [
     require('./app.constants'),
     require('./shared'),
     mallet.name,
-    home.name,
-    flare.name,
-    audio.name,
+    require('./home'),
+    require('./flare'),
+    require('./audio'),
     require('./warp'),
     media.name,
     simpleRequest.name,

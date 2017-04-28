@@ -8,4 +8,4 @@ const home = require('angular')
 require('./home.ctrl');
 require('./launcher.directive');
 
-module.exports = home;
+module.exports = home.name;

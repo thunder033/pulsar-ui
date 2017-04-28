@@ -21,7 +21,7 @@ ADT.game = {
 
 const game = require('angular')
     .module('game', [
-        require('../network').name,
+        require('../network'),
     ]);
 
 game.service(ADT.game.MatchLoader, require('./match-loader').resolve(ADT));

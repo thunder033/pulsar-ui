@@ -103,8 +103,7 @@ function MathService() {
             return new Vector3(
                 this.y * b.z - this.z * b.y,
                 this.z * b.x - this.x * b.z,
-                this.x * b.y - this.y * b.x,
-            );
+                this.x * b.y - this.y * b.x);
         }
 
         /**
@@ -320,4 +319,4 @@ function MathService() {
     this.average = values => values.reduce((avg, value) => avg + value / values.length, 0);
 }
 
-module.exports = math;
+module.exports = math.name;

@@ -125,8 +125,7 @@ function ParticleEmitter2D(Scheduler, Easel, ScaleFactor, MM) {
                 // Make particles evenly spread across canvas by taking aspect ratio into account
                 MM.vec3((0.166 - Math.random() / 3) * aspectRatio, (0.166 - Math.random() / 3)),
                 initEnergy,
-                Math.random() * size,
-            ));
+                Math.random() * size));
         },
     };
 

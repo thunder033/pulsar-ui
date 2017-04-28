@@ -22,4 +22,4 @@ const constants = require('angular').module('mallet-constants', [])
         Escape: 27,
     }));
 
-module.exports = constants;
+module.exports = constants.name;

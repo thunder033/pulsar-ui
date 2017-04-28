@@ -1,21 +1,15 @@
 /**
  * Created by Greg on 11/27/2016.
- */
-const math          = require('./math.svc');
-const config        = require('../config.module');
-const constants     = require('./mallet.constants');
-const simpleRequest = require('../network/simple-request');
-
-/**
+ *
  * Library for interactive web apps
  * @module mallet
  */
 const mallet = require('angular')
     .module('mallet', [
-        config.name,
-        constants.name,
-        math.name,
-        simpleRequest.name]);
+        require('../config.module'),
+        require('./mallet.constants'),
+        require('./math.svc'),
+        require('../network/simple-request')]);
 
 // Core
 require('./state-machine.factory');

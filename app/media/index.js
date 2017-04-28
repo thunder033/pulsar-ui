@@ -8,7 +8,7 @@
 const ADT = require('../app.dependency-tree.js').ADT;
 
 const media = require('angular').module('pulsar.media', [
-    require('../config.module').name,
+    require('../config.module'),
     require('angular-cookies'),
 ]);
 

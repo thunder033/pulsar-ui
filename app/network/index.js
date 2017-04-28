@@ -5,12 +5,11 @@
 const ADT = require('../app.dependency-tree.js').ADT;
 // this module needs an angular reference
 const angular = require('angular');
-const simpleRequest = require('./simple-request');
 require('angular-socket-io');
 
 const network = angular.module('network', [
     'btford.socket-io',
-    simpleRequest.name,
+    require('./simple-request'),
 ]);
 
 ADT.simpleRequest = {

@@ -132,7 +132,7 @@ module.exports = (grunt) => {
             },
             js: {
                 files: ['app/**/*.js'],
-                tasks: ['eslint', 'browserify:dev'],
+                tasks: ['browserify:dev'],
             },
         },
     });

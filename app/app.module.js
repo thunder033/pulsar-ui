@@ -8,11 +8,7 @@ const ADT = require('./app.dependency-tree').ADT;
 window.PriorityQueue = require('priority-queue').PriorityQueue;
 require('../assets/js/load-error');
 
-// external dependencies
-const angular = require('angular');
-require('angular-q-spread');
-
-angular.module('pulsar', [
+require('angular').module('pulsar', [
     require('./config.module'),
     require('./app.constants'),
     require('./shared'),
@@ -26,7 +22,7 @@ angular.module('pulsar', [
     require('./lobby'),
     require('./network'),
     require('./warp-mp'),
-    '$q-spread',
+    require('angular-q-spread'),
     require('checklist-model'),
     require('angular-ui-router'),
 ]).config([

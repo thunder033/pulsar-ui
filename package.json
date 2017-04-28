@@ -33,7 +33,7 @@
     "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.24"
   },
   "devDependencies": {
-    "angular-q-spread": "^1.1.0",
+    "angular-q-spread": "github:imensha/angular-q-spread",
     "angular-socket-io": "^0.7.0",
     "chai": "^3.5.0",
     "eslint": "^3.16.1",

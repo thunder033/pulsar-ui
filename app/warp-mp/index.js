@@ -17,6 +17,8 @@ ADT.game = {
     LerpedEntity: 'game.LerpedEntity',
     WarpDrive: 'game.WarpDrive',
     MatchLoader: 'game.MatchLoader',
+    FlowController: 'game.FlowController',
+    warpMenu: 'warpMenu',
 };
 
 const game = require('angular')
@@ -35,6 +37,8 @@ game.factory(ADT.game.Player, require('./player').resolve(ADT));
 game.factory(ADT.game.WarpField, require('./warp-field').resolve(ADT));
 game.factory(ADT.game.WarpGame, require('./warp-game').resolve(ADT));
 game.factory(ADT.game.WarpDrive, require('./warp-drive').resolve(ADT));
+game.controller(ADT.game.FlowController, require('./flow-ctrl').resolve(ADT));
+game.directive(ADT.game.warpMenu, require('./menu').resolve(ADT));
 
 game.directive('numbersOnly', () => ({
     restrict: 'A',

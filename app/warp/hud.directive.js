@@ -11,12 +11,11 @@ require('angular')
         'warp.Scoring',
         'warp.LevelLoader',
         '$sce',
-        '$timeout',
         'media.Playlist',
         'media.PlayQueue',
         hudDirective]);
 
-function hudDirective(WarpState, MScheduler, AudioPlayer, Scoring, LevelLoader, $sce, $timeout, Playlist, PlayQueue) {
+function hudDirective(WarpState, MScheduler, AudioPlayer, Scoring, LevelLoader, $sce, Playlist, PlayQueue) {
     return {
         restrict: 'E',
         templateUrl: 'views/warp-hud.html',
@@ -45,18 +44,6 @@ function hudDirective(WarpState, MScheduler, AudioPlayer, Scoring, LevelLoader, 
             scope.resume = () => {
                 MScheduler.resume();
             };
-
-            scope.toggleMute = () => {
-                scope.muted = !scope.muted;
-                localStorage.setItem('warp-muted', scope.muted === true ? '1' : '0');
-                AudioPlayer.setOutputGain(scope.muted ? 0 : 1);
-            };
-            const cachedMute = parseInt(localStorage.getItem('warp-muted') || '0', 10);
-            scope.muted = cachedMute === 1;
-
-            if (scope.muted) {
-                $timeout(() =>  AudioPlayer.setOutputGain(0));
-            }
         },
     };
 }

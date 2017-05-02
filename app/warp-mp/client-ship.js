@@ -35,7 +35,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
         const rampLBound = Track.POSITION_X + Track.LANE_WIDTH / 2;
         const rampRBound = Track.POSITION_X + Track.WIDTH - Track.LANE_WIDTH / 2;
 
-        if (x >= rampLBound || x <= rampRBound) {
+        if (x >= rampLBound && x <= rampRBound) {
             return 0.2;
         }
 

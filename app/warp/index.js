@@ -15,6 +15,7 @@ ADT.warp = {
     Bar: 'warp.Bar',
     State: 'warp.State',
     WarpFieldCache: 'warp.WarpFieldCache',
+    GameController: 'warp.GameController',
 };
 
 require('./bar.factory');

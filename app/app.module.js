@@ -47,15 +47,15 @@ function configuration($stateProvider, $urlRouterProvider, $locationProvider) {
     $stateProvider.state('home', {
         url: '/home',
         templateUrl: 'views/home.html',
-        controller: 'home.HomeController',
+        controller: ADT.home.HomeCtrl,
     }).state('flare', {
         url: '/flare',
         template: '<control-panel></control-panel><m-easel id="visualizer"></m-easel>',
-        controller: 'flare.FlareController',
+        controller: ADT.flare.FlareController,
     }).state('warp', {
         url: '/warp',
         template: '<m-easel id="warp"></m-easel><warp-hud></warp-hud>',
-        controller: 'warp.GameController',
+        controller: ADT.warp.GameController,
     }).state('lobby', {
         url: '/lobby',
         templateUrl: 'views/lobby.html',

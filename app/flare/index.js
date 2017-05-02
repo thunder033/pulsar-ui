@@ -1,7 +1,13 @@
 /**
  * Created by gjrwcs on 10/25/2016.
  */
+const ADT = require('../app.dependency-tree').ADT;
+
 const flare = require('angular').module('pulsar.flare', []);
+
+ADT.flare = {
+    FlareController: 'flare.FlareController',
+};
 
 require('./flare.constants');
 require('./audio-player.directive');

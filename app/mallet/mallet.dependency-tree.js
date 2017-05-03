@@ -2,8 +2,37 @@
  * Provide accurate, quick access to full list of mallet dependencies
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
-'use strict';
 
+const strictAccess = require('./strict-access.js').strictAccess;
+
+/**
+ * @property ng.$location
+ * @property ng.$scope
+ * @property ng.$rootScope
+ * @property ng.$q
+ * @property ng.$state
+ * @property ng.$socket
+ * @property config.Path
+ * @property const.ScaleFactor
+ * @property const.SampleCount
+ * @property const.MaxFrameRate
+ * @property const.Keys
+ * @property AsyncRequest
+ * @property Camera
+ * @property Color
+ * @property Easel
+ * @property Geometry
+ * @property Keyboard
+ * @property Log
+ * @property Math
+ * @property MouseUtils
+ * @property ParticleEmitter
+ * @property ParticleEmitter2D
+ * @property Scheduler
+ * @property State
+ * @property StateMachine
+ * @property Thread
+ */
 const MDT = {
     ng: {
         $location: '$location',
@@ -11,10 +40,10 @@ const MDT = {
         $rootScope: '$rootScope',
         $q: '$q',
         $state: '$state',
-        $socket: 'socketFactory'
+        $socket: 'socketFactory',
     },
     config: {
-        Path: 'config.Path'
+        Path: 'config.Path',
     },
     const: {
         ScaleFactor: 'mallet.const.ScaleFactor',
@@ -39,6 +68,5 @@ const MDT = {
     StateMachine:'mallet.StateMachine',
     Thread: 'mallet.Thread',
 };
-const mallet = MDT;
 
-module.exports = {MDT};
+module.exports = {MDT: strictAccess(MDT, 'MDT')};

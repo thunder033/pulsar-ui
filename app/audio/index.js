@@ -6,11 +6,11 @@ const ADT = require('../app.dependency-tree.js').ADT;
  * Utilities and services for playback and analysis of audio
  * @module pulsar.audio
  */
-var audio = require('angular')
+const audio = require('angular')
     .module('pulsar.audio', []);
 
 ADT.audio = {
-    'Player': 'audio.Player',
+    Player: 'audio.Player',
 };
 
 require('./audio.constants');
@@ -24,4 +24,4 @@ require('./volume.directive');
  * @type {IModule}
  * @property {string} name = pulsar.audio
  */
-module.exports = audio;
+module.exports = audio.name;

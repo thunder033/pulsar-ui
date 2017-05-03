@@ -2,14 +2,14 @@
  * TODO: [Description]
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
-'use strict';
 
 module.exports = {ResultsCtrl,
 resolve: ADT => [
-    ADT.ng.$scope,
     ADT.game.ClientMatch,
+    ADT.ng.$stateParams,
+    ADT.ng.$scope,
     ResultsCtrl]};
 
-function ResultsCtrl($scope, ClientMatch) {
-
+function ResultsCtrl(ClientMatch, $stateParams, $scope) {
+    $scope.match = null;
 }

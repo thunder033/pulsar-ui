@@ -35,7 +35,7 @@ function State($location, Log) {
      */
     function invokeStateListeners(state) {
         stateListeners.forEach((listener) => {
-            if ((listener.state | state) === state){
+            if ((listener.state | state) === state) {
                 listener.callback();
             }
         });

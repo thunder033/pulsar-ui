@@ -1,8 +1,6 @@
 /**
  * Created by Greg on 11/27/2016.
- */
-'use strict';
-/**
+ *
  * Misc. shared utilities
  * @module shared
  */
@@ -23,4 +21,4 @@ require('./accordion.directive');
 shared.service(ADT.shared.Status, require('./status.service').resolve(ADT));
 shared.directive(ADT.shared.statusDirective, require('./status.directive').resolve(ADT));
 
-module.exports = shared;
+module.exports = shared.name;

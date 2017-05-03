@@ -25,7 +25,7 @@ function getFieldPosition(field, format) {
 
     let item = it.next();
     while (item.done === false) {
-        if(item.value[0] === field) {
+        if (item.value[0] === field) {
             break;
         }
 
@@ -63,7 +63,8 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             this.id = id.id || id;
 
             if (typeof this.id !== 'string' && typeof this.id !== 'number') {
-                throw new TypeError(`${typeof this.id} is not valid a valid Network ID type. Must be string or number.`);
+                throw new TypeError(`${typeof this.id} is not valid a valid Network ID type. 
+                Must be string or number.`);
             }
 
             this.syncTime = 0;
@@ -85,20 +86,18 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                     const primitiveType = getPrimitiveType(type);
                     const size = this.sizes[field];
 
-                    if(isNaN(size)) {
+                    if (isNaN(size)) {
                         throw new Error(`Failed to read size for field ${field}`);
                     }
 
                     // Strings are read with different arguments than other types, so handle them separately
                     if (primitiveType === DataType.String) {
                         const method = this.buffer.toString.bind(this.buffer, 'utf8', position, position + size);
-                        this.syncOps.push(((m, f) => {
-                            return () => this[f] = m();
-                        })(method, field));
+                        this.syncOps.push(((m, f) => () => { this[f] = m(); })(method, field));
                     } else {
                         const method = NetworkEntity.readMethods.get(primitiveType);
-                        this.syncOps.push(((p, m, f) => {
-                            return () => this[f] = this.buffer[m](p);
+                        this.syncOps.push(((p, m, f) => () => {
+                            this[f] = this.buffer[m](p);
                         })(position, method, field));
                     }
 
@@ -117,6 +116,10 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             return this.id;
         }
 
+        getUpdateTime() {
+            return this.syncTime;
+        }
+
         /**
          * Set all values in a response on the entity
          * @param params {Object|ArrayBuffer}
@@ -124,8 +127,8 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
          * @param storeValuesCB {Function}
          */
         sync(params, view, storeValuesCB) {
-            if(params instanceof ArrayBuffer && view !== null) {
-                if(!(this.format instanceof Map)) {
+            if (params instanceof ArrayBuffer && view !== null) {
+                if (!(this.format instanceof Map)) {
                     const type = NetworkEntity.getName(this.getType());
                     throw new ReferenceError(`${type} cannot sync a binary response without a format set`);
                 }
@@ -141,7 +144,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                 this.syncTime = timeStamp;
 
                 // allow the entity to store any values it will need after the update
-                if(storeValuesCB instanceof Function) {
+                if (storeValuesCB instanceof Function) {
                     storeValuesCB();
                 }
 
@@ -151,9 +154,9 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                 }
             } else {
                 Object.assign(this, params);
-                this.syncTime = ~~performance.now();
+                // this.syncTime = ~~performance.now();
 
-                Log.debug(`sync ${this.constructor.name} ${this.id} at ${this.syncTime}`);
+                Log.debug(`sync ${this.constructor.name} ${this.id} at ${~~performance.now()}`);
                 $rootScope.$evalAsync();
             }
         }
@@ -202,7 +205,9 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             NetworkEntity.typeNames.set(type, name);
             NetworkEntity.constructorTypes.set(name, type);
             NetworkEntity.lookupTypes.set(name, baseType);
-            Log.debug(`Register NetworkEntity type ${NetworkEntity.getName(type)} [as ${NetworkEntity.getName(baseType)}]`);
+            Log.debug(`Register NetworkEntity type ${NetworkEntity.getName(type)} 
+            [as ${NetworkEntity.getName(baseType)}]`);
+
             if (baseType === type) {
                 Log.verbose(`Create NetworkEntity index ${NetworkEntity.getName(type)}`);
                 NetworkEntity.entities.set(name, new Map());
@@ -322,7 +327,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             let serverTypeCode;
             let view = null;
 
-            if(data instanceof ArrayBuffer) {
+            if (data instanceof ArrayBuffer) {
                 view = new Uint8Array(data);
                 id = String.fromCharCode.apply(null, view.subarray(0, NetworkEntity.ID_LENGTH));
                 serverTypeCode = view[NetworkEntity.ID_LENGTH];

@@ -1,6 +1,6 @@
 {
   "name": "pulsar-ui",
-  "version": "1.0.18",
+  "version": "1.0.24",
   "description": "Pulsar Client",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec test/*.js",
@@ -30,12 +30,17 @@
     "checklist-model": "^0.10.0",
     "eventtarget": "^0.1.0",
     "modular-adal-angular": "^1.0.4",
-    "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.23"
+    "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.24"
   },
   "devDependencies": {
-    "angular-q-spread": "^1.1.0",
+    "angular-q-spread": "github:imensha/angular-q-spread",
     "angular-socket-io": "^0.7.0",
     "chai": "^3.5.0",
+    "eslint": "^3.16.1",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "^1.0.0",
@@ -45,6 +50,7 @@
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
     "heroku-deploy-tarball": "^1.0.0",
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",

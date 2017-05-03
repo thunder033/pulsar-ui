@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Created by gjr8050 on 2/24/2017.
  */
@@ -13,13 +12,12 @@ resolve: ADT => [
     ADT.game.ClientMatch,
     ADT.network.Client,
     ADT.ng.$state,
-    ADT.ng.$q,
     ADT.network.NetworkEntity,
     ADT.network.ClientRoom,
+    ADT.mallet.Log,
     LobbyCtrl]};
 
-function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, $q, NetworkEntity, ClientRoom) {
-
+function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntity, ClientRoom, Log) {
     const status = {
         LOADING        : 0,
         UNAUTHENTICATED: 1,
@@ -42,33 +40,26 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, $q, NetworkE
         activeDiagram: 'api',
     };
 
-    $scope.getPing = function() {
-        return Connection.getPing();
-    };
+    $scope.getPing = () => Connection.getPing();
 
-    $scope.getStatusName = function(index) {
-        return Object.keys(status).reduce((name, curName) => {
-            return status[curName] === index ? curName : name;
-        }, '');
-    };
+    $scope.getStatusName = index => Object.keys(status)
+        .reduce((name, curName) => (status[curName] === index ? curName : name), '');
 
     // creates a callback to assign a value to the scope
     function assignScope(property) {
-        return function(value) {
+        return (value) => {
             $scope[property] = value;
         };
     }
 
     function addRoom(room, active) {
-        console.log('joined room ', room.getName());
-
-        if(active || $scope.activeRoom === null) {
+        if (active || $scope.activeRoom === null) {
             $scope.activeRoom = room;
         }
 
         $scope.rooms.push(room);
 
-        if($scope.activeRoom.getName() === 'lobby') {
+        if ($scope.activeRoom.getName() === 'lobby') {
             $scope.curStatus = status.READY;
         } else {
             $scope.curStatus = status.STAGING;
@@ -80,33 +71,29 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, $q, NetworkE
     });
 
     Client.addEventListener(IOEvent.leftRoom, (e) => {
-        console.log('left room ', e.room.getName());
         const roomIndex = $scope.rooms.indexOf(e.room);
-        if(roomIndex > -1) {
+        if (roomIndex > -1) {
             $scope.rooms.splice(roomIndex, 0);
         }
 
-        if(e.room.getName() !== 'lobby') {
+        if (e.room.getName() !== 'lobby') {
             $scope.activeRoom = $scope.rooms[0];
             $scope.curStatus = status.READY;
         }
     });
 
     Client.addEventListener(MatchEvent.matchStarted, (e) => {
-        console.log('start game');
         $state.go('play', {gameId: e.gameId});
     });
 
     Connection.ready().then(() => {
         $scope.curStatus = status.READY;
 
-        Connection.getSocket().get().on(IOEvent.serverError,
-            (err) => { $scope.errorMessage = `Error: ${err.message || err}`; });
+        Connection.getSocket().get().on(IOEvent.serverError, Log.error);
 
         Connection.getSocket().request('requestRooms').then((rooms) => {
             $scope.rooms.length = 0;
             $scope.activeRoom = null;
-            console.log(rooms);
             rooms.map(id => NetworkEntity.getById(ClientRoom, id).then(addRoom));
         });
 

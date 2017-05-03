@@ -1,10 +1,10 @@
-'use strict';
 /**
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
 
 const MatchEvent = require('event-types').MatchEvent;
 const EntityType = require('entity-types').EntityType;
+const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports = {matchFactory,
 resolve: ADT => [
@@ -15,9 +15,11 @@ resolve: ADT => [
     ADT.ng.$rootScope,
     ADT.media.IPlayable,
     ADT.game.MatchLoader,
+    ADT.ng.$q,
+    MDT.Log,
     matchFactory]};
 
-function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader) {
+function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, IPlayable, MatchLoader, $q, Log) {
     const matches = new Map();
     const matchList = [];
 
@@ -29,20 +31,23 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
             this.song = null;
             this.started = false;
             this.startTime = NaN;
+
+            this.defer = $q.defer();
         }
 
         sync(data) {
-            NetworkEntity.getById(User, data.host).then(user => this.host = user);
+            NetworkEntity.getById(User, data.host).then((user) => { this.host = user; });
             delete data.host;
             super.sync(data);
         }
 
         setSong(song) {
             this.song = song;
+            this.defer.resolve(song);
         }
 
         getSong() {
-            return this.song;
+            return $q.when(this.song || this.defer.promise);
         }
 
         isOpen() {
@@ -65,7 +70,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
 
         onStart(gameId) {
             this.started = true;
-            if(Connection.getUser() === this.getHost()) {
+            if (Connection.getUser() === this.getHost()) {
                 MatchLoader.loadMatch(this);
             }
             updateMatchList();
@@ -98,7 +103,8 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
             }
 
             item = it.next();
-        }   }
+        }
+    }
 
     function addMatch(matchId) {
         if (!matchId) {
@@ -126,10 +132,12 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
     }
 
     function setMatchSong(data) {
-        MatchLoader.reconstructSong(data.song).then((song) => {
-            console.log(song);
-            matches.get(data.matchId).setSong(song);
-        });
+        if (typeof data.song === 'object' && data.song !== null) {
+            MatchLoader.reconstructSong(data.song).then((song) => {
+                Log.debug(song);
+                matches.get(data.matchId).setSong(song);
+            });
+        }
     }
 
     NetworkEntity.registerType(ClientMatch, EntityType.Match);

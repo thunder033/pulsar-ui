@@ -1,10 +1,10 @@
-'use strict';
 /**
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
 
 const GameEvent = require('event-types').GameEvent;
 const MatchEvent = require('event-types').MatchEvent;
+const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports = {PlayCtrl,
 resolve: ADT => [
@@ -17,6 +17,7 @@ resolve: ADT => [
     ADT.network.Clock,
     ADT.game.WarpGame,
     ADT.network.Connection,
+    MDT.Log,
     PlayCtrl]};
 
 /**
@@ -30,9 +31,10 @@ resolve: ADT => [
  * @param Clock {Clock}
  * @param WarpGame {WarpGame}
  * @param Connection
+ * @param Log
  * @constructor
  */
-function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection) {
+function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection, Log) {
     if (Client.getUser() === null) {
        return $state.go('lobby');
     }
@@ -55,7 +57,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
         $timeout(() => $scope.$broadcast(GameEvent.playStarted));
 
         const startTime = Clock.getNow();
-        console.log(`start play at ${startTime}`);
+        Log.out(`start play at ${startTime}`);
     }
 
     $scope.endGame =  function endGame() {
@@ -68,7 +70,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
     });
 
     $scope.getPlayerInfo = () => {
-        if($scope.clientUser === null) {
+        if ($scope.clientUser === null) {
             return '-';
         }
 
@@ -78,28 +80,31 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
     const loadedGame = NetworkEntity.getById(WarpGame, $stateParams.gameId)
         .then((game) => {
             if (!game) {
-                console.error(`No game was found with game id: ${$stateParams.gameId}`);
+                Log.error(`No game was found with game id: ${$stateParams.gameId}`);
                 $state.go('lobby');
-                return;
+                return null;
             }
 
             $scope.warpGame = game;
             $scope.clientUser = Client.getUser();
             $scope.match = game.getMatch();
-            // TODO this will be called after the song has been buffered
-            // Currently ignored by server (just waits for host to send level)
-            Client.emit(GameEvent.clientLoaded);
+
+            return $scope.match.getSong()
+                .then(song => song.getBuffer())
+                .then(() => game.waitForLoaded())
+                .then(() => {
+                Client.emit(GameEvent.clientLoaded);
+            });
         }).catch((e) => {
-        console.error(e);
+        Log.error(e);
         $state.go('lobby');
     });
 
-    // The game countdown will begin when all clients have loaded
-    Client.addEventListener(GameEvent.clientsReady, () => {
+    function onClientsReady() {
         loadedGame.then(() => {
             $scope.state = gameState.SYNCING;
             const remainingStartTime = $scope.warpGame.getStartTime() - Clock.getNow();
-            console.log(`start match in ${remainingStartTime}`);
+            Log.out(`start match in ${remainingStartTime}`);
 
             $scope.secondsToStart = ~~(remainingStartTime / 1000);
             const countdownInterval = setInterval(() => {
@@ -111,5 +116,12 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
                 clearInterval(countdownInterval);
             }, remainingStartTime);
         });
+    }
+
+    // The game countdown will begin when all clients have loaded
+    Client.addEventListener(GameEvent.clientsReady, onClientsReady);
+
+    $scope.$on('$destroy', () => {
+        Client.removeEventListener(GameEvent.clientsReady, onClientsReady);
     });
 }

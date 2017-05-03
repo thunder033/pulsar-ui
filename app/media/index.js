@@ -1,8 +1,6 @@
 /**
  * Created by gjr8050 on 11/16/2016.
- */
-'use strict';
-/**
+ *
  * Sourcing and access of media content
  * @ngdoc module
  * @name pulsar.media
@@ -10,8 +8,8 @@
 const ADT = require('../app.dependency-tree.js').ADT;
 
 const media = require('angular').module('pulsar.media', [
-    require('../config.module').name,
-    require('angular-cookies')
+    require('../config.module'),
+    require('angular-cookies'),
 ]);
 
 ADT.media = {
@@ -40,20 +38,20 @@ require('./source.SoundCloud.factory');
 require('./groove-auth.svc');
 require('./source.Groove.factory');
 
-media.config(['config.PathProvider', 'config.Env', function(pathProvider, Env){
-    var base = 'assets/audio/';
+media.config(['config.PathProvider', 'config.Env', (pathProvider, Env) => {
+    const base = 'assets/audio/';
     pathProvider.addPath('media', {
         Base: base,
-        ReverbImpulse: base + '/reverb-impulses/',
-        Song: Env === 'dev' ? base + 'songs/' : 'https://thunderlab.net/pulsar-media/songs/',
-        Effect: base + 'effects/',
-        Tracks: 'assets/data/localAudio.json'
+        ReverbImpulse: `${base}/reverb-impulses/`,
+        Song: Env === 'dev' ? `${base}songs/` : 'https://thunderlab.net/pulsar-media/songs/',
+        Effect: `${base}effects/`,
+        Tracks: 'assets/data/localAudio.json',
     });
-}]).run(['media.Library', function (MediaLibrary) {
+}]).run(['media.Library', (MediaLibrary) => {
     MediaLibrary.init();
 }]);
 
 /**
  * @type {IModule}
  */
-module.exports = media;
+module.exports = media.name;

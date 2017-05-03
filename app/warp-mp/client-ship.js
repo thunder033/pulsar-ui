@@ -5,7 +5,6 @@
 const GameEvent = require('event-types').GameEvent;
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const Track = require('game-params').Track;
-const ShipEngine = require('game-params').ShipEngine;
 const DataFormat = require('game-params').DataFormat;
 const EntityType = require('entity-types').EntityType;
 
@@ -28,6 +27,26 @@ resolve: ADT => [
  * @returns {ClientShip}
  */
 function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
+    /**
+     * Ramp the ship up the side of the lanes
+     * @param x
+     */
+    function getYPos(x) {
+        const rampLBound = Track.POSITION_X + Track.LANE_WIDTH / 2;
+        const rampRBound = Track.POSITION_X + Track.WIDTH - Track.LANE_WIDTH / 2;
+
+        if (x >= rampLBound && x <= rampRBound) {
+            return 0.2;
+        }
+
+        const flatWidth = Track.WIDTH - Track.LANE_WIDTH;
+        const trackCenter = Track.POSITION_X + Track.WIDTH / 2;
+        const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
+
+        const r = Track.LANE_WIDTH; // arc radius
+        return 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
+    }
+
     class ClientShip extends LerpedEntity {
         constructor(params, id) {
             super(id, DataFormat.SHIP);
@@ -48,7 +67,8 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
                 writeable: true,
                 set(value) {
                     this.tPrev.position.x = this.tDest.position.x;
-                    this.tDest.position.x = value;},
+                    this.tDest.position.x = value;
+                    },
             });
         }
 
@@ -61,10 +81,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
             this.disp = MM.Vector3.subtract(this.tDest.position, this.tPrev.position);
         }
 
-        getUpdateTime() {
-            return this.syncTime;
-        }
-
+        // eslint-disable-next-line
         strafe(direction) {
             Connection.getSocket().get().emit(GameEvent.command, direction);
         }
@@ -72,7 +89,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
         update(dt) {
             super.update(dt);
             this.tRender.position.set(LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct));
-            this.tRender.position.y = 0.2;
+            this.tRender.position.y = getYPos(this.tRender.position.x);
             this.tRender.position.z = 0.8;
         }
 

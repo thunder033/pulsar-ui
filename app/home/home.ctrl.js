@@ -1,4 +1,3 @@
-'use strict';
 /**
  * @ngdoc controller
  * @description Behavior for the Pulsar home screen

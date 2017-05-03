@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Created by Greg on 12/3/2016.
  */
@@ -20,16 +19,16 @@ require('angular').module('shared')
      */
     .directive('psAccordionHeader', [psAccordianHeaderDirective]);
 
-function psAccordionDirective(){
+function psAccordionDirective() {
     return {
         restrict: 'AC',
         scope: {},
-        controller: ['$scope', function PsAccordionCtrl($scope){
+        controller: ['$scope', function PsAccordionCtrl($scope) {
+            const tabs = [];
+            $scope.tabs = tabs;
 
-            var tabs = $scope.tabs = [];
-
-            this.expand = $scope.expand = function(expandedTab){
-                tabs.forEach(tab => {
+            this.expand = (expandedTab) => {
+                tabs.forEach((tab) => {
                     tab.expanded = false;
                     tab.collapsed = true;
                 });
@@ -37,62 +36,68 @@ function psAccordionDirective(){
                 expandedTab.expanded = true;
                 expandedTab.collapsed = false;
             };
+            $scope.expand = this.expand;
 
-            this.addTab = function(tab){
-                if(tabs.length === 0){
+            this.addTab = (tab) => {
+                if (tabs.length === 0) {
                     $scope.expand(tab);
                 }
                 $scope.tabs.push(tab);
             };
-        }]
+        }],
     };
 }
 
-function psAccordionTabDirective(){
+function psAccordionTabDirective() {
     return {
         restrict: 'AC',
         require: '^^psAccordion',
         scope: true,
-        link: function(scope, elem, attrs, accordionCtrl){
+        link(scope, elem, attrs, accordionCtrl) {
             scope.expanded = false;
             scope.collapsed = true;
             scope.test = 'testing';
             scope.expand = accordionCtrl.expand;
             accordionCtrl.addTab(scope);
-            if(attrs.hasOwnProperty('selected')){
+            // eslint-disable-next-line
+            if(attrs.hasOwnProperty('selected')) {
                 scope.expand(scope);
             }
         },
-        controller: ['$scope', '$element', PsAccordionTabCtrl]
+        controller: ['$scope', '$element', PsAccordionTabCtrl],
     };
 }
 
-function PsAccordionTabCtrl($scope, $element){
+function PsAccordionTabCtrl($scope, $element) {
     $element.addClass('ps-accordion-tab');
 
-    this.expand = function(){
+    this.expand = () => {
         $scope.expand($scope, $element);
         $element.removeClass('collapsed');
         $element.addClass('expanded');
     };
 
     $scope.$watch('collapsed', (n) => {
-        if(n === true){
+        if (n === true) {
             $element.addClass('collapsed');
             $element.removeClass('expanded');
         }
     });
 }
 
-function psAccordianHeaderDirective(){
+function psAccordianHeaderDirective() {
     return {
         restrict: 'AC',
         require: '^^psAccordionTab',
         transclude: true,
         scope: true,
-        template: `<span ng-transclude></span><span class="ps-accordion-icon"><span class="fa" ng-class="[{'fa-arrow-down': expanded}, {'fa-arrow-left': collapsed}]"></span></span>`,
-        link: function(scope, elem, attrs, tabCtrl){
+        template: `
+<span ng-transclude></span>
+<span class="ps-accordion-icon">
+<span class="fa" ng-class="[{'fa-arrow-down': expanded}, {'fa-arrow-left': collapsed}]">
+</span></span>`,
+        link(scope, elem, attrs, tabCtrl) {
             elem.on('click', tabCtrl.expand);
-        }
+        },
     };
 }

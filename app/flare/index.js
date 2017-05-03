@@ -1,7 +1,13 @@
 /**
  * Created by gjrwcs on 10/25/2016.
  */
-var flare = require('angular').module('pulsar.flare', []);
+const ADT = require('../app.dependency-tree').ADT;
+
+const flare = require('angular').module('pulsar.flare', []);
+
+ADT.flare = {
+    FlareController: 'flare.FlareController',
+};
 
 require('./flare.constants');
 require('./audio-player.directive');
@@ -16,4 +22,4 @@ require('./flare.ctrl');
 /**
  * @type {IModule}
  */
-module.exports = flare;
+module.exports = flare.name;

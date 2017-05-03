@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Created by gjr8050 on 2/24/2017.
  */
@@ -14,32 +13,32 @@ resolve: ADT => [
     socketFactory]};
 
 function socketFactory($socket, $q, HttpConfig, Path) {
-
     class Socket {
-
         constructor(credentials) {
-            const io = require('socket.io-client')(Path.warpApi, {query: HttpConfig.getQueryString(credentials), transports: ['websocket', 'jsonp-polling']});
+            const io = require('socket.io-client')(Path.warpApi, {
+                query: HttpConfig.getQueryString(credentials),
+                transports: ['websocket', 'jsonp-polling']});
             const ioSocket = io.connect();
 
-            this.socket = $socket({ioSocket: ioSocket});
+            this.socket = $socket({ioSocket});
         }
 
         /**
          *
          * @param event {string}: event to trigger
-         * @param body {any}: data to send
+         * @param body {*}: data to send
          * @param timeoutDuration=3000 {number}: milliseconds before request fails
          * @returns {Promise}
          */
         request(event, body, timeoutDuration = 3000) {
             return $q((resolve, reject) => {
-                //TODO: use something better than this, relatively high chance of collisions
+                // TODO: use something better than this, relatively high chance of collisions
                 const id = ~~(Math.random() * 100000);
                 this.socket.emit(event, {reqId: id, body});
 
                 let timer = null;
-                if(typeof timeoutDuration === 'number') {
-                    timer = setTimeout(()=>reject('Request Timed Out'), timeoutDuration);
+                if (typeof timeoutDuration === 'number') {
+                    timer = setTimeout(() => reject('Request Timed Out'), timeoutDuration);
                 }
 
                 const responseKey = `${event}-${id}`;
@@ -63,7 +62,7 @@ function socketFactory($socket, $q, HttpConfig, Path) {
             });
         }
 
-        get(){
+        get() {
             return this.socket;
         }
     }

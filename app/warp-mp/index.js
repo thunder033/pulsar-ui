@@ -17,11 +17,13 @@ ADT.game = {
     LerpedEntity: 'game.LerpedEntity',
     WarpDrive: 'game.WarpDrive',
     MatchLoader: 'game.MatchLoader',
+    FlowController: 'game.FlowController',
+    warpMenu: 'warpMenu',
 };
 
 const game = require('angular')
     .module('game', [
-        require('../network').name,
+        require('../network'),
     ]);
 
 game.service(ADT.game.MatchLoader, require('./match-loader').resolve(ADT));
@@ -35,6 +37,24 @@ game.factory(ADT.game.Player, require('./player').resolve(ADT));
 game.factory(ADT.game.WarpField, require('./warp-field').resolve(ADT));
 game.factory(ADT.game.WarpGame, require('./warp-game').resolve(ADT));
 game.factory(ADT.game.WarpDrive, require('./warp-drive').resolve(ADT));
+game.controller(ADT.game.FlowController, require('./flow-ctrl').resolve(ADT));
+game.directive(ADT.game.warpMenu, require('./menu').resolve(ADT));
 
+game.directive('numbersOnly', () => ({
+    restrict: 'A',
+    require: 'ngModel',
+    link: (scope, elem, attr, ngModel) => {
+        ngModel.$parsers.push((inputVal) => {
+            const value = /\d*\.?\d{0,2}/.exec(inputVal)[0];
 
-module.exports = game;
+            if (inputVal !== value) {
+                ngModel.$setViewValue(value);
+                ngModel.$render();
+            }
+
+            return value;
+        });
+    },
+}));
+
+module.exports = game.name;

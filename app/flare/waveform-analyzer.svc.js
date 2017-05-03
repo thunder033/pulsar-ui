@@ -1,4 +1,3 @@
-'use strict';
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 /**
  * Performs analysis on the waveform data each frame to derive metrics
@@ -11,7 +10,7 @@ require('angular').module('pulsar.flare').service('flare.WaveformAnalyzer', [
     WaveformAnalazyer]);
 
 function WaveformAnalazyer(MScheduler, AudioData, SampleCount) {
-    var results = {};
+    const results = {};
 
     /**
      * Calculate the peak, trough, and period of the waveform
@@ -19,17 +18,17 @@ function WaveformAnalazyer(MScheduler, AudioData, SampleCount) {
      * @param {Object} outResults
      */
     function analyzeWaveform(waveform, outResults) {
-        var peakMax = -Number.MAX_VALUE,
-            troughMin = Number.MAX_VALUE,
-            peakDistance = 0;
+        let peakMax = -Number.MAX_VALUE;
+        let troughMin = Number.MAX_VALUE;
+        let peakDistance = 0;
 
-        //Find the peak value of the wave and position of the first peak
-        var i = 0;
+        // Find the peak value of the wave and position of the first peak
+        let i = 0;
         while (waveform[i] > peakMax) {
             peakMax = waveform[i++];
         }
 
-        //Find the trough and the period
+        // Find the trough and the period
         while (waveform[++i] < peakMax || troughMin >= peakMax) {
             peakDistance++;
             if (waveform[i] < troughMin) {
@@ -41,7 +40,7 @@ function WaveformAnalazyer(MScheduler, AudioData, SampleCount) {
             }
         }
 
-        //Set the values on the object to maintain object references
+        // Set the values on the object to maintain object references
         outResults.peak = peakMax;
         outResults.peakDistance = peakDistance;
         outResults.trough = troughMin;
@@ -49,13 +48,13 @@ function WaveformAnalazyer(MScheduler, AudioData, SampleCount) {
         outResults.period = peakDistance / SampleCount * 2;
     }
 
-    MScheduler.schedule(()=> {
+    MScheduler.schedule(() => {
         analyzeWaveform(AudioData.getWaveform(), results);
     }, 75);
 
     return {
-        getMetrics(){
+        getMetrics() {
             return results;
-        }
+        },
     };
 }

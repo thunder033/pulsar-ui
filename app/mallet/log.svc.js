@@ -92,7 +92,7 @@ function Log(StateMachine) {
         args.unshift(trace);
         for (let i = 0, l = loggers.length; i < l; i++) {
             const loggerLevel = Number.isInteger(loggers[i].level) ? loggers[i].level : level;
-            if(msgLevel <= loggerLevel) {
+            if (msgLevel <= loggerLevel) {
                 loggers[i].api[func](...args);
             }
         }

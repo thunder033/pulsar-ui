@@ -50,19 +50,28 @@ class StatusService extends EventTarget {
         this.statuses = new PriorityQueue();
         this.priorities = Log.levels;
         Log.addLogger(this, Log.levels.Error);
+
+        this.error = this.error.bind(this);
+        this.display = this.display.bind(this);
+        this.displayConditional = this.displayConditional.bind(this);
     }
 
     /**
      *
      * @param message
      * @param level
-     * @returns {function()}: Callback to remove the conditional status
+     * @returns {function()}: Callback to dismiss the conditional status
      */
     displayConditional(message, level) {
         const status = new StatusMessage(message, level, NaN);
         status.persist();
         this.dispatchStatus(status);
-        return () => {this.statuses.remove(status);};
+        return () => {
+            this.statuses.remove(status);
+            const evt = new Event('dismissStatus');
+            evt.status = status;
+            this.dispatchEvent(evt);
+        };
     }
 
     error() {
@@ -91,7 +100,8 @@ class StatusService extends EventTarget {
 }
 
 module.exports = {StatusService,
+// eslint-disable-next-line
 resolve: ADT => [
     MDT.Log,
-    StatusService
+    StatusService,
 ]};

@@ -1,4 +1,3 @@
-'use strict';
 /**
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
@@ -7,9 +6,10 @@ const EventTarget = require('eventtarget');
 module.exports = {asyncInitializerFactory,
 resolve: ADT => [
     ADT.ng.$q,
+    ADT.mallet.Log,
     asyncInitializerFactory]};
 
-function asyncInitializerFactory($q) {
+function asyncInitializerFactory($q, Log) {
     class AsyncInitializer extends EventTarget {
         constructor(baseOps = []) {
             super();
@@ -37,7 +37,7 @@ function asyncInitializerFactory($q) {
         ready() {
             return this.readyChain
                 .then(() => this.socket)
-                .catch(e => console.error(`Failed to initialize ${this.constructor.name}: `, e));
+                .catch(e => Log.error(`Failed to initialize ${this.constructor.name}: `, e));
         }
     }
 

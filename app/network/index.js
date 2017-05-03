@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Created by gjr8050 on 2/24/2017.
  */
@@ -6,12 +5,11 @@
 const ADT = require('../app.dependency-tree.js').ADT;
 // this module needs an angular reference
 const angular = require('angular');
-const simpleRequest = require('./simple-request');
 require('angular-socket-io');
 
 const network = angular.module('network', [
     'btford.socket-io',
-    simpleRequest.name
+    require('./simple-request'),
 ]);
 
 ADT.simpleRequest = {
@@ -40,4 +38,4 @@ network.factory(ADT.network.User, require('./user-factory').resolve(ADT));
 network.factory(ADT.network.ClientRoom, require('./client-room').resolve(ADT));
 network.factory(ADT.network.Client, require('./client').resolve(ADT));
 
-module.exports = network;
+module.exports = network.name;

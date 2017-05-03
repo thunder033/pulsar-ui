@@ -16,9 +16,9 @@
     </h3>
 
     <div class="song">
-        <div ng-if="!match.getSong()">No Song Chosen</div>
-        <div ng-bind="match.getSong().getName()"></div>
-        <div ng-bind="match.getSong().getInfo()"></div>
+        <div ng-if="!match.song">No Song Chosen</div>
+        <div ng-bind="match.song.getName()"></div>
+        <div ng-bind="match.song.getInfo()"></div>
         <span class="track-length" ng-if="match.getSong().getDuration()">{{ match.getSong().getDuration() | secondsToDate | date:'m:ss' }}</span>
     </div>
 

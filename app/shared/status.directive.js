@@ -3,7 +3,7 @@
  */
 module.exports = {resolve: ADT => [
     ADT.inject(),
-    statusDirective
+    statusDirective,
     ]};
 
 function statusDirective(ADT) {
@@ -11,30 +11,43 @@ function statusDirective(ADT) {
         constructor($scope, Status, $timeout) {
             $scope.activeMessage = null;
             $scope.msgStyle = '';
+            let statusTimeout = null;
 
             window.testStatus = () => {
                 Status.display('This is a test message');
             };
 
+            window.testCond = () => Status.displayConditional('test conditional');
+
             $scope.displayNextStatus = () => {
                 $scope.setActiveStatus(Status.getNextStatus());
             };
 
-            Status.addEventListener('displayStatus', $scope.displayNextStatus);
-
-            $scope.setActiveStatus = (msg)=> {
+            $scope.setActiveStatus = (msg) => {
+                $timeout.cancel(statusTimeout);
                 $scope.activeMessage = msg;
-                if (msg !== null && Number.isFinite(msg.getDuration())) {
+                if (msg === null) {
+                    return;
+                }
+
+                if (Number.isFinite(msg.getDuration())) {
                     $scope.msgStyle = msg.getLevel();
-                    $timeout($scope.displayNextStatus, msg.getDuration());
+                    statusTimeout = $timeout($scope.displayNextStatus, msg.getDuration());
                 } else {
-                    $scope.msgStyle = 'persist';
+                    $scope.msgStyle = `${msg.getLevel()} persist`;
                 }
             };
 
-            $scope.dismissStatus = () => {
+            $scope.dismissStatus = (e) => {
+                if (e && e.status && $scope.activeMessage !== e.status) {
+                    return;
+                }
+
                 $scope.displayNextStatus();
             };
+
+            Status.addEventListener('dismissStatus', $scope.dismissStatus);
+            Status.addEventListener('displayStatus', $scope.displayNextStatus);
         }
     }
 
@@ -46,6 +59,6 @@ function statusDirective(ADT) {
             ADT.ng.$scope,
             ADT.shared.Status,
             ADT.ng.$timeout,
-            StatusController]
+            StatusController],
     };
 }

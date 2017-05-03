@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Created by Greg on 12/1/2016.
  */
@@ -9,17 +8,16 @@ require('angular')
     .factory('media.PlayQueue', [
         'media.const.State',
         'media.IPlayable',
-        playQueueFactory
+        playQueueFactory,
     ]);
 
 function playQueueFactory(MediaState, IPlayable) {
-
     /**
      * Holds the list of items to be sent to be played
      */
     class PlayQueue extends EventTarget {
 
-        constructor(audioPlayer){
+        constructor(audioPlayer) {
             super();
 
             /** @type {Array<IPlayable>} */
@@ -27,9 +25,9 @@ function playQueueFactory(MediaState, IPlayable) {
             /** @type {audio.Player} */
             this._player = audioPlayer;
 
-            audioPlayer.addEventListener('ended', ()=>{
+            audioPlayer.addEventListener('ended', () => {
                 const next = this.getNext();
-                if(next !== null){
+                if (next !== null) {
                     this._player.playClip(next);
                 }
             });
@@ -39,15 +37,15 @@ function playQueueFactory(MediaState, IPlayable) {
          * Dequeue and return the next playable item
          * @returns {IPlayable}
          */
-        getNext(){
-            var next = null;
+        getNext() {
+            let next = null;
             do {
-                if(this._queue.length === 0){
+                if (this._queue.length === 0) {
                     break;
                 }
 
                 next = this._queue.shift();
-            } while (next.getState() === MediaState.Error );
+            } while (next.getState() === MediaState.Error);
             this.dispatchEvent(new Event('itemDequeued'));
             return next;
         }
@@ -57,15 +55,15 @@ function playQueueFactory(MediaState, IPlayable) {
          * @param {IPlayable} playable - item to add to the play queue
          * @param {int} [placement=PlayQueue.PlayNext] where to add the item
          */
-        addItem(playable, placement){
-            if(!(playable instanceof IPlayable)){
+        addItem(playable, placement) {
+            if (!(playable instanceof IPlayable)) {
                 throw new TypeError('Only objects of type IPlayable can be queued');
             }
 
             placement = typeof placement === 'undefined' ? PlayQueue.PlayNext : placement;
-            var evt = new Event('itemAdded');
+            const evt = new Event('itemAdded');
             evt.item = playable;
-            switch (placement){
+            switch (placement) {
                 case PlayQueue.PlayNext:
                     this._queue.unshift(playable);
                     this.dispatchEvent(evt);
@@ -78,7 +76,7 @@ function playQueueFactory(MediaState, IPlayable) {
                     this._player.playClip(playable);
                     break;
                 default:
-                    throw new ReferenceError('Invalid placement value: ' + placement);
+                    throw new ReferenceError(`Invalid placement value: ${placement}`);
             }
         }
 
@@ -86,7 +84,7 @@ function playQueueFactory(MediaState, IPlayable) {
          * Get the list of items in the queue
          * @returns {Array.<IPlayable>}
          */
-        getItems(){
+        getItems() {
             return this._queue;
         }
     }

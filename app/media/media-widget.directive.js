@@ -1,14 +1,13 @@
-'use strict';
 /**
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
 require('angular')
     .module('pulsar.media')
     .directive('psMediaWidget', [
-        mediaWidgetDirective
+        mediaWidgetDirective,
     ]);
 
-function mediaWidgetDirective(){
+function mediaWidgetDirective() {
     return {
         restrict: 'E',
         templateUrl: 'views/media-widget.html',
@@ -17,84 +16,90 @@ function mediaWidgetDirective(){
             queue: '=',
             actionOverride: '=',
             availSources: '@',
-            player: '='
+            player: '=',
         },
-        controller: ['$scope', 'media.PlayQueue', 'media.Playlist', 'media.const.Type', 'media.Library', 'media.Source', function ($scope, PlayQueue, Playlist, MediaType, MediaLibrary, Source) {
-
-            const availSources = $scope.availSources || [];
-
-            $scope.displaySource = (source) => {
-                if (availSources.length === 0) {
-                    return true;
-                }
-
-                if (!(source.getName instanceof Function)) {
-                    return false;
-                }
-
-                if(source === 'UserStream') {
-                    return availSources.indexOf('UserStream') > -1;
-                }
-
-                return availSources.indexOf(source.getName()) > -1;
-            };
-
-            $scope.playlist = new Playlist();
-            $scope.sources = Source.getSources();
-
-            //Retrieve initial set of songs from the media library
-            MediaLibrary.isReady()
-                .then(() => MediaLibrary.getAudioClips(MediaType.Song))
-                .then(clips => $scope.playlist.setItems(clips));
-
-            $scope.queueOptions = [
-                {value: PlayQueue.PlayNext, name: 'Play Next', icon: ''},
-                {value: PlayQueue.PlayNow, name: 'Play Now', icon: ''},
-                {value: PlayQueue.QueueEnd, name: 'Add to Queue', icon: ''}
-            ];
-
-            $scope.model = {
-                queueMode: $scope.actionOverride || PlayQueue.PlayNext,
-                search: ''
-            };
-
-            $scope.hasActionOverride = () => {
-                return typeof $scope.actionOverride === 'number';
-            };
-
-            $scope.toggleActive = function(source){
-                source.toggleActive();
-                $scope.search();
-            };
-
-            $scope.playUserStream = function(){
-                $scope.player.playUserStream();
-            };
-
-
-            /**
-             * Add a clip to the play queue the the user-selected queue mode
-             * @param clip
-             */
-            $scope.queueClip = function (clip) {
-                $scope.queue.addItem(clip, $scope.model.queueMode);
-            };
-
-            /**
-             * Execute a search of the media library
-             */
-            $scope.search = function(){
-                if($scope.model.search.length === 0){
-                    return MediaLibrary.getAudioClips(MediaType.Song)
-                        .then(clips => $scope.playlist.setItems(clips));
-                }
-
-                MediaLibrary.searchByName($scope.model.search).then(null, null, results => {
-                    $scope.playlist.setItems(results);
-                });
-            };
-
-            $scope.$watch('model.search', $scope.search);
-        }]
+        controller: [
+            '$scope',
+            'media.PlayQueue',
+            'media.Playlist',
+            'media.const.Type',
+            'media.Library',
+            'media.Source',
+            MediaWidgetController],
     };
+}
+
+function MediaWidgetController($scope, PlayQueue, Playlist, MediaType, MediaLibrary, Source) {
+    const availSources = $scope.availSources || [];
+
+    $scope.displaySource = (source) => {
+        if (availSources.length === 0) {
+            return true;
+        }
+
+        if (!(source.getName instanceof Function)) {
+            return false;
+        }
+
+        if (source === 'UserStream') {
+            return availSources.indexOf('UserStream') > -1;
+        }
+
+        return availSources.indexOf(source.getName()) > -1;
+    };
+
+    $scope.playlist = new Playlist();
+    $scope.sources = Source.getSources();
+
+    // Retrieve initial set of songs from the media library
+    MediaLibrary.isReady()
+        .then(() => MediaLibrary.getAudioClips(MediaType.Song))
+        .then(clips => $scope.playlist.setItems(clips));
+
+    $scope.queueOptions = [
+        {value: PlayQueue.PlayNext, name: 'Play Next', icon: ''},
+        {value: PlayQueue.PlayNow, name: 'Play Now', icon: ''},
+        {value: PlayQueue.QueueEnd, name: 'Add to Queue', icon: ''},
+    ];
+
+    $scope.model = {
+        queueMode: $scope.actionOverride || PlayQueue.PlayNext,
+        search: '',
+    };
+
+    $scope.hasActionOverride = () => typeof $scope.actionOverride === 'number';
+
+    $scope.toggleActive = (source) => {
+        source.toggleActive();
+        $scope.search();
+    };
+
+    $scope.playUserStream = () => {
+        $scope.player.playUserStream();
+    };
+
+
+    /**
+     * Add a clip to the play queue the the user-selected queue mode
+     * @param clip
+     */
+    $scope.queueClip = (clip) => {
+        $scope.queue.addItem(clip, $scope.model.queueMode);
+    };
+
+    /**
+     * Execute a search of the media library
+     */
+    $scope.search = () => {
+        if ($scope.model.search.length === 0) {
+            MediaLibrary.getAudioClips(MediaType.Song)
+                .then(clips => $scope.playlist.setItems(clips));
+        } else {
+            MediaLibrary.searchByName($scope.model.search).then(null, null, (results) => {
+                $scope.playlist.setItems(results);
+            });
+        }
+    };
+
+    $scope.$watch('model.search', $scope.search);
 }

@@ -1,12 +1,12 @@
 /**
  * Created by gjr8050 on 11/16/2016.
  */
-angular.module('pulsar.media')
+require('angular').module('pulsar.media')
     .constant('media.const.Sources', Object.freeze({
-        //{Source Name}: [enabled - true/false]
+        // {Source Name}: [enabled - true/false]
         Flare: true,
         SoundCloud: true,
-        Groove: true
+        Groove: true,
     }))
     /**
      * @description Indicates what state a media object is in
@@ -19,7 +19,7 @@ angular.module('pulsar.media')
         Ready: 'Ready',
         Buffering: 'Buffering',
         Buffered: 'Buffered',
-        Error: 'Error'
+        Error: 'Error',
     })
 
     /**
@@ -30,8 +30,8 @@ angular.module('pulsar.media')
      * @property {media.Type} ReverbImpulse
      */
     .constant('media.const.Type', Object.freeze({
-        'Song': 'Song',
-        'Effect': 'Effect',
-        'Stream': 'Stream',
-        'ReverbImpulse' : 'ReverbImpulse'
+        Song: 'Song',
+        Effect: 'Effect',
+        Stream: 'Stream',
+        ReverbImpulse : 'ReverbImpulse',
     }));

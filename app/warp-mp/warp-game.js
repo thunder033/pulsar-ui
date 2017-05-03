@@ -62,6 +62,8 @@ function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom
             this.players = [];
             this.warpField = null;
             this.warpDrive = null;
+
+            this.isLoaded = $q.defer();
         }
 
         /**
@@ -81,15 +83,25 @@ function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom
                 this.warpDrive.load(this.warpField);
 
                 if (this.players.length === 0) {
-                    return createPlayers(params.shipIds, match).then((players) => { this.players = players; });
+                    return createPlayers(params.shipIds, match).then((players) => {
+                        this.players = players;
+                    });
                 }
 
                 return null;
             }).finally(() => {
+                if (this.warpField !== null) {
+                    this.isLoaded.resolve();
+                }
+
                 delete params.matchId;
                 delete params.shipIds;
                 super.sync(params);
             });
+        }
+
+        waitForLoaded() {
+            return this.isLoaded.promise;
         }
 
         onClientsReady(startTime) {

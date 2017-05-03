@@ -81,10 +81,6 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
             this.disp = MM.Vector3.subtract(this.tDest.position, this.tPrev.position);
         }
 
-        getUpdateTime() {
-            return this.syncTime;
-        }
-
         // eslint-disable-next-line
         strafe(direction) {
             Connection.getSocket().get().emit(GameEvent.command, direction);

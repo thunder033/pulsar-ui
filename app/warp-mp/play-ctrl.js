@@ -91,8 +91,8 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
 
             return $scope.match.getSong()
                 .then(song => song.getBuffer())
+                .then(() => game.waitForLoaded())
                 .then(() => {
-                // Currently ignored by server (just waits for host to send level)
                 Client.emit(GameEvent.clientLoaded);
             });
         }).catch((e) => {
@@ -100,8 +100,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
         $state.go('lobby');
     });
 
-    // The game countdown will begin when all clients have loaded
-    Client.addEventListener(GameEvent.clientsReady, () => {
+    function onClientsReady() {
         loadedGame.then(() => {
             $scope.state = gameState.SYNCING;
             const remainingStartTime = $scope.warpGame.getStartTime() - Clock.getNow();
@@ -117,5 +116,12 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
                 clearInterval(countdownInterval);
             }, remainingStartTime);
         });
+    }
+
+    // The game countdown will begin when all clients have loaded
+    Client.addEventListener(GameEvent.clientsReady, onClientsReady);
+
+    $scope.$on('$destroy', () => {
+        Client.removeEventListener(GameEvent.clientsReady, onClientsReady);
     });
 }

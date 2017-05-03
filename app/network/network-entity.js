@@ -116,6 +116,10 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             return this.id;
         }
 
+        getUpdateTime() {
+            return this.syncTime;
+        }
+
         /**
          * Set all values in a response on the entity
          * @param params {Object|ArrayBuffer}
@@ -150,9 +154,9 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                 }
             } else {
                 Object.assign(this, params);
-                this.syncTime = ~~performance.now();
+                // this.syncTime = ~~performance.now();
 
-                Log.debug(`sync ${this.constructor.name} ${this.id} at ${this.syncTime}`);
+                Log.debug(`sync ${this.constructor.name} ${this.id} at ${~~performance.now()}`);
                 $rootScope.$evalAsync();
             }
         }

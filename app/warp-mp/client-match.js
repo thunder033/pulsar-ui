@@ -132,10 +132,12 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
     }
 
     function setMatchSong(data) {
-        MatchLoader.reconstructSong(data.song).then((song) => {
-            Log.debug(song);
-            matches.get(data.matchId).setSong(song);
-        });
+        if (typeof data.song === 'object' && data.song !== null) {
+            MatchLoader.reconstructSong(data.song).then((song) => {
+                Log.debug(song);
+                matches.get(data.matchId).setSong(song);
+            });
+        }
     }
 
     NetworkEntity.registerType(ClientMatch, EntityType.Match);

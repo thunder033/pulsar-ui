@@ -11,6 +11,9 @@ resolve: ADT => [
 function menuDirective(ADT) {
     return {
         restrict: 'E',
+        scope: {
+            player: '=',
+        },
         templateUrl: 'views/warp-menu.html',
         controller: ADT.game.FlowController,
     };

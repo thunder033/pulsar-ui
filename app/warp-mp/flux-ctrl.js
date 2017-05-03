@@ -8,7 +8,7 @@ const Track = require('game-params').Track;
 const SliceBar = require('game-params').SliceBar;
 const DriveParams = require('game-params').DriveParams;
 
-module.exports = {FluxCtrl,
+module.exports = {WarpCtrl,
 resolve: ADT => [
     ADT.ng.$scope,
     MDT.Scheduler,
@@ -21,7 +21,7 @@ resolve: ADT => [
     ADT.warp.State,
     MDT.Color,
     ADT.audio.Player,
-    FluxCtrl]};
+    WarpCtrl]};
 
 /**
  *
@@ -38,7 +38,9 @@ resolve: ADT => [
  * @param Player
  * @constructor
  */
-function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color, Player) {
+function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color, Player) {
+    $scope.player = Player;
+
     const meshes = Geometry.meshes;
     const mLanePadding = 0.01; // padding on edge of each lane
 
@@ -170,6 +172,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
 
     function init() {
         Camera.init();
+        MScheduler.resume();
 
         const players = $scope.warpGame.getPlayers();
         let clientShip = null;
@@ -210,7 +213,7 @@ function FluxCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             $scope.clientScore = clientPlayer.getScore();
             $scope.sliceIndex = `${warpDrive.getSliceIndex()} ${warpDrive.getBarOffset().toFixed(2)}`;
 
-            if (warpDrive.getSliceIndex() === -DriveParams.RENDER_OFFSET && Player.state !== Player.states.Playing) {
+            if (warpDrive.getUpdateTime() > DriveParams.LEVEL_BUFFER_START && Player.state !== Player.states.Playing) {
                 $scope.match.getSong().then(Player.playClip);
             }
 

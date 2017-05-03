@@ -4,9 +4,12 @@ const MDT = require('./mallet.dependency-tree').MDT;
  * Client for a web worker
  * @class Thread
  */
-require('angular').module('mallet').factory(MDT.Thread, [MDT.ng.$q, threadFactory]);
+require('angular').module('mallet').factory(MDT.Thread, [
+    MDT.ng.$q,
+    MDT.Log,
+    threadFactory]);
 
-function threadFactory($q) {
+function threadFactory($q, Log) {
     /**
      * @param {string} script name of the file to use in the worker
      * @constructor
@@ -32,7 +35,7 @@ function threadFactory($q) {
             // check the return status of the worker
             if (typeof invocations[e.data._id] === 'undefined') {
                 // If we can't find the invocation give a warning
-                console.warn(`Response for invocation ${e.data._id} (${e.data._status}) 
+                Log.warn(`Response for invocation ${e.data._id} (${e.data._status}) 
                 of ${script} could not be resolved`);
             } else if (e.data._status === 'ERROR') {
                 // If it returned with an error, reject the promise

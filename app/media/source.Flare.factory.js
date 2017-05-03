@@ -11,12 +11,13 @@ require('angular').module('pulsar.media').factory('media.source.Flare', [
     'media.const.Type',
     'config.Path',
     '$q',
+    MDT.Log,
     sourcePulsarFactory]);
 
 /**
  * @returns {Flare}
  */
-function sourcePulsarFactory(Source, AsyncRequest, HttpConfig, AudioClip, MediaType, Path, $q) {
+function sourcePulsarFactory(Source, AsyncRequest, HttpConfig, AudioClip, MediaType, Path, $q, Log) {
     /**
      * @extends Source
      */
@@ -62,7 +63,7 @@ function sourcePulsarFactory(Source, AsyncRequest, HttpConfig, AudioClip, MediaT
                         }));
                     }, (err) => {
                         const status = err.status || err;
-                        console.warn(`Pulsar track "${fileName}" could not be loaded: ${status}`);
+                        Log.warn(`Pulsar track "${fileName}" could not be loaded: ${status}`);
                     });
                 })).then(() => this._cachedTracks);
             });

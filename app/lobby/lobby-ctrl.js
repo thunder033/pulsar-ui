@@ -14,10 +14,10 @@ resolve: ADT => [
     ADT.ng.$state,
     ADT.network.NetworkEntity,
     ADT.network.ClientRoom,
-    ADT.shared.Status,
+    ADT.mallet.Log,
     LobbyCtrl]};
 
-function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntity, ClientRoom, Status) {
+function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntity, ClientRoom, Log) {
     const status = {
         LOADING        : 0,
         UNAUTHENTICATED: 1,
@@ -53,8 +53,6 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntit
     }
 
     function addRoom(room, active) {
-        console.log('joined room ', room.getName());
-
         if (active || $scope.activeRoom === null) {
             $scope.activeRoom = room;
         }
@@ -73,7 +71,6 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntit
     });
 
     Client.addEventListener(IOEvent.leftRoom, (e) => {
-        console.log('left room ', e.room.getName());
         const roomIndex = $scope.rooms.indexOf(e.room);
         if (roomIndex > -1) {
             $scope.rooms.splice(roomIndex, 0);
@@ -86,19 +83,17 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntit
     });
 
     Client.addEventListener(MatchEvent.matchStarted, (e) => {
-        console.log('start game');
         $state.go('play', {gameId: e.gameId});
     });
 
     Connection.ready().then(() => {
         $scope.curStatus = status.READY;
 
-        Connection.getSocket().get().on(IOEvent.serverError, Status.error);
+        Connection.getSocket().get().on(IOEvent.serverError, Log.error);
 
         Connection.getSocket().request('requestRooms').then((rooms) => {
             $scope.rooms.length = 0;
             $scope.activeRoom = null;
-            console.log(rooms);
             rooms.map(id => NetworkEntity.getById(ClientRoom, id).then(addRoom));
         });
 

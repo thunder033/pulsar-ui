@@ -7,6 +7,7 @@ require('angular').module('pulsar.media').factory('media.AudioClip', [
     'audio.DataUtils',
     '$q',
     'media.IPlayable',
+    'mallet.Log',
     _Clip]);
 
 /**
@@ -14,7 +15,7 @@ require('angular').module('pulsar.media').factory('media.AudioClip', [
  * @returns {{AudioClip: AudioClip}}
  * @private
  */
-function _Clip(MediaType, MediaState, DataUtils, $q, IPlayable) {
+function _Clip(MediaType, MediaState, DataUtils, $q, IPlayable, Log) {
     /**
      * Derive a more readable name from a file name
      * @param fileName
@@ -147,8 +148,7 @@ function _Clip(MediaType, MediaState, DataUtils, $q, IPlayable) {
                     this.state = MediaState.Buffered;
                     return buffer;
                 }).catch((err) => {
-                    // Temporary error handling until we get an error service
-                    console.log(err);
+                    Log.error(err);
                     this.state = MediaState.Error;
                     return $q.reject(err);
                 });

@@ -11,9 +11,10 @@ require('angular')
         '$cookies',
         'simple-request.HttpConfig',
         'config.Path',
+        'mallet.Log',
         GrooveAuth]);
 
-function GrooveAuth($window, $q, $cookies, HttpConfig, Path) {
+function GrooveAuth($window, $q, $cookies, HttpConfig, Path, Log) {
     const AUTH_SCOPE = 'MicrosoftMediaServices.GrooveApiAccess';
     const AUTH_COOKIE_KEY = 'pulsar-groove-auth';
 
@@ -116,7 +117,7 @@ function GrooveAuth($window, $q, $cookies, HttpConfig, Path) {
         };
 
         return authDefer.promise.catch((err) => {
-            console.error(err);
+            Log.error(err);
         });
     };
 

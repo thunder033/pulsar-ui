@@ -39,6 +39,7 @@ require('angular').module('pulsar', [
 
 function configuration($stateProvider, $urlRouterProvider, $locationProvider) {
     // message about error messages
+    // eslint-disable-next-line
     console.info('READMEEEEE: Any HEAD requests with status 404 are expected.' +
         ' Network errors cannot be suppressed through JavaScript.');
     $urlRouterProvider.otherwise('/home');

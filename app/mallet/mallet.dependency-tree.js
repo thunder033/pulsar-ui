@@ -3,7 +3,36 @@
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
 
+const strictAccess = require('./strict-access.js').strictAccess;
 
+/**
+ * @property ng.$location
+ * @property ng.$scope
+ * @property ng.$rootScope
+ * @property ng.$q
+ * @property ng.$state
+ * @property ng.$socket
+ * @property config.Path
+ * @property const.ScaleFactor
+ * @property const.SampleCount
+ * @property const.MaxFrameRate
+ * @property const.Keys
+ * @property AsyncRequest
+ * @property Camera
+ * @property Color
+ * @property Easel
+ * @property Geometry
+ * @property Keyboard
+ * @property Log
+ * @property Math
+ * @property MouseUtils
+ * @property ParticleEmitter
+ * @property ParticleEmitter2D
+ * @property Scheduler
+ * @property State
+ * @property StateMachine
+ * @property Thread
+ */
 const MDT = {
     ng: {
         $location: '$location',
@@ -40,4 +69,4 @@ const MDT = {
     Thread: 'mallet.Thread',
 };
 
-module.exports = {MDT};
+module.exports = {MDT: strictAccess(MDT, 'MDT')};

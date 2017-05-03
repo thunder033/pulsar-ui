@@ -54,6 +54,14 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
         AudioPlayer.seekTo(songTime);
     });
 
+    Connection.addEventListener(IOEvent.disconnect, () => {
+        Scheduler.suspend();
+    });
+
+    Connection.addEventListener(IOEvent.reconnect, () => {
+        Scheduler.resume();
+    });
+
     // Handle actual events when scheduler receives them
     MState.onState(MState.Suspended, () => {
         if (State.is(State.Playing)) {

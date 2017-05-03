@@ -172,7 +172,8 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
 
     function init() {
         Camera.init();
-        MScheduler.resume();
+        MScheduler.suspend();
+        MScheduler.startMainLoop();
 
         const players = $scope.warpGame.getPlayers();
         let clientShip = null;
@@ -234,6 +235,7 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
 
     $scope.$on('$destroy', () => {
         State.current = State.Paused;
+        MScheduler.suspend();
         MScheduler.reset();
     });
 

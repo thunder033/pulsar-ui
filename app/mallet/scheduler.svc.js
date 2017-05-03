@@ -129,9 +129,7 @@ function Scheduler(MaxFrameRate, MState, $rootScope, Log) {
     };
 
     this.resume = () => {
-        Log.out('resume');
         if (MState.is(MState.Suspended)) {
-            MState.setState(MState.Running);
             self.startMainLoop();
         }
     };

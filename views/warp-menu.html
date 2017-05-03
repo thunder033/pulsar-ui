@@ -8,6 +8,7 @@
     </div>
 
     <button class="menu-btn" ng-if="warpState.is(warpState.Paused)" ng-click="resume()">Resume</button>
+    <button class="menu-btn" ng-if="warpState.is(warpState.Paused)" ng-click="endGame()">End Game</button>
     <loader-icon ng-if="warpState.is(warpState.Loading)"></loader-icon>
 
     <ul class="notes" ng-if="warpState.is(warpState.Loading)">

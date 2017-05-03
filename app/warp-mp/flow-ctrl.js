@@ -2,23 +2,26 @@
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
 
-const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const GameEvent = require('event-types').GameEvent;
+const DriveParams = require('game-params').DriveParams;
+const IOEvent = require('event-types').IOEvent;
+const MatchEvent = require('event-types').MatchEvent;
 
 module.exports = {FlowCtrl,
 resolve: ADT => [
-    MDT.State,
-    MDT.Keyboard,
+    ADT.mallet.State,
+    ADT.mallet.Keyboard,
     ADT.warp.State,
-    MDT.Scheduler,
-    MDT.Keys,
+    ADT.mallet.Scheduler,
+    ADT.mallet.const.Keys,
     ADT.audio.Player,
     ADT.network.Connection,
     ADT.network.Client,
     ADT.ng.$scope,
+    ADT.shared.Status,
     FlowCtrl]};
 
-function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connection, Client, $scope) {
+function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connection, Client, $scope, Status) {
     $scope.warpState = State;
 
     // Emit pause/resume messages to server
@@ -33,13 +36,21 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
     });
 
     // Forward Game Events to the local scheduler
-    Client.addEventListener(GameEvent.pause, () => {
+    Client.addEventListener(GameEvent.pause, (e) => {
+        if (e.player) {
+            const dismiss = Status.displayConditional(`${e.player.getUser().getName()} paused the game.`);
+            // TODO: remove this as a listener when executed
+            MState.onState(MState.Running, dismiss);
+        }
         Scheduler.suspend();
     });
 
-    Client.addEventListener(GameEvent.resume, (data) => {
+    Client.addEventListener(GameEvent.resume, (e) => {
+        if (e.player) {
+            Status.display(`${e.player.getUser().getName()} resumed the game.`);
+        }
         Scheduler.resume();
-        const songTime = data.time + Connection.getTimeDifference();
+        const songTime = e.time + Connection.getPing() - DriveParams.LEVEL_BUFFER_START;
         AudioPlayer.seekTo(songTime);
     });
 
@@ -55,5 +66,18 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
         if (State.is(State.Paused)) {
             State.current = State.Playing;
         }
+    });
+
+    // Scope methods
+    $scope.resume = () => {
+        Client.emit(GameEvent.resume);
+    };
+
+    $scope.endGame =  function endGame() {
+        Client.emit(MatchEvent.requestEnd);
+    };
+
+    $scope.$on('$destroy', () => {
+        MState.clearState();
     });
 }

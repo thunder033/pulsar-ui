@@ -123,8 +123,21 @@ function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom
             .then(game => game.onClientsReady(data.startTime));
     }
 
+    function forwardPlayerEvt(evt, data) {
+        if (!data.playerId) {
+            $rootScope.$broadcast(evt, Object.assign(data, {clientEvent: true}));
+            return;
+        }
+
+        NetworkEntity.getById(Player, data.playerId).then((player) => {
+            $rootScope.$broadcast(evt, Object.assign(data, {clientEvent: true, player}));
+        });
+    }
+
     Connection.ready().then((socket) => {
         socket.get().on(GameEvent.clientsReady, onGameClientsReady);
+        socket.get().on(GameEvent.pause, data => forwardPlayerEvt(GameEvent.pause, data));
+        socket.get().on(GameEvent.resume, data => forwardPlayerEvt(GameEvent.resume, data));
     });
 
     NetworkEntity.registerType(ClientSimulation, EntityType.Simulation);

@@ -121,10 +121,10 @@ function Scheduler(MaxFrameRate, MState, $rootScope, Log) {
     }
 
     this.suspend = (e) => {
-        if ((e && e.type !== 'blur') || suspendOnBlur === true) {
+        if (!(e && e.type === 'blur' && suspendOnBlur === false)) {
             MState.setState(MState.Suspended);
             cancelAnimationFrame(animationFrame);
-            $rootScope.$apply();
+            $rootScope.$evalAsync();
         }
     };
 

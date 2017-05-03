@@ -25,7 +25,7 @@ function strictAccess(obj, name) {
             }
         },
         set(target, key, value) {
-            if (canApply(value)) {
+            if (canApply(value) === true) {
                 target[key] = strictAccess(value, `${name}.${key}`);
             }
         },
@@ -33,7 +33,7 @@ function strictAccess(obj, name) {
 
     // Recursively apply strict access to properties of the object
     Object.keys(obj).forEach((key) => {
-        if (canApply(obj[key])) {
+        if (canApply(obj[key]) === true) {
             obj[key] = strictAccess(obj[key], key);
         }
     });

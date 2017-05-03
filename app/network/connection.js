@@ -83,8 +83,8 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock, Status) {
         }
 
         onReconnect() {
-            const disconnectEvt = new Event(IOEvent.reconnect);
-            this.dispatchEvent(disconnectEvt);
+            const reconnectEvt = new Event(IOEvent.reconnect);
+            this.dispatchEvent(reconnectEvt);
             Status.display('Connected!');
         }
 

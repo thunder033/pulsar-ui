@@ -31,6 +31,8 @@ function clientFactory(Connection, $rootScope, AsyncInitializer, Log, Status) {
                 MatchEvent.matchStarted,
                 MatchEvent.matchEnded,
                 GameEvent.clientsReady,
+                GameEvent.pause,
+                GameEvent.resume,
             ].forEach(e => $rootScope.$on(e, forward));
 
             $rootScope.$on(IOEvent.joinedRoom, (e, args) => this.onRoomJoin(e, args));

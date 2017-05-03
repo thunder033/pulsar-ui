@@ -53,19 +53,25 @@ class StatusService extends EventTarget {
 
         this.error = this.error.bind(this);
         this.display = this.display.bind(this);
+        this.displayConditional = this.displayConditional.bind(this);
     }
 
     /**
      *
      * @param message
      * @param level
-     * @returns {function()}: Callback to remove the conditional status
+     * @returns {function()}: Callback to dismiss the conditional status
      */
     displayConditional(message, level) {
         const status = new StatusMessage(message, level, NaN);
         status.persist();
         this.dispatchStatus(status);
-        return () => { this.statuses.remove(status); };
+        return () => {
+            this.statuses.remove(status);
+            const evt = new Event('dismissStatus');
+            evt.status = status;
+            this.dispatchEvent(evt);
+        };
     }
 
     error() {

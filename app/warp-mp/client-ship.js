@@ -4,7 +4,6 @@
 
 const GameEvent = require('event-types').GameEvent;
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
-const Track = require('game-params').Track;
 const DataFormat = require('game-params').DataFormat;
 const EntityType = require('entity-types').EntityType;
 
@@ -15,6 +14,7 @@ resolve: ADT => [
     MDT.Geometry,
     MDT.Math,
     ADT.game.LerpedEntity,
+    ADT.game.const.UITrack,
     shipFactory]};
 
 /**
@@ -24,26 +24,27 @@ resolve: ADT => [
  * @param Geometry
  * @param MM
  * @param LerpedEntity
+ * @param UITrack
  * @returns {ClientShip}
  */
-function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
+function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, UITrack) {
     /**
      * Ramp the ship up the side of the lanes
      * @param x
      */
     function getYPos(x) {
-        const rampLBound = Track.POSITION_X + Track.LANE_WIDTH / 2;
-        const rampRBound = Track.POSITION_X + Track.WIDTH - Track.LANE_WIDTH / 2;
+        const rampLBound = UITrack.POSITION_X + UITrack.LANE_WIDTH / 2;
+        const rampRBound = UITrack.POSITION_X + UITrack.WIDTH - UITrack.LANE_WIDTH / 2;
 
         if (x >= rampLBound && x <= rampRBound) {
             return 0.2;
         }
 
-        const flatWidth = Track.WIDTH - Track.LANE_WIDTH;
-        const trackCenter = Track.POSITION_X + Track.WIDTH / 2;
+        const flatWidth = UITrack.WIDTH - UITrack.LANE_WIDTH;
+        const trackCenter = UITrack.POSITION_X + UITrack.WIDTH / 2;
         const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
 
-        const r = Track.LANE_WIDTH; // arc radius
+        const r = UITrack.LANE_WIDTH * 3; // arc radius
         return 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
     }
 

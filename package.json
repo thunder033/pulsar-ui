@@ -55,7 +55,7 @@
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
     "mocha": "^3.1.2",
-    "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.23",
+    "pulsar-lib": "github:thunder033/pulsar-lib#v1.0.26",
     "request": "^2.79.0",
     "socket.io-client": "^1.7.3",
     "uglify-js": "github:mishoo/UglifyJS2#harmony"

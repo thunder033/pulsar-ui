@@ -4,7 +4,6 @@
  */
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const GameEvent = require('event-types').GameEvent;
-const Track = require('game-params').Track;
 const SliceBar = require('game-params').SliceBar;
 const DriveParams = require('game-params').DriveParams;
 
@@ -21,6 +20,7 @@ resolve: ADT => [
     ADT.warp.State,
     MDT.Color,
     ADT.audio.Player,
+    ADT.game.const.UITrack,
     WarpCtrl]};
 
 /**
@@ -36,16 +36,17 @@ resolve: ADT => [
  * @param State
  * @param Color
  * @param Player
+ * @param UITrack
  * @constructor
  */
-function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color, Player) {
+function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color, Player, UITrack) {
     $scope.player = Player;
 
     const meshes = Geometry.meshes;
     const mLanePadding = 0.01; // padding on edge of each lane
 
     const tLane = new Geometry.Transform()
-        .scaleBy(Track.LANE_WIDTH - mLanePadding, 1, 150)
+        .scaleBy(UITrack.LANE_WIDTH - mLanePadding, 1, 150)
         .translate(0, -0.1, 2.3);
     tLane.origin.z = 1;
     const grey = MM.vec3(225, 225, 225);
@@ -56,10 +57,10 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
     const zRot = -Math.PI / 8;
 
     function drawLanes(camera) {
-        tLane.position.x = Track.POSITION_X + Track.LANE_WIDTH / 2;
-        for (let i = 0; i < Track.NUM_LANES; i++) {
+        tLane.position.x = UITrack.POSITION_X + UITrack.LANE_WIDTH / 2;
+        for (let i = 0; i < UITrack.NUM_LANES; i++) {
             camera.render(meshes.XZQuad, tLane, grey);
-            tLane.position.x += Track.LANE_WIDTH;
+            tLane.position.x += UITrack.LANE_WIDTH;
         }
         camera.present(); // Draw the background
     }
@@ -123,11 +124,11 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             tBar.scale.x = SliceBar.scaleX * slice.loudness;
             tBar.scale.z = depth;
 
-            tBar.position.set(Track.POSITION_X, 0, zOffset);
+            tBar.position.set(UITrack.POSITION_X, 0, zOffset);
             tBar.rotation.z = (-Math.PI) - zRot;
             Camera.render(meshes.XZQuad, tBar, color);
 
-            tBar.position.set(Track.POSITION_X + Track.WIDTH, 0, zOffset);
+            tBar.position.set(UITrack.POSITION_X + UITrack.WIDTH, 0, zOffset);
             tBar.rotation.z = zRot;
             Camera.render(meshes.XZQuad, tBar, color);
 
@@ -135,12 +136,12 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
             gems[i].scale.set(0);
 
             if ((sliceIndex + i) % 2 === 0) {
-                for (let l = 0; l < Track.NUM_LANES; l++) {
+                for (let l = 0; l < UITrack.NUM_LANES; l++) {
                     if (sliceGems[l] === 0 || sliceGems[l] === 2) {
                         continue;
                     }
 
-                    const gemXPos = Track.POSITION_X + Track.LANE_WIDTH / 2 + Track.LANE_WIDTH * l;
+                    const gemXPos = UITrack.POSITION_X + UITrack.LANE_WIDTH / 2 + UITrack.LANE_WIDTH * l;
                     gems[i].position.set(gemXPos, 0.1, zOffset);
                     if (sliceGems[l] === 1) {
                         gems[i].scale.set(0.15);

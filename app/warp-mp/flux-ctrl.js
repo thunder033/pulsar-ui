@@ -2,7 +2,6 @@
  * TODO: [Description]
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
-const MDT = require('../mallet/mallet.dependency-tree').MDT;
 const GameEvent = require('event-types').GameEvent;
 const SliceBar = require('game-params').SliceBar;
 const DriveParams = require('game-params').DriveParams;
@@ -10,21 +9,22 @@ const DriveParams = require('game-params').DriveParams;
 module.exports = {WarpCtrl,
 resolve: ADT => [
     ADT.ng.$scope,
-    MDT.Scheduler,
-    MDT.Camera,
-    MDT.Geometry,
-    MDT.Math,
-    MDT.Keyboard,
-    MDT.const.Keys,
+    ADT.mallet.Scheduler,
+    ADT.mallet.Camera,
+    ADT.mallet.Geometry,
+    ADT.mallet.Math,
+    ADT.mallet.Keyboard,
+    ADT.mallet.const.Keys,
     ADT.warp.Level,
     ADT.warp.State,
-    MDT.Color,
+    ADT.mallet.Color,
     ADT.audio.Player,
     ADT.game.const.UITrack,
+    ADT.mallet.State,
     WarpCtrl]};
 
+/* eslint-disable */
 /**
- *
  * @param $scope
  * @param MScheduler
  * @param Camera {Camera}
@@ -37,9 +37,11 @@ resolve: ADT => [
  * @param Color
  * @param Player
  * @param UITrack
+ * @param MState
  * @constructor
  */
-function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color, Player, UITrack) {
+function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Level, State, Color, Player, UITrack, MState) {
+    /* eslint-enable */
     $scope.player = Player;
 
     const meshes = Geometry.meshes;
@@ -66,6 +68,10 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
     }
 
     function processCameraInput(dt) {
+        if (!MState.is(MState.Debug)) {
+            return;
+        }
+
         const cameraSpeed = 0.005;
 
         if (Keyboard.isKeyDown(87 /* W*/)) { Camera.timeTranslate(MM.vec3(0, cameraSpeed, 0), dt); }
@@ -242,3 +248,4 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Leve
 
     $scope.$on(GameEvent.playStarted, init);
 }
+

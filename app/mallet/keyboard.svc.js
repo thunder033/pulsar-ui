@@ -44,7 +44,7 @@ function Keyboard() {
     });
     
     window.addEventListener('keydown', (e) => {
-        if (keyState[e.keyCode] === false) {
+        if (keyState[e.keyCode] !== true) {
             invokeListeners(keyDownEvents, e);
         }
 

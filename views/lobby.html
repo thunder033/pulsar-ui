@@ -1,25 +1,12 @@
 <div id="lobby">
-    <div ng-if="curStatus === status.UNAUTHENTICATED">
-        <div class="ps-logo">
-            <img src="assets/images/warp-icon.png" alt="Warp Logo">
-            <h2>Warp</h2>
-        </div>
+    <warp-header title="curStatus === status.STAGING ? 'New Match' : 'Lobby'"></warp-header>
+
+    <div class="staging-panel" ng-if="curStatus === status.UNAUTHENTICATED">
         <input class="cp-text-input" type="text" placeholder="Name" ng-model="fields.username">
         <button class="cp-button cp-button-md" ng-click="authenticate(fields.username)">Join Lobby</button>
     </div>
 
-    <div ng-if="curStatus === status.LOADING">
-        Loading...
-    </div>
-
     <div ng-if="curStatus === status.READY">
-        <header>
-            <div class="ps-logo">
-                <img src="assets/images/warp-icon.png" alt="Warp Logo">
-                <h2>Warp | Lobby</h2>
-            </div>
-        </header>
-
         <div class="staging-panel">
             <!--Users: <span ng-repeat="user in activeRoom.getUsers() track by $index" ng-bind="user.getName() + ', '"></span><br>-->
             <!--Active Room: <span ng-bind="activeRoom.getName()"></span> (<span ng-bind="activeRoom.getUsers().length"></span> users, synced <span ng-bind="activeRoom.syncTime"></span>)<br>-->
@@ -61,13 +48,6 @@
     </div>
 
     <div ng-if="curStatus === status.STAGING">
-        <header>
-            <div class="ps-logo">
-                <img src="assets/images/warp-icon.png" alt="Warp Logo">
-                <h2>Warp</h2>
-            </div>
-        </header>
-
         <div class="staging-panel">
             <staging-match match="activeRoom"></staging-match>
         </div>

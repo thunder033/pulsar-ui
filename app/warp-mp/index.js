@@ -20,6 +20,7 @@ ADT.game = {
     MatchLoader: 'game.MatchLoader',
     FlowController: 'game.FlowController',
     warpMenu: 'warpMenu',
+    warpHeader: 'warpHeader',
     const: {
         UITrack: 'game.const.UITrack',
     },
@@ -43,6 +44,7 @@ game.factory(ADT.game.WarpGame, require('./warp-game').resolve(ADT));
 game.factory(ADT.game.WarpDrive, require('./warp-drive').resolve(ADT));
 game.controller(ADT.game.FlowController, require('./flow-ctrl').resolve(ADT));
 game.directive(ADT.game.warpMenu, require('./menu').resolve(ADT));
+game.directive(ADT.game.warpHeader, require('./header').resolve(ADT));
 
 // The UI track shows 3 lanes + the edge bars as lanes
 game.constant(ADT.game.const.UITrack, Object.assign(Track, {

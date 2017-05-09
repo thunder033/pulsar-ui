@@ -1,15 +1,15 @@
-#lobby header {
+.warp-header {
     background: #333;
     padding: .5em;
     margin: 0;
 }
 
-#lobby header .ps-logo {
+.warp-header .ps-logo {
     font-size: .5em;
     color: #fff;
 }
 
-#lobby header .ps-logo h2 {
+.warp-header .ps-logo h2 {
     margin-left: 1rem;
 }
 
@@ -45,7 +45,8 @@
     color: #c00;
 }
 
-#lobby .staging-panel {
+#lobby .staging-panel,
+#results .staging-panel {
     padding: 1em;
     height: 100%;
 }

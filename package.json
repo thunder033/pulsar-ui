@@ -1,6 +1,6 @@
 {
   "name": "pulsar-ui",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "Pulsar Client",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec test/*.js",

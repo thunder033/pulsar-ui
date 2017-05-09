@@ -25,7 +25,7 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
     $scope.warpState = State;
 
     // Emit pause/resume messages to server
-    Keyboard.onKeyDown(Keys.Escape, () => { // Escape key toggles playing
+    const removeListener = Keyboard.onKeyDown(Keys.Escape, () => { // Escape key toggles playing
         if (State.is(State.Playing) || State.is(State.Paused)) {
             if (MState.is(MState.Running)) {
                 Client.emit(GameEvent.pause);
@@ -50,8 +50,9 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
             Status.display(`${e.player.getUser().getName()} resumed the game.`);
         }
         Scheduler.resume();
-        const songTime = e.time + Connection.getPing() - DriveParams.LEVEL_BUFFER_START;
-        AudioPlayer.seekTo(songTime);
+        const songTime = (e.time + Connection.getPing() - DriveParams.LEVEL_BUFFER_START) / 1000;
+        console.log(songTime);
+        AudioPlayer.seekToTime(songTime);
     });
 
     Connection.addEventListener(IOEvent.disconnect, () => {
@@ -87,5 +88,6 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
 
     $scope.$on('$destroy', () => {
         MState.clearState();
+        removeListener();
     });
 }

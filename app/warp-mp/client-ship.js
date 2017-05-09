@@ -30,22 +30,31 @@ resolve: ADT => [
 function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, UITrack) {
     /**
      * Ramp the ship up the side of the lanes
-     * @param x
+     * @param pos
      */
-    function getYPos(x) {
+    function reMapPosition(pos) {
+        const x = pos.x;
+
         const rampLBound = UITrack.POSITION_X + UITrack.LANE_WIDTH / 2;
         const rampRBound = UITrack.POSITION_X + UITrack.WIDTH - UITrack.LANE_WIDTH / 2;
 
         if (x >= rampLBound && x <= rampRBound) {
-            return 0.2;
+            pos.y = 0.2;
+        } else {
+            const flatWidth = UITrack.WIDTH - UITrack.LANE_WIDTH;
+            const trackCenter = UITrack.POSITION_X + UITrack.WIDTH / 2;
+            const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
+
+            // Beyond the edge of the lanes, the ship will move slower in X
+            const contractionFactor = 0.67;
+            pos.x = Math.sign(x - trackCenter) * (flatWidth / 2 + relX * contractionFactor);
+
+            const r = UITrack.LANE_WIDTH * 3; // arc radius
+            pos.y = 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
         }
 
-        const flatWidth = UITrack.WIDTH - UITrack.LANE_WIDTH;
-        const trackCenter = UITrack.POSITION_X + UITrack.WIDTH / 2;
-        const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
-
-        const r = UITrack.LANE_WIDTH * 3; // arc radius
-        return 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
+        pos.z = 0.8;
+        return pos;
     }
 
     class ClientShip extends LerpedEntity {
@@ -63,6 +72,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, UITr
 
             this.updateTS = 0;
             this.color = MM.vec3(255, 255, 255);
+            this.bankPct = 0;
 
             Object.defineProperty(this, 'positionX', {
                 writeable: true,
@@ -86,12 +96,44 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, UITr
         strafe(direction) {
             Connection.getSocket().get().emit(GameEvent.command, direction);
         }
+
+        getRotation(dt, pos) {
+            const newRot = MM.vec3();
+            const bankRate = 0.008;
+            const bankAngle = MM.vec3(Math.PI / 12, Math.PI / 24, Math.PI / 4);
+
+            if (this.disp.len2() > 0) {
+                const sign = Math.sign(this.disp.x);
+                this.bankPct += dt * sign * bankRate;
+            } else if (this.bankPct !== 0) {
+                const sign =  Math.sign(this.bankPct);
+                this.bankPct -= dt * bankRate * sign;
+
+                const newSign =  Math.sign(this.bankPct);
+                if (newSign !== sign) {
+                    this.bankPct = 0;
+                }
+            }
+
+            this.bankPct = MM.clamp(this.bankPct, -1, 1);
+
+            newRot.x = this.tRender.rotation.x;
+            newRot.y = bankAngle.y * this.bankPct;
+            newRot.z = bankAngle.z * this.bankPct;
+
+            // eslint-disable-next-line no-constant-condition
+            if (pos && false) {
+                newRot.x += 1;
+            }
+
+            return newRot;
+        }
         
         update(dt) {
             super.update(dt);
-            this.tRender.position.set(LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct));
-            this.tRender.position.y = getYPos(this.tRender.position.x);
-            this.tRender.position.z = 0.8;
+            const pos = LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct);
+            this.tRender.position.set(reMapPosition(pos));
+            this.tRender.rotation.set(this.getRotation(dt, pos));
         }
 
         getTransform() {

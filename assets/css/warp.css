@@ -6,12 +6,22 @@
     height: 20em;
     box-sizing: border-box;
     margin: -10em 0 0 -20em;
-    background: rgba(255, 255, 255, .3);
+    background: rgba(255, 255, 255, .5);
     padding: 1em;
-    color: #fff;
+    color: #222;
     border-radius: 1em;
     text-align: center;
     z-index: 1000;
+}
+
+.menu .volume-panel {
+    position: relative;
+    top: 1.3em;
+    right: 1em;
+}
+
+.menu .warp-header {
+    margin: 0 -1em 1em;
 }
 
 .menu .playlist {

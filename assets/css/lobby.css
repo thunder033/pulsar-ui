@@ -93,14 +93,24 @@
 }
 
 .start-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 25em;
-    height: 10em;
-    margin: -5em 0 0 -12.5em;
     text-align: center;
     z-index: 100;
+    font-size: 1.1em;
+    padding: .5em;
+    /* http://www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%28148\%2C90\%2C199\%2C0\%29\%200\%25\%2C\%20rgba\%28130\%2C46\%2C199\%2C0\.84\%29\%2015\%25\%2C\%20rgba\%28129\%2C45\%2C199\%2C0\.9\%29\%2016\%25\%2C\%20rgba\%28104\%2C6\%2C196\%2C0\.9\%29\%2050\%25\%2C\%20rgba\%28147\%2C88\%2C199\%2C0\.9\%29\%2084\%25\%2C\%20rgba\%28148\%2C90\%2C199\%2C0\.84\%29\%2085\%25\%2C\%20rgba\%28148\%2C90\%2C199\%2C0\%29\%20100\%25\%29\%3B' */
+    background: linear-gradient(to right,
+    rgba(148,90,199,0) 0%,
+    rgba(199, 48, 48, 0.84) 15%,
+    rgba(199, 46, 46, 0.9) 16%,
+    rgba(194, 8, 8, 0.9) 50%,
+    rgba(199, 46, 46, 0.9) 84%,
+    rgba(199, 48, 48, 0.84) 85%,
+    rgba(148,90,199,0) 100%);
+    color: #fff;
+    border-top: 1px #222 solid;
+    border-bottom: 1px #222 solid;
+    box-shadow: 0 5px 5px -5px #fff, 0 -5px 5px -5px #fff;
+    margin-bottom: 1em;
 }
 
 .match-players {
@@ -139,6 +149,7 @@
     right: 4.2em;
 }
 
-#lobby .cp-button-md {
+#lobby .cp-button-md,
+#results .cp-button-md {
     font-size: 1.2em;
 }

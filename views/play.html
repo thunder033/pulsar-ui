@@ -2,16 +2,18 @@
     <!--<span>State: {{state}}</span>-->
     <div ng-if="state === states.LOADING">Loading...</div>
 
-    <div class="start-overlay" ng-if="state === states.SYNCING">
-        <span class="match-players">
-            <span class="name" ng-bind="match.getUsers()[0].getName()"></span> ft.
-            <span class="name" ng-bind="match.getUsers()[1].getName()"></span>
-        </span><br>
-        <span class="countdown"> Start Game in <span ng-bind="secondsToStart"></span></span>
-    </div>
+
 
     <div ng-controller="game.WarpCtrl" class="warp-wrapper">
-        <warp-menu player="player"></warp-menu>
+        <warp-menu player="player">
+            <div class="start-overlay" ng-if="state !== states.PLAYING">
+                <span class="match-players">
+                    <span class="name" ng-bind="match.getUsers()[0].getName()"></span> ft.
+                    <span class="name" ng-bind="match.getUsers()[1].getName()"></span>
+                </span><br>
+                <span class="countdown" ng-if="state === states.SYNCING"> Start Game in <span ng-bind="secondsToStart"></span></span>
+            </div>
+        </warp-menu>
 
         <div class="warp-wrapper" ng-show="state === states.PLAYING">
             <div class="debug-stats">

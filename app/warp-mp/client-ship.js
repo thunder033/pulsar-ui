@@ -68,18 +68,24 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, Rend
             Connection.getSocket().get().emit(GameEvent.command, direction);
         }
 
+        /**
+         * Derives the rotation of the ship based on it's movement and position
+         * @param dt {number}
+         * @param pos {Vector3}
+         */
         getRotation(dt, pos) {
             const newRot = MM.vec3();
-            const bankRate = 0.008;
-            const bankAngle = MM.vec3(Math.PI / 12, Math.PI / 24, Math.PI / 4);
+            const bankRate = 0.008; // how quickly the ship banks during turns
+            const maxBankOrientation = MM.vec3(Math.PI / 12, Math.PI / 24, Math.PI / 4);
 
+            // If the ship is moving (laterally), bank more
             if (this.disp.len2() > 0) {
                 const sign = Math.sign(this.disp.x);
                 this.bankPct += dt * sign * bankRate;
-            } else if (this.bankPct !== 0) {
+            } else if (this.bankPct !== 0) { // If not, return to resting position
                 const sign =  Math.sign(this.bankPct);
                 this.bankPct -= dt * bankRate * sign;
-
+                // Check if the ship has crossed resting position
                 const newSign =  Math.sign(this.bankPct);
                 if (newSign !== sign) {
                     this.bankPct = 0;
@@ -89,13 +95,8 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, Rend
             this.bankPct = MM.clamp(this.bankPct, -1, 1);
 
             newRot.x = this.tRender.rotation.x;
-            newRot.y = bankAngle.y * this.bankPct;
-            newRot.z = bankAngle.z * this.bankPct;
-
-            // eslint-disable-next-line no-constant-condition
-            if (pos && false) {
-                newRot.x += 1;
-            }
+            newRot.y = maxBankOrientation.y * this.bankPct;
+            newRot.z = maxBankOrientation.z * this.bankPct + Render.getBankAngle(pos);
 
             return newRot;
         }

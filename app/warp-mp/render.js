@@ -60,35 +60,51 @@ function renderFactory(UITrack, Geometry, MM, Camera, Level) {
         gems[g].scale = MM.vec3(0.175);
     }
 
+    // Banking Parameters
+    const BANK_L_BOUND = UITrack.POSITION_X + UITrack.LANE_WIDTH / 2;
+    const BANK_R_BOUND = UITrack.POSITION_X + UITrack.WIDTH - UITrack.LANE_WIDTH / 2;
+    const FLAT_WIDTH = UITrack.WIDTH - UITrack.LANE_WIDTH;
+    const TRACK_CENTER = UITrack.POSITION_X + UITrack.WIDTH / 2;
+    const BANK_RADIUS = UITrack.LANE_WIDTH * 3; // arc radius
+
     class Render {
         static setWarpDrive(newDrive) {
             warpDrive = newDrive;
         }
 
         /**
-         * Ramp objects up the side of the lanes
+         * Bank objects up the side of the lanes
          * @param pos {Vector3}
          * @returns {Vector3}
          */
         static reMapPosition(pos) {
-            const rampLBound = UITrack.POSITION_X + UITrack.LANE_WIDTH / 2;
-            const rampRBound = UITrack.POSITION_X + UITrack.WIDTH - UITrack.LANE_WIDTH / 2;
-
             const x = pos.x;
-            if (x < rampLBound || x > rampRBound) {
-                const flatWidth = UITrack.WIDTH - UITrack.LANE_WIDTH;
-                const trackCenter = UITrack.POSITION_X + UITrack.WIDTH / 2;
-                const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
-
+            if (x < BANK_L_BOUND || x > BANK_R_BOUND) {
+                const relX = Math.abs(x - TRACK_CENTER) - (FLAT_WIDTH / 2);
                 // Beyond the edge of the lanes, the ship will move slower in X
                 const contractionFactor = 0.67;
-                pos.x = Math.sign(x - trackCenter) * (flatWidth / 2 + relX * contractionFactor);
-
-                const r = UITrack.LANE_WIDTH * 3; // arc radius
-                pos.y += 1 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
+                pos.x = Math.sign(x - TRACK_CENTER) * (FLAT_WIDTH / 2 + relX * contractionFactor);
+                pos.y += 1 + Math.sin((3 / 2) * Math.PI + (relX / BANK_RADIUS) * Math.PI / 2);
             }
 
             return pos;
+        }
+
+        /**
+         * Determines the bank angle based on position
+         * @param pos {Vector3}
+         * @return {number}
+         */
+        static getBankAngle(pos) {
+            const x = pos.x;
+            let z = 0;
+            if (x < BANK_L_BOUND || x > BANK_R_BOUND) {
+                const relX = Math.abs(x - TRACK_CENTER) - (FLAT_WIDTH / 2);
+                // acos has a domain of -1 to 1, values beyond that return NaN
+                z = Math.acos(1 - (relX / BANK_RADIUS)) * Math.sign(TRACK_CENTER - x);
+            }
+
+            return z;
         }
 
         static drawLanes(camera) {
@@ -144,18 +160,16 @@ function renderFactory(UITrack, Geometry, MM, Camera, Level) {
                             continue;
                         }
 
-                        const gemXPos = UITrack.Field.POSITION_X + UITrack.LANE_WIDTH / 2 + UITrack.LANE_WIDTH * l;
-                        gems[i].position.set(gemXPos, 0.1, zOffset);
-                        Render.reMapPosition(gems[i].position);
+                        gems[i].position.set(Render.GEM_LANE_POSITIONS[l], 0.2, zOffset);
                         if (sliceGems[l] === Gem.GREEN) {
                             gems[i].scale.set(0.15);
-                            gems[i].rotation.set(0, tt / 1000, 0);
+                            gems[i].rotation.set(0, tt / 1000, Render.GEM_LANE_ANGLES[l]);
                         } else if (sliceGems[l] === Gem.BLACK) {
                             blackGems.push(i);
                             gems[i].rotation.set(
                                 tt / 666,
                                 tt / 666,
-                                Math.PI / 4);
+                                (Math.PI / 4) + Render.GEM_LANE_ANGLES[l]);
                         }
                     }
                 }
@@ -175,6 +189,17 @@ function renderFactory(UITrack, Geometry, MM, Camera, Level) {
             Camera.present(); // Draw the gems
         }
     }
+
+    // Pre-calculate the x positions and bank angles for gems
+    Render.GEM_LANE_POSITIONS = new Float32Array(UITrack.Field.NUM_LANES)
+        .map((_, lane) => {
+            const origX = UITrack.Field.POSITION_X + UITrack.LANE_WIDTH / 2 + UITrack.LANE_WIDTH * lane;
+            const pos = Render.reMapPosition(MM.vec3(origX, 0, 0));
+            return pos.x;
+        });
+
+    Render.GEM_LANE_ANGLES = new Float32Array(UITrack.Field.NUM_LANES)
+        .map((_, lane) => Render.getBankAngle(MM.vec3(Render.GEM_LANE_POSITIONS[lane], 0, 0)));
 
     return Render;
 }

@@ -4,7 +4,14 @@
 
 // https://github.com/corbanbrook/dsp.js
 const dsp = require('../dsp');
+const Track = require('game-params').Track;
+const Gem = require('game-params').Gem;
 
+/**
+ * Gets the index of the largest number in the array
+ * @param arr
+ * @returns {number}
+ */
 function getMaxIndex(arr) {
     let max = -Infinity;
     let maxIndex = 0;
@@ -19,6 +26,11 @@ function getMaxIndex(arr) {
     return maxIndex;
 }
 
+/**
+ * Generates a pseudo-random number based on the seed
+ * @param seed
+ * @returns {number}
+ */
 function random(seed) {
     const x = Math.sin(seed) * 10000;
     return x - ~~(x);
@@ -33,9 +45,21 @@ function random(seed) {
  */
 function generateAudioField(frameBuffers, frequencyBinCount, sampleRate) {
     const fft = new dsp.FFT(frequencyBinCount, sampleRate);
-    const frequencyRanges = [0, 400, 650, 21050];
-    const lanes = new Array(3); // frequencyRanges = [0, 60, 250, 2000, 6000, 21050],
+    // const frequencyRanges = [0, 400, 650, 21050];
+    // Each bucket corresponds to a lane, from left to right
+    const frequencyBuckets = [
+        0, 250,
+        250, 500,
+        500, 1750,
+        1750, 7000,
+        7000, 21050];
+    const lanes = new Array(Track.NUM_LANES);
     const df = 21050 / (frameBuffers[0].length / 2); // delta-frequency between indices after FFT
+
+    // Don't generate a level if frequency buckets are not properly configured
+    if (frequencyBuckets.length / 2 !== Track.NUM_LANES) {
+        throw new RangeError('Frequency Bucket configuration is incompatible with Track configuration.');
+    }
 
     // console.log(frameBuffers);
     const fftSpectra = [];
@@ -52,7 +76,7 @@ function generateAudioField(frameBuffers, frequencyBinCount, sampleRate) {
         for (let f = 0; f < fftSpectra[i].length; f++) {
             sampleCount++;
             const frequency = f * df;
-            if (frequency + df >= frequencyRanges[lane + 1]) {
+            if (frequency + df >= frequencyBuckets[lane + 1]) {
                 lanes[lane] = sum / sampleCount;
                 sum = 0;
                 sampleCount = 0;
@@ -61,7 +85,7 @@ function generateAudioField(frameBuffers, frequencyBinCount, sampleRate) {
             sum += fftSpectra[i][f];
             avg += fftSpectra[i][f] / fftSpectra[i].length;
         }
-        field[i] = {gems: lanes.slice(), loudness: avg};
+        field[i] = {gems: lanes.slice(), loudness: avg, speed: 1};
     }
 
     // normalize loudness values
@@ -70,24 +94,20 @@ function generateAudioField(frameBuffers, frequencyBinCount, sampleRate) {
 
     let sameLaneCount = 0;
     let lastLane = 0;
-    const Gems = {
-        Basic: 1,
-        // 2 is collected
-        Black: 3,
-    };
 
-    let blackGemInterval = 13;
+    const BLACK_GEM_TRIGGER = 13;
+    let blackGemInterval = BLACK_GEM_TRIGGER;
     for (let o = 0; o < field.length; o++) {
         field[o].loudness /= maxLoudness;
         const loudestRange = getMaxIndex(field[o].gems);
 
-        let gem = Gems.Basic;
+        let gem = Gem.GREEN;
         if (loudestRange === lastLane) {
-            if (++sameLaneCount > 12 &&
+            if (++sameLaneCount > BLACK_GEM_TRIGGER - 1 &&
                 (sameLaneCount % blackGemInterval === 1
                 || sameLaneCount % blackGemInterval === 0)) {
-                gem = Gems.Black;
-                blackGemInterval = 13 + 3 * ~~(0.5 - random(o));
+                gem = Gem.BLACK;
+                blackGemInterval = BLACK_GEM_TRIGGER + 3 * ~~(0.5 - random(o));
                 // gem = random(o) > .5 ? Gems.Black : Gems.Basic;
             }
         }        else {

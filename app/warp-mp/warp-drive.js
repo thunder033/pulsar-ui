@@ -14,7 +14,7 @@ resolve: ADT => [
     warpDriveFactory]};
 
 function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
-    const EMPTY_SLICE = {speed: 1, loudness: 0, gems: [0, 0, 0]};
+    const EMPTY_SLICE = {speed: 1, loudness: 0, gems: [0, 0, 0, 0, 0]};
 
     class WarpDrive extends LerpedEntity {
         constructor(params, id) {

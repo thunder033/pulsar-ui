@@ -14,7 +14,7 @@ resolve: ADT => [
     MDT.Geometry,
     MDT.Math,
     ADT.game.LerpedEntity,
-    ADT.game.const.UITrack,
+    ADT.game.Render,
     shipFactory]};
 
 /**
@@ -24,39 +24,10 @@ resolve: ADT => [
  * @param Geometry
  * @param MM
  * @param LerpedEntity
- * @param UITrack
+ * @param Render
  * @returns {ClientShip}
  */
-function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, UITrack) {
-    /**
-     * Ramp the ship up the side of the lanes
-     * @param pos
-     */
-    function reMapPosition(pos) {
-        const x = pos.x;
-
-        const rampLBound = UITrack.POSITION_X + UITrack.LANE_WIDTH / 2;
-        const rampRBound = UITrack.POSITION_X + UITrack.WIDTH - UITrack.LANE_WIDTH / 2;
-
-        if (x >= rampLBound && x <= rampRBound) {
-            pos.y = 0.2;
-        } else {
-            const flatWidth = UITrack.WIDTH - UITrack.LANE_WIDTH;
-            const trackCenter = UITrack.POSITION_X + UITrack.WIDTH / 2;
-            const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
-
-            // Beyond the edge of the lanes, the ship will move slower in X
-            const contractionFactor = 0.67;
-            pos.x = Math.sign(x - trackCenter) * (flatWidth / 2 + relX * contractionFactor);
-
-            const r = UITrack.LANE_WIDTH * 3; // arc radius
-            pos.y = 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
-        }
-
-        pos.z = 0.8;
-        return pos;
-    }
-
+function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, Render) {
     class ClientShip extends LerpedEntity {
         constructor(params, id) {
             super(id, DataFormat.SHIP);
@@ -132,7 +103,9 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, UITr
         update(dt) {
             super.update(dt);
             const pos = LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct);
-            this.tRender.position.set(reMapPosition(pos));
+            pos.y = 0.2;
+            pos.z = 0.8;
+            this.tRender.position.set(Render.reMapPosition(pos));
             this.tRender.rotation.set(this.getRotation(dt, pos));
         }
 

@@ -49,6 +49,10 @@
     border-radius: .2em;
 }
 
+.warp-wrapper {
+    background: #000;
+}
+
 /* level status*/
 .warp-wrapper .level-status {
     position: fixed;

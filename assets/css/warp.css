@@ -36,7 +36,10 @@
     font-family: 'Cuprum', "Century Gothic", sans-serif;
     border: 0;
     border-radius: .5em;
-    font-size: 1.1em;
+    font-size: 1.2em;
+    display: block;
+    margin: .3em auto;
+    width: 7em;
 }
 
 .menu .menu-btn:hover {

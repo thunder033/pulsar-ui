@@ -71,7 +71,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope, I
         onStart(gameId) {
             this.started = true;
             if (Connection.getUser() === this.getHost()) {
-                MatchLoader.loadMatch(this);
+                MatchLoader.loadMatch(this).catch(Log.error);
             }
             updateMatchList();
             $rootScope.$broadcast(MatchEvent.matchStarted, {match: this, gameId, clientEvent: true});

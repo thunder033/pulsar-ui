@@ -24,6 +24,7 @@ resolve: ADT => [
 
 function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connection, Client, $scope, Status) {
     $scope.warpState = State;
+    State.current = State.Loading;
 
     // Emit pause/resume messages to server
     const removeEscListener = Keyboard.onKeyDown(Keys.Escape, () => { // Escape key toggles playing
@@ -60,11 +61,14 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
     Client.addEventListener(GameEvent.pause, pauseGame);
     Client.addEventListener(GameEvent.resume, resumeGame);
 
-    // Don't need to worry about removing excess handlers for these at the moment
-    Client.addEventListener(GameEvent.playEnded, () => {
+    function onEnded() {
         State.current = State.LevelComplete;
         Scheduler.suspend();
-    });
+    }
+
+    // Don't need to worry about removing excess handlers for these at the moment
+    Client.addEventListener(GameEvent.playEnded, onEnded);
+    Client.addEventListener(MatchEvent.matchEnded, onEnded);
 
     Connection.addEventListener(IOEvent.disconnect, () => {
         Scheduler.suspend();

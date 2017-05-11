@@ -65,12 +65,15 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
     }
 
     $scope.endGame =  function endGame() {
-        $scope.state = gameState.ENDED;
         Client.emit(MatchEvent.requestEnd);
     };
 
     Client.addEventListener(MatchEvent.matchEnded, () => {
-        $state.go('results', {matchId: $scope.match.getId()});
+        $scope.state = gameState.ENDED;
+    });
+
+    Client.addEventListener(GameEvent.playEnded, () => {
+        $scope.state = gameState.ENDED;
     });
 
     $scope.getPlayerInfo = (user = $scope.clientUser) => {

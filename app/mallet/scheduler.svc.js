@@ -109,8 +109,9 @@ function Scheduler(MaxFrameRate, MState, $rootScope, Log) {
             update(timestep, elapsedTime);
             deltaTime -= timestep;
 
-            if (++updateSteps > 240) {
-                Log.warn('Update Loop Exceeded 240 Calls');
+            const maxConsecSteps = 240;
+            if (++updateSteps > maxConsecSteps) {
+                Log.warn(`Update Loop Exceeded ${maxConsecSteps} Calls`);
                 deltaTime = 0; // don't do a silly # of updates
                 break;
             }

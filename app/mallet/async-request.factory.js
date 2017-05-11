@@ -11,9 +11,9 @@ require('angular').module('mallet').service(MDT.AsyncRequest, [
 
 /**
  * Provides a simple set of interfaces for making HTTP requests through web workers
- * @param {mallet.Thread} Thread
+ * @param Thread
  * @param $q
- * @param {config.Path} Path
+ * @param Path
  * @returns {{send: createRequest, createRequestPool: createRequestPool}}
  */
 function asyncRequestFactory(Thread, $q, Path) {

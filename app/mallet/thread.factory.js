@@ -73,6 +73,11 @@ function threadFactory($q, Log) {
     }
 
     return {
+        /**
+         * Creates a new thread running the given script
+         * @param script {string}
+         * @returns {Thread}
+         */
         create(script) {
             return new Thread(script);
         },

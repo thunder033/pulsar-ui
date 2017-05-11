@@ -96,12 +96,13 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Stat
 
         MScheduler.schedule((dt, tt) => {
             $scope.posX = clientShip.getTransform().position.toString(3);
-            $scope.updateTime = clientShip.getUpdateTime();
+            $scope.updateTime = warpDrive.getGameTime();
             $scope.tCamera = Camera.getPos().toString(3);
             $scope.clientScore = clientPlayer.getScore();
             $scope.sliceIndex = `${warpDrive.getSliceIndex()} ${warpDrive.getBarOffset().toFixed(2)}`;
 
-            if (warpDrive.getUpdateTime() > DriveParams.LEVEL_BUFFER_START && Player.state !== Player.states.Playing) {
+            if (warpDrive.getGameTime() > DriveParams.LEVEL_BUFFER_START &&
+                Player.state !== Player.states.Playing) {
                 $scope.match.getSong().then(Player.playClip);
             }
 

@@ -11,6 +11,7 @@ resolve: ADT => [
     ADT.mallet.Math,
     ADT.mallet.Camera,
     ADT.warp.Level,
+    ADT.mallet.State,
     renderFactory]};
 
 /**
@@ -22,7 +23,7 @@ resolve: ADT => [
  * @param Level {Level}
  * @returns {Render}
  */
-function renderFactory(UITrack, Geometry, MM, Camera, Level) {
+function renderFactory(UITrack, Geometry, MM, Camera, Level, MState) {
     const meshes = Geometry.meshes;
     const mLanePadding = 0.01; // padding on edge of each lane
 
@@ -37,10 +38,10 @@ function renderFactory(UITrack, Geometry, MM, Camera, Level) {
     tBar.origin.set(-1, 0, 1);
     const zRot = -Math.PI / 8;
 
+    const SLICE_OFFSET = 2;
     function getStartOffset() {
         let startOffset = 0;
-        const sliceOffset = 2;
-        for (let i = 0; i < sliceOffset; i++) {
+        for (let i = 0; i < SLICE_OFFSET; i++) {
             startOffset += (warpDrive.getSlice(i).speed * SliceBar.scaleZ + SliceBar.margin) || 0;
         }
 
@@ -119,7 +120,8 @@ function renderFactory(UITrack, Geometry, MM, Camera, Level) {
         static drawGems(dt, tt) {
             // make the first bar yellow
             // ctx.fillStyle = '#ff0';
-            let color = MM.vec3(100, 255, 255);
+            const teal = MM.vec3(100, 255, 255);
+            let color = teal;
 
             const barOffset = warpDrive.getBarOffset();
             const sliceIndex = warpDrive.getSliceIndex();
@@ -129,17 +131,22 @@ function renderFactory(UITrack, Geometry, MM, Camera, Level) {
 
             const blackGems = [];
             for (let i = 0; i < Level.barsVisible; i++) {
-                if (i + 10 > Level.barsVisible) {
-                    const sliceValue = 1 - (Level.barsVisible - i) / 10;
-                    color = MM.vec3(100 + sliceValue * 110, 255 - sliceValue * 45, 255 - sliceValue * 45);
-                }
-
                 const slice = warpDrive.getSlice(i);
                 const depth = SliceBar.scaleZ * slice.speed;
                 const zOffset = drawOffset - barOffset;
 
                 tBar.scale.x = SliceBar.scaleX * slice.loudness;
                 tBar.scale.z = depth;
+
+                if (sliceIndex + i === 0 && MState.is(MState.Debug) === true) {
+                    color = MM.vec3(255, 255, 0);
+                    tBar.scale.x = SliceBar.scaleX * 1.5;
+                } else if (i + 10 > Level.barsVisible) {
+                    const sliceValue = 1 - (Level.barsVisible - i) / 10;
+                    color = MM.vec3(100 + sliceValue * 110, 255 - sliceValue * 45, 255 - sliceValue * 45);
+                } else {
+                    color = teal;
+                }
 
                 // Render the left bar
                 tBar.position.set(UITrack.POSITION_X, 0, zOffset);
@@ -189,6 +196,8 @@ function renderFactory(UITrack, Geometry, MM, Camera, Level) {
             Camera.present(); // Draw the gems
         }
     }
+
+    Render.SLICE_OFFSET = SLICE_OFFSET;
 
     // Pre-calculate the x positions and bank angles for gems
     Render.GEM_LANE_POSITIONS = new Float32Array(UITrack.Field.NUM_LANES)

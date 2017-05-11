@@ -80,6 +80,7 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Stat
         Render.setWarpDrive(warpDrive);
         State.current = State.Playing;
         $scope.match.getSong().then((song) => { $scope.song = song; });
+        const timeStep = $scope.warpGame.getWarpField().getTimeStep();
 
         $scope.getTime = () => warpDrive.getGameTime() / 1000;
 
@@ -114,8 +115,8 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Stat
                 $scope.sliceIndex = `${warpDrive.getSliceIndex()} ${warpDrive.getBarOffset().toFixed(2)}`;
             }
 
-            if (warpDrive.getGameTime() > DriveParams.LEVEL_BUFFER_START &&
-                Player.state !== Player.states.Playing) {
+            if (Player.state !== Player.states.Playing &&
+                warpDrive.getGameTime() + Render.SLICE_OFFSET * timeStep > DriveParams.LEVEL_BUFFER_START) {
                 $scope.match.getSong().then(Player.playClip);
             }
 

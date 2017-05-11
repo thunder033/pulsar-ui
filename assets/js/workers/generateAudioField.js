@@ -48,16 +48,17 @@ function generateAudioField(frameBuffers, frequencyBinCount, sampleRate) {
     // const frequencyRanges = [0, 400, 650, 21050];
     // Each bucket corresponds to a lane, from left to right
     const frequencyBuckets = [
-        0, 250,
-        250, 500,
-        500, 1750,
-        1750, 7000,
-        7000, 21050];
+        0, // -> 250
+        250, // -> 500
+        500, // -> 1750
+        1750, // -> 700
+        7000, // -> 21050
+        21050];
     const lanes = new Array(Track.NUM_LANES);
     const df = 21050 / (frameBuffers[0].length / 2); // delta-frequency between indices after FFT
 
     // Don't generate a level if frequency buckets are not properly configured
-    if (frequencyBuckets.length / 2 !== Track.NUM_LANES) {
+    if (frequencyBuckets.length !== Track.NUM_LANES + 1) {
         throw new RangeError('Frequency Bucket configuration is incompatible with Track configuration.');
     }
 

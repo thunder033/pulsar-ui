@@ -42,6 +42,18 @@ function State($location, Log) {
     }
 
     /**
+     * Removes the given event listener
+     * @param arr
+     * @param listener
+     */
+    function removeListener(arr, listener) {
+        const index = stateListeners.indexOf(listener);
+        if (index > -1) {
+            arr.splice(index, 1);
+        }
+    }
+
+    /**
      * Indicates if a given state is active
      * @param state
      * @returns {boolean}
@@ -58,9 +70,12 @@ function State($location, Log) {
      * Creates an event listener for the given state
      * @param state
      * @param callback
+     * @returns {Function} function to cancel handler
      */
     this.onState = (state, callback) => {
-        stateListeners.push({callback, state});
+        const listener = {callback, state};
+        stateListeners.push(listener);
+        return removeListener.bind(null, stateListeners, listener);
     };
 
     function deactivate(state) {

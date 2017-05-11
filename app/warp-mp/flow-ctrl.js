@@ -1,4 +1,5 @@
 /**
+ * Coordinates state changes triggered from different game components
  * @author Greg Rozmarynowycz <greg@thunderlab.net>
  */
 
@@ -25,7 +26,7 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
     $scope.warpState = State;
 
     // Emit pause/resume messages to server
-    const removeListener = Keyboard.onKeyDown(Keys.Escape, () => { // Escape key toggles playing
+    const removeEscListener = Keyboard.onKeyDown(Keys.Escape, () => { // Escape key toggles playing
         if (State.is(State.Playing) || State.is(State.Paused)) {
             if (MState.is(MState.Running)) {
                 Client.emit(GameEvent.pause);
@@ -35,24 +36,34 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
         }
     });
 
-    // Forward Game Events to the local scheduler
-    Client.addEventListener(GameEvent.pause, (e) => {
+    function pauseGame(e) {
         if (e.player) {
             const dismiss = Status.displayConditional(`${e.player.getUser().getName()} paused the game.`);
-            // TODO: remove this as a listener when executed
-            MState.onState(MState.Running, dismiss);
+            const removeStateListener = MState.onState(MState.Running, () => {
+                dismiss();
+                removeStateListener();
+            });
         }
         Scheduler.suspend();
-    });
+    }
 
-    Client.addEventListener(GameEvent.resume, (e) => {
+    function resumeGame(e) {
         if (e.player) {
             Status.display(`${e.player.getUser().getName()} resumed the game.`);
         }
         Scheduler.resume();
         const songTime = (e.time + Connection.getPing() - DriveParams.LEVEL_BUFFER_START) / 1000;
-        console.log(songTime);
         AudioPlayer.seekToTime(songTime);
+    }
+
+    // Forward Game Events to the local scheduler
+    Client.addEventListener(GameEvent.pause, pauseGame);
+    Client.addEventListener(GameEvent.resume, resumeGame);
+
+    // Don't need to worry about removing excess handlers for these at the moment
+    Client.addEventListener(GameEvent.playEnded, () => {
+        State.current = State.LevelComplete;
+        Scheduler.suspend();
     });
 
     Connection.addEventListener(IOEvent.disconnect, () => {
@@ -64,6 +75,7 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
     });
 
     // Handle actual events when scheduler receives them
+    // These get removed by clearing MState
     MState.onState(MState.Suspended, () => {
         if (State.is(State.Playing)) {
             State.current = State.Paused;
@@ -88,6 +100,8 @@ function FlowCtrl(MState, Keyboard, State, Scheduler, Keys, AudioPlayer, Connect
 
     $scope.$on('$destroy', () => {
         MState.clearState();
-        removeListener();
+        removeEscListener();
+        Client.removeEventListener(GameEvent.resume, resumeGame);
+        Client.removeEventListener(GameEvent.pause, pauseGame);
     });
 }

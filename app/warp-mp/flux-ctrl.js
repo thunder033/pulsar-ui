@@ -15,10 +15,10 @@ resolve: ADT => [
     ADT.mallet.Keyboard,
     ADT.mallet.const.Keys,
     ADT.warp.State,
-    ADT.mallet.Color,
     ADT.audio.Player,
     ADT.mallet.State,
     ADT.game.Render,
+    ADT.network.Client,
     WarpCtrl]};
 
 /**
@@ -30,13 +30,13 @@ resolve: ADT => [
  * @param Keyboard
  * @param Keys
  * @param State
- * @param Color
  * @param Player
  * @param MState
  * @param Render
+ * @param Client
  * @constructor
  */
-function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, State, Color, Player, MState, Render) {
+function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, State, Player, MState, Render, Client) {
     $scope.player = Player;
     let warpDrive = null;
 
@@ -64,21 +64,32 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Stat
         const players = $scope.warpGame.getPlayers();
         let clientShip = null;
         let clientPlayer = null;
+
+        function isClient(player) {
+            return player.getUser() === $scope.clientUser;
+        }
+
         players.forEach((player) => {
-            if (player.getUser() === $scope.clientUser) {
+            if (isClient(player)) {
                 clientPlayer = player;
                 clientShip = player.getShip();
-
-                const color = player.getColor();
-                $scope.clientColor = Color.rgba(color.x, color.y, color.z, 1);
             }
-            return player.getShip();
         });
 
         warpDrive = $scope.warpGame.getWarpDrive();
         Render.setWarpDrive(warpDrive);
         State.current = State.Playing;
-        $scope.posX = 0;
+        $scope.match.getSong().then((song) => { $scope.song = song; });
+
+        $scope.getTime = () => warpDrive.getGameTime() / 1000;
+
+        $scope.pause = () => {
+            if (State.is(State.Playing) && MState.is(MState.Running)) {
+                Client.emit(GameEvent.pause);
+            }
+        };
+
+        $scope.isDebug = () => MState.is(MState.Debug);
 
         function sendKeysReleased() {
             if (!Keyboard.isKeyDown(Keys.Left) && !Keyboard.isKeyDown(Keys.Right)) {
@@ -95,11 +106,13 @@ function WarpCtrl($scope, MScheduler, Camera, Geometry, MM, Keyboard, Keys, Stat
         Keyboard.onKeyUp(Keys.Right, sendKeysReleased);
 
         MScheduler.schedule((dt, tt) => {
-            $scope.posX = clientShip.getTransform().position.toString(3);
-            $scope.updateTime = warpDrive.getGameTime();
-            $scope.tCamera = Camera.getPos().toString(3);
-            $scope.clientScore = clientPlayer.getScore();
-            $scope.sliceIndex = `${warpDrive.getSliceIndex()} ${warpDrive.getBarOffset().toFixed(2)}`;
+            if (MState.is(MState.Debug)) {
+                $scope.posX = clientShip.getTransform().position.toString(3);
+                $scope.updateTime = warpDrive.getGameTime();
+                $scope.tCamera = Camera.getPos().toString(3);
+                $scope.clientScore = clientPlayer.getScore();
+                $scope.sliceIndex = `${warpDrive.getSliceIndex()} ${warpDrive.getBarOffset().toFixed(2)}`;
+            }
 
             if (warpDrive.getGameTime() > DriveParams.LEVEL_BUFFER_START &&
                 Player.state !== Player.states.Playing) {

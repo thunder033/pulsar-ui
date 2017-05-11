@@ -1,8 +1,5 @@
 <div id="game-wrapper">
-    <!--<span>State: {{state}}</span>-->
     <div ng-if="state === states.LOADING">Loading...</div>
-
-
 
     <div ng-controller="game.WarpCtrl" class="warp-wrapper">
         <warp-menu player="player">
@@ -15,9 +12,38 @@
             </div>
         </warp-menu>
 
+        <div class="level-status">
+            <span class="score">Score: {{ getScore() | number: 0}}</span>
+            <!--<span class="multiplier">{{scoring.multiplier | number: 1}}</span>-->
+        </div>
+
+        <div class="game-info">
+            <button class="menu-open" ng-click="pause()">Menu</button>
+            <span class="time"> {{ getTime() | secondsToDate | date:'m:ss' }}</span>
+
+            <div class="players">
+                <div class="player" ng-repeat="player in getPlayers()">
+                    <span class="player-color" ng-style="{'background-color': getColor(player)}"></span>
+                    <span ng-bind="getPlayerInfo(player.getUser())"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="song-info clearfix">
+            <a class="icon-wrapper" href="{{ song.getDeepLink() }}" target="_blank">
+                <img class="source-icon" ng-src="{{song.source.getIcon()}}" title="Source: {{clip.source.getName()}}" alt="{{clip.source.getName()}}">
+            </a>
+
+            <div>
+                <span class="song-title" ng-bind="song.getName()"></span><br>
+                <span class="song-artist" ng-bind="song.getInfo()"></span>
+            </div>
+
+        </div>
+
         <div class="warp-wrapper" ng-show="state === states.PLAYING">
-            <div class="debug-stats">
-                <span class="player-color" ng-style="{'background-color': clientColor}"></span><span ng-bind="getPlayerInfo()"></span><br>
+            <div class="debug-stats" ng-if="isDebug()">
+                <span ng-bind="getPlayerInfo()"></span><br>
                 Ship: <span ng-bind="posX"></span><span> </span>
                 <!--<span ng-bind="lossPct + '%'"></span>-->
                 <span ng-bind="updateTime"></span><br>

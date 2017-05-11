@@ -44,7 +44,7 @@
     cursor: pointer;
 }
 
-.song-title {
+.hud .song-title {
     position: fixed;
     top: 0;
     left: 0;
@@ -54,7 +54,7 @@
     font-weight: bold;
 }
 
-.score {
+.hud .score {
     position: fixed;
     top: 1em;
     color: #fff;
@@ -63,7 +63,7 @@
     font-weight: bold;
 }
 
-.multiplier {
+.hud .multiplier {
     position: fixed;
     top: 4em;
     left: .66em;
@@ -71,6 +71,6 @@
     font-size: 1.5em;
 }
 
-.multiplier:before {
+.hud .multiplier:before {
     content: 'x';
 }

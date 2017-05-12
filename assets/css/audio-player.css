@@ -12,7 +12,7 @@
     left: -2.25em;
 }
 
-.volume-panel {
+.audio-player .volume-panel {
     display: inline-block;
     width: 6.5em;
     top: .4em;

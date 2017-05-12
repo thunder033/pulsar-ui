@@ -14,6 +14,7 @@ function menuDirective(ADT) {
         scope: {
             player: '=',
         },
+        transclude: true,
         templateUrl: 'views/warp-menu.html',
         controller: ADT.game.FlowController,
     };

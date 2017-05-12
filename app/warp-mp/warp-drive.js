@@ -14,7 +14,7 @@ resolve: ADT => [
     warpDriveFactory]};
 
 function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
-    const EMPTY_SLICE = {speed: 1, loudness: 0, gems: [0, 0, 0]};
+    const EMPTY_SLICE = {speed: 1, loudness: 0, gems: [0, 0, 0, 0, 0]};
 
     class WarpDrive extends LerpedEntity {
         constructor(params, id) {
@@ -37,6 +37,7 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
             this.warpField = null;
             this.level = [];
             this.velocity = 0;
+            this.startTime = NaN;
         }
 
         load(warpField) {
@@ -50,6 +51,10 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
 
         sync(buffer, view) {
             super.sync(buffer, view, () => {
+                if (isNaN(this.startTime)) {
+                    this.startTime = this.getUpdateTime();
+                }
+
                 this.prevBarOffset = this.barOffset;
                 this.prevSliceIndex = this.sliceIndex;
             });
@@ -64,6 +69,14 @@ function warpDriveFactory(LerpedEntity, NetworkEntity, Bar) {
                 const switchTime = Math.abs(this.barOffset / this.velocity); // this.level[this.sliceIndex].speed;
                 this.sliceEndPct = (this.syncElapsed - switchTime) / this.syncElapsed;
             }
+        }
+
+        /**
+         * Milliseconds since first update
+         * @returns {number}
+         */
+        getGameTime() {
+            return this.getUpdateTime() - this.startTime;
         }
 
         getSliceIndex() {

@@ -202,8 +202,12 @@ function Player(SampleCount, $timeout, AudioClip) {
      * @param {number} [pct=0] song position from 0 to 1
      */
     this.seekTo = (pct) => {
+        const time = trackLength * (pct || 0);
+        self.seekToTime(time);
+    };
+
+    this.seekToTime = (time) => {
         if (playing && state !== states.Streaming) {
-            const time = trackLength * (pct || 0);
             self.playBuffer(sourceNode.buffer, time).then(() => {
                 trackStart = getNow() - time * 1000;
             });

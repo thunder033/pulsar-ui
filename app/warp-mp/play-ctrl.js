@@ -18,12 +18,14 @@ resolve: ADT => [
     ADT.game.WarpGame,
     ADT.network.Connection,
     MDT.Log,
+    MDT.Color,
     PlayCtrl]};
 
+/* eslint-disable */
 /**
  *
  * @param $stateParams
- * @param NetworkEntity {NetworkEntity}
+ * @param NetworkEntity
  * @param $scope
  * @param $timeout
  * @param $state
@@ -32,9 +34,11 @@ resolve: ADT => [
  * @param WarpGame {WarpGame}
  * @param Connection
  * @param Log
+ * @param Color
  * @constructor
  */
-function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection, Log) {
+function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Connection, Log, Color) {
+    /* eslint-enable */
     if (Client.getUser() === null) {
        return $state.go('lobby');
     }
@@ -61,21 +65,46 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
     }
 
     $scope.endGame =  function endGame() {
-        $scope.state = gameState.ENDED;
         Client.emit(MatchEvent.requestEnd);
     };
 
     Client.addEventListener(MatchEvent.matchEnded, () => {
-        $state.go('results', {matchId: $scope.match.getId()});
+        $scope.state = gameState.ENDED;
     });
 
-    $scope.getPlayerInfo = () => {
-        if ($scope.clientUser === null) {
+    Client.addEventListener(GameEvent.playEnded, () => {
+        $scope.state = gameState.ENDED;
+    });
+
+    $scope.getPlayerInfo = (user = $scope.clientUser) => {
+        if (user === null) {
             return '-';
+        } else if (user === $scope.clientUser) {
+            return `${user.getName()} (${Connection.getPing()} ms)`;
         }
 
-        return `${$scope.clientUser.getName()} (${Connection.getPing()} ms)`;
+        return user.getName();
     };
+
+    function initPlayerInfo(game) {
+        function isClient(player) {
+            return player.getUser() === $scope.clientUser;
+        }
+
+        const colors = {};
+        const players = game.getPlayers();
+        players.forEach((player) => {
+            const color = player.getColor();
+            colors[player.getId()] = Color.rgba(color.x, color.y, color.z, 1);
+        });
+
+        $scope.getColor = player => colors[player.getId()];
+
+        // http://stackoverflow.com/questions/17387435/javascript-sort-array-of-objects-by-a-boolean-property
+        $scope.getPlayers = () => players.sort((a, b) => isClient(b) - isClient(a));
+
+        $scope.getScore = () => players.reduce((score, p) => score + p.getScore(), 0);
+    }
 
     const loadedGame = NetworkEntity.getById(WarpGame, $stateParams.gameId)
         .then((game) => {
@@ -93,7 +122,8 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
                 .then(song => song.getBuffer())
                 .then(() => game.waitForLoaded())
                 .then(() => {
-                Client.emit(GameEvent.clientLoaded);
+                    initPlayerInfo(game);
+                    Client.emit(GameEvent.clientLoaded);
             });
         }).catch((e) => {
         Log.error(e);

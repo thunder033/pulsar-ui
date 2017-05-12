@@ -1,15 +1,15 @@
-#lobby header {
+.warp-header {
     background: #333;
     padding: .5em;
     margin: 0;
 }
 
-#lobby header .ps-logo {
+.warp-header .ps-logo {
     font-size: .5em;
     color: #fff;
 }
 
-#lobby header .ps-logo h2 {
+.warp-header .ps-logo h2 {
     margin-left: 1rem;
 }
 
@@ -45,7 +45,8 @@
     color: #c00;
 }
 
-#lobby .staging-panel {
+#lobby .staging-panel,
+#results .staging-panel {
     padding: 1em;
     height: 100%;
 }
@@ -82,52 +83,6 @@
     padding: .3em;
 }
 
-.debug-stats {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 1em;
-    color: #fff;
-    z-index: 1000;
-}
-
-.start-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 25em;
-    height: 10em;
-    margin: -5em 0 0 -12.5em;
-    text-align: center;
-    z-index: 100;
-}
-
-.match-players {
-    font-size: 1.2em;
-    font-style: italic;
-}
-
-.match-players span.name {
-    font-weight: bold;
-    font-style: normal;
-}
-
-.end-button {
-    position: fixed;
-    top: 1em;
-    right: 1em;
-    z-index: 100;
-}
-
-.player-color {
-    display: inline-block;
-    box-sizing: border-box;
-    height: .7em;
-    width: .7em;
-    vertical-align: middle;
-    margin-right: .3em;
-}
-
 .staging-match .control-panel {
     padding: .5em;
     margin-right: 1em;
@@ -138,6 +93,7 @@
     right: 4.2em;
 }
 
-#lobby .cp-button-md {
+#lobby .cp-button-md,
+#results .cp-button-md {
     font-size: 1.2em;
 }

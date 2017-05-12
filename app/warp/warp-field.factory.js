@@ -18,7 +18,7 @@
          * A WarpField defines a level in Warp, generated from an audio file
          * @constructor
          */
-        function WarpField(version = 'v1.39') {
+        function WarpField(version = 'v1.41') {
             // Defining a version as a key so that the 'signature' of the object
             // can be compared without analyzing any specific property
             Object.defineProperty(this, version, {configurable: false, value: 1, enumerable: true});

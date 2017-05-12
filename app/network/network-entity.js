@@ -247,7 +247,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
 
         /**
          * Returns a network entity identified by type and id
-         * @param type {class}
+         * @param type {Function}
          * @param id {string}
          * @returns {Promise<NetworkEntity>}
          */

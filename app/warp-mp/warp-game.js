@@ -150,6 +150,7 @@ function warpGameFactory(Player, NetworkEntity, ClientShip, User, $q, ClientRoom
         socket.get().on(GameEvent.clientsReady, onGameClientsReady);
         socket.get().on(GameEvent.pause, data => forwardPlayerEvt(GameEvent.pause, data));
         socket.get().on(GameEvent.resume, data => forwardPlayerEvt(GameEvent.resume, data));
+        socket.get().on(GameEvent.playEnded, data => forwardPlayerEvt(GameEvent.playEnded, data));
     });
 
     NetworkEntity.registerType(ClientSimulation, EntityType.Simulation);

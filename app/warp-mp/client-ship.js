@@ -4,7 +4,6 @@
 
 const GameEvent = require('event-types').GameEvent;
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
-const Track = require('game-params').Track;
 const DataFormat = require('game-params').DataFormat;
 const EntityType = require('entity-types').EntityType;
 
@@ -15,6 +14,7 @@ resolve: ADT => [
     MDT.Geometry,
     MDT.Math,
     ADT.game.LerpedEntity,
+    ADT.game.Render,
     shipFactory]};
 
 /**
@@ -24,29 +24,10 @@ resolve: ADT => [
  * @param Geometry
  * @param MM
  * @param LerpedEntity
+ * @param Render
  * @returns {ClientShip}
  */
-function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
-    /**
-     * Ramp the ship up the side of the lanes
-     * @param x
-     */
-    function getYPos(x) {
-        const rampLBound = Track.POSITION_X + Track.LANE_WIDTH / 2;
-        const rampRBound = Track.POSITION_X + Track.WIDTH - Track.LANE_WIDTH / 2;
-
-        if (x >= rampLBound && x <= rampRBound) {
-            return 0.2;
-        }
-
-        const flatWidth = Track.WIDTH - Track.LANE_WIDTH;
-        const trackCenter = Track.POSITION_X + Track.WIDTH / 2;
-        const relX = Math.abs(x - trackCenter) - (flatWidth / 2);
-
-        const r = Track.LANE_WIDTH; // arc radius
-        return 1.2 + Math.sin((3 / 2) * Math.PI + (relX / r) * Math.PI / 2);
-    }
-
+function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity, Render) {
     class ClientShip extends LerpedEntity {
         constructor(params, id) {
             super(id, DataFormat.SHIP);
@@ -62,6 +43,7 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
 
             this.updateTS = 0;
             this.color = MM.vec3(255, 255, 255);
+            this.bankPct = 0;
 
             Object.defineProperty(this, 'positionX', {
                 writeable: true,
@@ -85,12 +67,47 @@ function shipFactory(NetworkEntity, Connection, Geometry, MM, LerpedEntity) {
         strafe(direction) {
             Connection.getSocket().get().emit(GameEvent.command, direction);
         }
+
+        /**
+         * Derives the rotation of the ship based on it's movement and position
+         * @param dt {number}
+         * @param pos {Vector3}
+         */
+        getRotation(dt, pos) {
+            const newRot = MM.vec3();
+            const bankRate = 0.008; // how quickly the ship banks during turns
+            const maxBankOrientation = MM.vec3(Math.PI / 12, Math.PI / 24, Math.PI / 4);
+
+            // If the ship is moving (laterally), bank more
+            if (this.disp.len2() > 0) {
+                const sign = Math.sign(this.disp.x);
+                this.bankPct += dt * sign * bankRate;
+            } else if (this.bankPct !== 0) { // If not, return to resting position
+                const sign =  Math.sign(this.bankPct);
+                this.bankPct -= dt * bankRate * sign;
+                // Check if the ship has crossed resting position
+                const newSign =  Math.sign(this.bankPct);
+                if (newSign !== sign) {
+                    this.bankPct = 0;
+                }
+            }
+
+            this.bankPct = MM.clamp(this.bankPct, -1, 1);
+
+            newRot.x = this.tRender.rotation.x;
+            newRot.y = maxBankOrientation.y * this.bankPct;
+            newRot.z = maxBankOrientation.z * this.bankPct + Render.getBankAngle(pos);
+
+            return newRot;
+        }
         
         update(dt) {
             super.update(dt);
-            this.tRender.position.set(LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct));
-            this.tRender.position.y = getYPos(this.tRender.position.x);
-            this.tRender.position.z = 0.8;
+            const pos = LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct);
+            pos.y = 0.2;
+            pos.z = 0.8;
+            this.tRender.position.set(Render.reMapPosition(pos));
+            this.tRender.rotation.set(this.getRotation(dt, pos));
         }
 
         getTransform() {

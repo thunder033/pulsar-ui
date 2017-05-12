@@ -15,15 +15,18 @@ resolve: ADT => [
     ADT.network.NetworkEntity,
     ADT.network.ClientRoom,
     ADT.mallet.Log,
+    ADT.shared.Status,
     LobbyCtrl]};
 
-function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntity, ClientRoom, Log) {
+function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntity, ClientRoom, Log, Status) {
     const status = {
         LOADING        : 0,
         UNAUTHENTICATED: 1,
         READY          : 2,
         STAGING        : 4,
     };
+
+    let loadingDismiss = null;
 
     $scope.curStatus = status.UNAUTHENTICATED;
 
@@ -60,11 +63,24 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntit
         $scope.rooms.push(room);
 
         if ($scope.activeRoom.getName() === 'lobby') {
-            $scope.curStatus = status.READY;
+            setStatus(status.READY);
         } else {
-            $scope.curStatus = status.STAGING;
+            setStatus(status.STAGING);
         }
     }
+
+    function setStatus(newStatus) {
+        if (loadingDismiss !== null) {
+            loadingDismiss();
+            loadingDismiss = null;
+        }
+
+        $scope.curStatus = newStatus;
+        if (newStatus === status.LOADING) {
+            loadingDismiss = Status.displayConditional('Loading...');
+        }
+    }
+
 
     Client.addEventListener(IOEvent.joinedRoom, (e) => {
         addRoom(e.room, true);
@@ -78,7 +94,7 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntit
 
         if (e.room.getName() !== 'lobby') {
             $scope.activeRoom = $scope.rooms[0];
-            $scope.curStatus = status.READY;
+            setStatus(status.READY);
         }
     });
 
@@ -87,7 +103,7 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntit
     });
 
     Connection.ready().then(() => {
-        $scope.curStatus = status.READY;
+        setStatus(status.READY);
 
         Connection.getSocket().get().on(IOEvent.serverError, Log.error);
 
@@ -104,21 +120,21 @@ function LobbyCtrl(Connection, $scope, ClientMatch, Client, $state, NetworkEntit
         if (username.length > 0) {
             Client.authenticate({name: username})
                 .then(assignScope('user'));
-            $scope.curStatus = status.LOADING;
+            setStatus(status.LOADING);
         }
     };
 
     $scope.joinMatch = (name) => {
         if (name && name.length > 0) {
             Client.emit(MatchEvent.requestJoin, {name});
-            $scope.curStatus = status.LOADING;
+            setStatus(status.LOADING);
         }
     };
 
     $scope.createMatch = (matchName) => {
         if (matchName && matchName.length > 0) {
             Client.emit(MatchEvent.requestMatch, {label: matchName});
-            $scope.curStatus = status.LOADING;
+            setStatus(status.LOADING);
         }
     };
 }

@@ -1,17 +1,23 @@
 /**
  * Created by gjrwcs on 10/25/2016.
  */
-"use strict";
 
-//https://github.com/corbanbrook/dsp.js
-var dsp = require('../dsp');
+// https://github.com/corbanbrook/dsp.js
+const dsp = require('../dsp');
+const Track = require('game-params').Track;
+const Gem = require('game-params').Gem;
 
-function getMaxIndex(arr){
-    var max = -Infinity,
-        maxIndex = 0;
+/**
+ * Gets the index of the largest number in the array
+ * @param arr
+ * @returns {number}
+ */
+function getMaxIndex(arr) {
+    let max = -Infinity;
+    let maxIndex = 0;
 
-    for(var i = 0; i < arr.length; i++){
-        if(arr[i] > max){
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] > max) {
             max = arr[i];
             maxIndex = i;
         }
@@ -20,8 +26,13 @@ function getMaxIndex(arr){
     return maxIndex;
 }
 
+/**
+ * Generates a pseudo-random number based on the seed
+ * @param seed
+ * @returns {number}
+ */
 function random(seed) {
-    var x = Math.sin(seed) * 10000;
+    const x = Math.sin(seed) * 10000;
     return x - ~~(x);
 }
 
@@ -32,30 +43,41 @@ function random(seed) {
  * @param sampleRate
  * @returns {Array}
  */
-function generateAudioField(frameBuffers, frequencyBinCount, sampleRate){
+function generateAudioField(frameBuffers, frequencyBinCount, sampleRate) {
+    const fft = new dsp.FFT(frequencyBinCount, sampleRate);
+    // const frequencyRanges = [0, 400, 650, 21050];
+    // Each bucket corresponds to a lane, from left to right
+    const frequencyBuckets = [
+        0, // -> 250
+        250, // -> 500
+        500, // -> 1750
+        1750, // -> 700
+        7000, // -> 21050
+        21050];
+    const lanes = new Array(Track.NUM_LANES);
+    const df = 21050 / (frameBuffers[0].length / 2); // delta-frequency between indices after FFT
 
-    var fft = new dsp.FFT(frequencyBinCount, sampleRate),
-        frequencyRanges = [0, 400, 650, 21050],
-        lanes = new Array(3),
-        //frequencyRanges = [0, 60, 250, 2000, 6000, 21050],
-        df = 21050 / (frameBuffers[0].length / 2); //delta-frequency between indices after FFT
+    // Don't generate a level if frequency buckets are not properly configured
+    if (frequencyBuckets.length !== Track.NUM_LANES + 1) {
+        throw new RangeError('Frequency Bucket configuration is incompatible with Track configuration.');
+    }
 
-    //console.log(frameBuffers);
-    var fftSpectra = [],
-        field = new Array(frameBuffers.length);
+    // console.log(frameBuffers);
+    const fftSpectra = [];
+    const field = new Array(frameBuffers.length);
 
-    for(var i = 0; i < frameBuffers.length; i++){
+    for (let i = 0; i < frameBuffers.length; i++) {
         fft.forward(frameBuffers[i]);
         fftSpectra[i] = fft.spectrum.slice();
 
-        var sum = 0,
-            sampleCount = 0,
-            avg = 0,
-            lane = 0;
-        for(var f = 0; f < fftSpectra[i].length; f++){
+        let sum = 0;
+        let sampleCount = 0;
+        let avg = 0;
+        let lane = 0;
+        for (let f = 0; f < fftSpectra[i].length; f++) {
             sampleCount++;
-            var frequency = f * df;
-            if(frequency + df >= frequencyRanges[lane + 1]){
+            const frequency = f * df;
+            if (frequency + df >= frequencyBuckets[lane + 1]) {
                 lanes[lane] = sum / sampleCount;
                 sum = 0;
                 sampleCount = 0;
@@ -64,38 +86,32 @@ function generateAudioField(frameBuffers, frequencyBinCount, sampleRate){
             sum += fftSpectra[i][f];
             avg += fftSpectra[i][f] / fftSpectra[i].length;
         }
-        field[i] = {gems: lanes.slice(), loudness: avg};
+        field[i] = {gems: lanes.slice(), loudness: avg, speed: 1};
     }
 
-    //normalize loudness values
-    var maxLoudness = field.reduce( (max, val) => val.loudness > max ? val.loudness : max, 0);
+    // normalize loudness values
+    const maxLoudness = field.reduce((max, val) => (val.loudness > max ? val.loudness : max), 0);
     console.log(maxLoudness);
 
-    var sameLaneCount = 0,
-        lastLane = 0,
-        Gems = {
-            Basic: 1,
-            //2 is collected
-            Black: 3,
-        };
+    let sameLaneCount = 0;
+    let lastLane = 0;
 
-    var blackGemInterval = 13;
-    for(var o = 0; o < field.length; o++){
-        field[o].loudness = field[o].loudness / maxLoudness;
-        var loudestRange = getMaxIndex(field[o].gems);
+    const BLACK_GEM_TRIGGER = 13;
+    let blackGemInterval = BLACK_GEM_TRIGGER;
+    for (let o = 0; o < field.length; o++) {
+        field[o].loudness /= maxLoudness;
+        const loudestRange = getMaxIndex(field[o].gems);
 
-        var gem = Gems.Basic;
-        if(loudestRange === lastLane){
-            if(++sameLaneCount > 12 &&
+        let gem = Gem.GREEN;
+        if (loudestRange === lastLane) {
+            if (++sameLaneCount > BLACK_GEM_TRIGGER - 1 &&
                 (sameLaneCount % blackGemInterval === 1
-                || sameLaneCount % blackGemInterval === 0)){
-
-                gem = Gems.Black;
-                blackGemInterval = 13 + 3 * ~~(.5 - random(o));
-                //gem = random(o) > .5 ? Gems.Black : Gems.Basic;
+                || sameLaneCount % blackGemInterval === 0)) {
+                gem = Gem.BLACK;
+                blackGemInterval = BLACK_GEM_TRIGGER + 3 * ~~(0.5 - random(o));
+                // gem = random(o) > .5 ? Gems.Black : Gems.Basic;
             }
-        }
-        else {
+        }        else {
             sameLaneCount = 0;
         }
 
@@ -104,16 +120,16 @@ function generateAudioField(frameBuffers, frequencyBinCount, sampleRate){
         lastLane = loudestRange;
     }
 
-    //The current "gems" is just based off the normalized loudness values of each frame
-    //more complex analysis will be done later to generate actual gems
+    // The current "gems" is just based off the normalized loudness values of each frame
+    // more complex analysis will be done later to generate actual gems
     return field;
 }
 
-function processMessage(e){
-    var audioField = generateAudioField(e.data.frameBuffers, e.data.frequencyBinCount, e.data.frameBuffers);
+function processMessage(e) {
+    const audioField = generateAudioField(e.data.frameBuffers, e.data.frequencyBinCount, e.data.frameBuffers);
     postMessage({
         _id: e.data._id,
-        audioField: audioField
+        audioField,
     });
 }
 

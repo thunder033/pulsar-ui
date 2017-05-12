@@ -1,11 +1,13 @@
 <div ng-if="!warpState.is(warpState.Playing)" class="menu">
-    <div class="clearfix">
+    <div class="clearfix warp-header">
         <ap-volume class="pull-right" player="player"></ap-volume>
         <div class="ps-logo pull-left">
             <img src="assets/images/warp-icon.png" alt="Warp Logo">
             <h2>Warp</h2>
         </div>
     </div>
+
+    <div class="notes" ng-transclude></div>
 
     <button class="menu-btn" ng-if="warpState.is(warpState.Paused)" ng-click="resume()">Resume</button>
     <button class="menu-btn" ng-if="warpState.is(warpState.Paused)" ng-click="endGame()">End Game</button>
@@ -18,9 +20,9 @@
         <li>Level is generated from audio analysis; not all songs (currently) result in "fun" levels</li>
     </ul>
 
-    <div ng-if="warpState.is(warpState.LevelComplete)">
-        <span ng-bind="player.playing.name"></span><br>
-        <span class="finalScore">Final Score: {{ scoring.score }}</span>
-    </div>
+    <!--<div ng-if="warpState.is(warpState.LevelComplete)">-->
+        <!--<span ng-bind="player.playing.name"></span><br>-->
+        <!--<span class="finalScore">Final Score: {{ scoring.score }}</span>-->
+    <!--</div>-->
 
 </div>

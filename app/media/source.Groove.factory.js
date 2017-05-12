@@ -21,6 +21,7 @@ require('angular').module('pulsar.media').factory('media.source.Groove', [
  * @param MediaType
  * @param {GrooveAuth} GrooveAuth
  * @param {config.Path} Path
+ * @param Status
  * @returns {Groove}
  */
 function sourceGrooveFactory(Source, HttpConfig, AudioClip, MediaType, GrooveAuth, Path, Status) {

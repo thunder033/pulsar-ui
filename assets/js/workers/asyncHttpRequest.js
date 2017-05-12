@@ -1,4 +1,3 @@
-'use strict';
 
 // http://stackoverflow.com/questions/26668430/is-it-possible-to-run-angular-in-a-web-worker
 self.window = self;
@@ -7,6 +6,7 @@ self.window = self;
 // These are normally defined by the browser env
 self.history = {};
 self.Node = {prototype: {}}; // this one is new (not in SO question)
+// noinspection JSAnnotator
 self.document = {
     readyState: 'complete',
     querySelector() {},
@@ -18,8 +18,7 @@ self.document = {
     },
 };
 
-var appPath = '../../../app/';
-
+// const appPath = '../../../app/';
 // Import angular
 const angular = require('angular');
 

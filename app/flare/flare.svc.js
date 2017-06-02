@@ -287,7 +287,7 @@ function Flare(MScheduler, MEasel, Effects, FrequencyRanges, MColor, WaveformAna
 
         MScheduler.draw(() => {
             // Draw the background color
-            MEasel.context.fillStyle = MColor.hsla(visualizer.hue, '90%', '10%', 1);
+            MEasel.context.fillStyle = MColor.hsla(visualizer.hue, 90, 10, 1);
             MEasel.context.fillRect(0, 0, canvas.width, canvas.height);
         });
 

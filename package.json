@@ -25,7 +25,7 @@
   "dependencies": {
     "angular": "1.5.8",
     "angular-cookies": "1.6.0",
-    "angular-ui-router": "^0.3.1",
+    "angular-ui-router": "0.3.1",
     "buffer": "^5.0.6",
     "checklist-model": "^0.10.0",
     "eventtarget": "^0.1.0",
@@ -52,8 +52,6 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-eslint": "^19.0.0",
     "heroku-deploy-tarball": "^1.0.0",
-    "jshint": "^2.9.4",
-    "jshint-stylish": "^2.2.1",
     "mocha": "^3.1.2",
     "request": "^2.79.0",
     "socket.io-client": "^1.7.3",

@@ -82,6 +82,52 @@
     display: inline-block;
     text-overflow: ellipsis;
     overflow: hidden;
+    position: relative;
+}
+
+.clip-title.streaming {
+    overflow: visible;
+    width: 9em;
+    margin-bottom: .35em;
+}
+
+.clip-title select {
+    max-width: 100%;
+    background: transparent;
+    color: #eee;
+    border: 0;
+    font: inherit;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.select-wrapper {
+    width: 100%;
+    font: inherit;
+    overflow: hidden;
+    font-size: .75em;
+    border: 1px #eee solid;
+    padding: .3em;
+    border-radius: .3em;
+}
+
+.select-wrapper:after {
+    content: '\25BC';
+    color: #eee;
+    background: #333;
+    position: absolute;
+    top: .05em;
+    right: -.45em;
+    z-index: 5;
+    pointer-events: none;
+    border-radius: 1em;
+    padding: .2em;
+}
+
+.clip-title select option {
+    color: #222;
+    background: #eee;
+    font-size: .75em;
 }
 
 .clip-title span {

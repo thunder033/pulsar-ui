@@ -171,13 +171,15 @@ function Player(SampleCount, $timeout, AudioClip) {
             trackLength = 0;
         });
 
-    this.playUserStream = () => navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
-            userStream = stream;
-            this.playStream(userStream);
-            cachedOutputGain = outputGainNode.gain.value;
-            outputGainNode.gain.value = 0;
-            playing = playableStream;
-        });
+    this.playUserStream = deviceId => navigator.mediaDevices.getUserMedia({
+        audio: deviceId ? {deviceId} : true,
+    }).then((stream) => {
+        userStream = stream;
+        this.playStream(userStream);
+        cachedOutputGain = outputGainNode.gain.value;
+        outputGainNode.gain.value = 0;
+        playing = playableStream;
+    });
 
     /**
      * Player the audio buffer from the given time (in microseconds) or from the start

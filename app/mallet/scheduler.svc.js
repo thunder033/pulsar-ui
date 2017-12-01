@@ -59,7 +59,7 @@ function Scheduler(MaxFrameRate, MState, $rootScope, Log) {
         }
 
         // There might be a better way to do this, but not really slowing things down right now
-        $rootScope.$apply();
+        $rootScope.$evalAsync();
     }
 
     /**

@@ -1,6 +1,10 @@
 
 // http://stackoverflow.com/questions/26668430/is-it-possible-to-run-angular-in-a-web-worker
 self.window = self;
+if (!self.ImageBitmap) {
+    self.ImageBitmap = (function Placeholder() {});
+}
+
 
 // Setup stubs for angular required document properties
 // These are normally defined by the browser env

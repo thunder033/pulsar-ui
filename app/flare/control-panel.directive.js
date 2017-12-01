@@ -5,13 +5,13 @@ const MDT = require('../mallet/mallet.dependency-tree').MDT;
 require('angular').module('pulsar.flare').directive('controlPanel', [
     'Flare',
     'flare.const.Effects',
-    MDT.Scheduler,
     'media.Library',
     'audio.Player',
     'media.const.Type',
+    MDT.Log,
     controlPanel]);
 
-function controlPanel(Visualizer, Effects, MScheduler, MediaLibrary, AudioPlayer, MediaType) {
+function controlPanel(Visualizer, Effects, MediaLibrary, AudioPlayer, MediaType, Log) {
     return {
         restrict: 'E',
         replace: true,
@@ -35,6 +35,7 @@ function controlPanel(Visualizer, Effects, MScheduler, MediaLibrary, AudioPlayer
              * Enables the currently selected reverb effect
              */
             scope.setReverbEffect = () => {
+                Log.debug(`Set reverb effect to ${scope.reverbEffect.name}`);
                 if (scope.reverbEffect.name === 'None') {
                     AudioPlayer.disableConvolverNode();
                 } else {
@@ -42,8 +43,6 @@ function controlPanel(Visualizer, Effects, MScheduler, MediaLibrary, AudioPlayer
                     AudioPlayer.setConvolverImpulse(clipData);
                 }
             };
-
-            MScheduler.schedule(() => scope.$apply());
         },
         controller: 'ControlPanelCtrl',
     };

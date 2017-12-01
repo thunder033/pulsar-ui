@@ -18,6 +18,14 @@ require('angular').module('pulsar.flare').directive('audioPlayer', [() => ({
                 activeDevice: null,
             };
 
+            const progressBar = elem[0].querySelector('.play-bar-progress');
+            // not angular but were doing an apply every frame so doesn't matter
+            const playBarUpdate = setInterval(() => {
+                progressBar.style.width = `${((scope.player.completionPct || 0) * 100)}%`;
+                }, 300);
+
+            scope.$on('$destroy', () => { clearInterval(playBarUpdate); });
+
             function isAudioDevice(deviceInfo) {
                 return (deviceInfo.kind === 'audiooutput' || deviceInfo.kind === 'audioinput') &&
                     deviceInfo.label !== 'Default' && deviceInfo.label !== 'Communications';

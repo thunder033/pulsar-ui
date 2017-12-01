@@ -27,7 +27,7 @@
     </span>
 
 
-    <span class="play-bar" ng-click="setGain($event)"><span class="play-bar-progress" ng-style="{width: getPlaybarSize()}"></span></span>
+    <span class="play-bar" ng-click="setGain($event)"><span class="play-bar-progress"></span></span>
     <span class="ap-timestamp">{{ player.playbackTime | secondsToDate | date:'m:ss' }} / {{ player.trackLength | secondsToDate | date:'m:ss' }}</span>
 
     <button ng-click="seekForward()" class="cp-button cp-button-round-sm ap-seek ap-seek-forward" title="Skip Forward">

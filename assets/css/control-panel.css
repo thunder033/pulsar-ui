@@ -26,6 +26,10 @@ html, body {
     transition: opacity .75s;
 }
 
+.control-panel.collapsed .ps-logo {
+    transform: translate(0);
+}
+
 .ps-logo.visible {
     opacity: 1;
     transition: opacity .25s;

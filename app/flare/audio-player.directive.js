@@ -13,7 +13,36 @@ require('angular').module('pulsar.flare').directive('audioPlayer', [() => ({
         link(scope, elem) {
             scope.marqueeClipTitle = false;
 
+            scope.media = {
+                devices: [],
+                activeDevice: null,
+            };
+
+            const progressBar = elem[0].querySelector('.play-bar-progress');
+            // not angular but were doing an apply every frame so doesn't matter
+            const playBarUpdate = setInterval(() => {
+                progressBar.style.width = `${((scope.player.completionPct || 0) * 100)}%`;
+                }, 300);
+
+            scope.$on('$destroy', () => { clearInterval(playBarUpdate); });
+
+            function isAudioDevice(deviceInfo) {
+                return (deviceInfo.kind === 'audiooutput' || deviceInfo.kind === 'audioinput') &&
+                    deviceInfo.label !== 'Default' && deviceInfo.label !== 'Communications';
+            }
+
+            navigator.mediaDevices.enumerateDevices().then((devices) => {
+                scope.media.devices = devices.filter(isAudioDevice);
+                if (scope.media.devices.length > 0) {
+                    scope.media.activeDevice = scope.media.devices[0].deviceId;
+                }
+            });
+
             scope.getPlaybarSize = () => `${scope.player.completionPct * 100}%`;
+
+            scope.changeActiveDevice = (deviceId) => {
+                scope.player.playUserStream(deviceId);
+            };
             
             scope.seekForward = () => {
                 scope.player.playClip(scope.queue.getNext());

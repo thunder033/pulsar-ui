@@ -10,7 +10,15 @@
             <span class="fa fa-microphone fa-2x"></span>
         </span>
     </button>
-    <span class="clip-title" ng-class="{marquee: marqueeClipTitle}"><span ng-bind="player.playing.name"></span></span><br>
+    <span class="clip-title" ng-show="player.state !== 'Streaming'" ng-class="{marquee: marqueeClipTitle}"><span ng-bind="player.playing.name"></span></span>
+    <!-- Clip title select for local audio -->
+    <span class="clip-title streaming" ng-show="player.state === 'Streaming'">
+        <label class="select-wrapper">
+             <select ng-change="changeActiveDevice(media.activeDevice)"
+                     ng-options="device.deviceId as device.label for device in media.devices"
+                     ng-model="media.activeDevice"></select>
+        </label>
+    </span><br>
     <span class="ap-clip-info">
         <span ng-bind="player.playing.getInfo()"></span>
         <a ng-if="player.playing.getDeepLink()" href="{{player.playing.getDeepLink()}}" target="_blank" class="text-info ap-deep-link">
@@ -19,7 +27,7 @@
     </span>
 
 
-    <span class="play-bar" ng-click="setGain($event)"><span class="play-bar-progress" ng-style="{width: getPlaybarSize()}"></span></span>
+    <span class="play-bar" ng-click="setGain($event)"><span class="play-bar-progress"></span></span>
     <span class="ap-timestamp">{{ player.playbackTime | secondsToDate | date:'m:ss' }} / {{ player.trackLength | secondsToDate | date:'m:ss' }}</span>
 
     <button ng-click="seekForward()" class="cp-button cp-button-round-sm ap-seek ap-seek-forward" title="Skip Forward">

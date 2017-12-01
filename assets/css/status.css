@@ -9,6 +9,10 @@
     z-index: 100;
 }
 
+.pulsar-status.empty {
+    height: 0;
+}
+
 .pulsar-status .status-message.persist .dismiss-status {
     display: none;
 }

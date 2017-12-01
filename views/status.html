@@ -1,4 +1,4 @@
-<div class="pulsar-status">
+<div class="pulsar-status" ng-class="{empty: activeMessage === null}">
     <div class="status-message" ng-class="[msgStyle]" ng-if="activeMessage !== null">
         <button ng-click="dismissStatus()" class="dismiss-status"></button>
         <span ng-bind="activeMessage.getMessage()"

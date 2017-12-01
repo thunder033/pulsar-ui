@@ -41,6 +41,7 @@ const MDT = {
         $q: '$q',
         $state: '$state',
         $socket: 'socketFactory',
+        $window: '$window',
     },
     config: {
         Path: 'config.Path',

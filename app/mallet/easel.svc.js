@@ -3,9 +3,11 @@
  */
 
 const MDT = require('./mallet.dependency-tree').MDT;
-require('angular').module('mallet').service(MDT.Easel, [Easel]);
+require('angular').module('mallet').service(MDT.Easel, [
+    MDT.Log,
+    Easel]);
 
-function Easel() {
+function Easel(Log) {
     const contexts = {};
     const defaultKey = 'default';
 
@@ -52,8 +54,14 @@ function Easel() {
         clearCanvas(ctx) {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         },
-        resizeCanvas(canvas, ctx, scale) {
-            scale = scale || 1;
+        /**
+         * Resize the canvas to the given scale, taking into account device pixel ratio
+         * @param canvas
+         * @param ctx
+         * @param [scale=1] {number}
+         */
+        resizeCanvas(canvas, ctx, scale = 1) {
+            Log.debug(`resize ${canvas.id || canvas.className} to ${scale}`);
             // finally query the various pixel ratios
             const devicePixelRatio = window.devicePixelRatio || 1;
             const backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
@@ -64,9 +72,8 @@ function Easel() {
 
             const ratio = devicePixelRatio / backingStoreRatio;
 
-            const oldWidth = canvas.clientWidth;
-            const oldHeight = canvas.clientHeight;
-
+            // const oldWidth = canvas.clientWidth;
+            // const oldHeight = canvas.clientHeight;
 
             canvas.width = canvas.clientWidth * scale;
             canvas.height = canvas.clientHeight * scale;
@@ -75,8 +82,11 @@ function Easel() {
                 canvas.width *= ratio;
                 canvas.height *= ratio;
 
-                canvas.style.width = `${oldWidth}px`;
-                canvas.style.height = `${oldHeight}px`;
+                // original code suggested "restoring" these values, but this doesn't allow
+                // the canvas to resize dynamically, and relying on pure css appears to yield
+                // desired behavior
+                // canvas.style.width = `${oldWidth}px`;
+                // canvas.style.height = `${oldHeight}px`;
                 
                 // We don't appear to need this working w/ relative sizes
                 // ctx.scale(ratio, ratio);

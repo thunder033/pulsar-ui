@@ -23,7 +23,7 @@ function controlPanel(Visualizer, Effects, MediaLibrary, AudioPlayer, MediaType,
             scope.effects = Effects;
 
             const noneOption = {name: 'None', id: 9999};
-            scope.reverbEffect = noneOption;
+            scope.fields = {reverbEffect: noneOption};
             // Get all of the reverb effects from the media library
             MediaLibrary.getAudioClips(MediaType.ReverbImpulse)
                 .then((effects) => {
@@ -35,12 +35,14 @@ function controlPanel(Visualizer, Effects, MediaLibrary, AudioPlayer, MediaType,
              * Enables the currently selected reverb effect
              */
             scope.setReverbEffect = () => {
-                Log.debug(`Set reverb effect to ${scope.reverbEffect.name}`);
-                if (scope.reverbEffect.name === 'None') {
+                if (scope.fields.reverbEffect.name === 'None') {
+                    Log.info('Disable audio effect');
                     AudioPlayer.disableConvolverNode();
                 } else {
-                    const clipData = MediaLibrary.getAudioClip(scope.reverbEffect.name).clip;
-                    AudioPlayer.setConvolverImpulse(clipData);
+                    Log.info(`Set reverb effect to ${scope.fields.reverbEffect.name}`);
+                    scope.fields.reverbEffect.getBuffer().then((buffer) => {
+                        AudioPlayer.setConvolverImpulse(buffer);
+                    }, Log.error);
                 }
             };
         },

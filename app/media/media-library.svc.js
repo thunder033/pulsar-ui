@@ -1,15 +1,17 @@
 /**
 * Created by gjr8050 on 9/16/2016.
 */
+const MDT = require('../mallet/mallet.dependency-tree').MDT;
 require('angular').module('pulsar.media').service('media.Library', [
     '$q',
     'media.const.Type',
     'media.Source',
     'media.const.Sources',
     '$injector',
+    MDT.Log,
     Library]);
 
-function Library($q, MediaType, Source, Sources, $injector) {
+function Library($q, MediaType, Source, Sources, $injector, Log) {
     const ready = $q.defer();
     const clips = {};
     const sources = {};
@@ -47,6 +49,7 @@ function Library($q, MediaType, Source, Sources, $injector) {
      * @returns {Promise<AudioClip>}
      */
     this.getAudioClip = (id) => { // eslint-disable-line
+        Log.warn('This get audio clip method is currently non-functional.');
         return ready.promise.then(() => {
             if (typeof id === 'number') {
                 return clips[id];

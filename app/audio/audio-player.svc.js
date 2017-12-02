@@ -10,6 +10,7 @@ require('angular').module('pulsar.audio').service('audio.Player', [
     MDT.const.SampleCount,
     '$timeout',
     'media.AudioClip',
+    MDT.Log,
     Player]);
 
 /**
@@ -17,7 +18,7 @@ require('angular').module('pulsar.audio').service('audio.Player', [
  * @constructor
  * @extends EventTarget
  */
-function Player(SampleCount, $timeout, AudioClip) {
+function Player(SampleCount, $timeout, AudioClip, Log) {
     EventTarget.call(this);
 
     const states = Object.freeze({
@@ -83,6 +84,10 @@ function Player(SampleCount, $timeout, AudioClip) {
         analyzerNode = self.createAnalyzerNode(audioCtx);
         gainNode = self.createMasterGainNode(audioCtx);
         convolverNode = self.createConvolverNode(audioCtx);
+
+        gainNode.connect(analyzerNode);
+        analyzerNode.connect(outputGainNode);
+        outputGainNode.connect(audioCtx.destination);
 
         this.addEventListener('ended', () => { this.stop(); });
 
@@ -228,7 +233,7 @@ function Player(SampleCount, $timeout, AudioClip) {
                 sourceNode.onended = null;
                 if (state === states.Playing || state === states.Paused) {
                     sourceNode.stop(0);
-                }                else if (state === states.Streaming) {
+                } else if (state === states.Streaming) {
                     sourceNode.disconnect();
                     outputGainNode.gain.value = cachedOutputGain;
                     userStream = null;
@@ -256,14 +261,22 @@ function Player(SampleCount, $timeout, AudioClip) {
      * @param impulseData
      */
     this.setConvolverImpulse = (impulseData) => {
+        Log.info('enabling convoler node with impluse');
         const convolver = self.getConvolverNode();
 
-        audioCtx.decodeAudioData(impulseData, (buffer) => {
-            convolver.buffer = buffer;
-            convolver.loop = true;
-            convolver.normalize = true;
-            convolver.connect(audioCtx.destination);
-        });
+        convolver.buffer = impulseData;
+        convolver.loop = true;
+        convolver.normalize = true;
+
+        try {
+            gainNode.disconnect(analyzerNode);
+        } catch (e) {
+            // TODO: implement a flag for this ??
+            // the node may or may not be connected; no (quick) way to know
+        } finally  {
+            gainNode.connect(convolverNode);
+            convolver.connect(analyzerNode);
+        }
     };
 
     /**
@@ -271,7 +284,14 @@ function Player(SampleCount, $timeout, AudioClip) {
      */
     this.disableConvolverNode = () => {
         if (convolverNode) {
-            convolverNode.disconnect();
+            try {
+                convolverNode.disconnect(analyzerNode);
+            } catch (e) {
+                // the node may or may not be connected; no (quick) way to know
+            } finally {
+                gainNode.disconnect(convolverNode);
+                gainNode.connect(analyzerNode);
+            }
         }
     };
 
@@ -305,7 +325,7 @@ function Player(SampleCount, $timeout, AudioClip) {
      */
     this.createConvolverNode = (ctx) => {
         const convolver = ctx.createConvolver();
-        (analyzerNode).connect(convolver);
+        // convolver.connect(analyzerNode);
         return convolver;
     };
 
@@ -330,21 +350,20 @@ function Player(SampleCount, $timeout, AudioClip) {
         analyserNode.fftSize = SampleCount;
 
         // here we connect to the destination i.e. speakers
-        analyserNode.connect(outputGainNode);
+        // analyserNode.connect(outputGainNode);
         return analyserNode;
     };
 
     this.createMasterGainNode = (ctx) => {
         const masterGain = ctx.createGain();
-        masterGain.connect(analyzerNode);
+        // masterGain.connect(analyzerNode);
 
         return masterGain;
     };
 
     this.createOutputGainNode = (ctx) => {
         const outputGain = ctx.createGain();
-        outputGain.connect(audioCtx.destination);
-
+        // outputGain.connect(audioCtx.destination);
         return outputGain;
     };
 

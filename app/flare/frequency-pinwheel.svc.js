@@ -39,12 +39,14 @@ function FrequencyPinwheel(AudioData, MEasel, FrequencyAnalyzer, MColor) {
      * @param fill the color to fill the arcs
      * @param interval how many data values to increment each iteration
      * @param angle what rotation to draw the pinwheel at
+     * @param filterInterval reduce frequencies drawn to improve performance
      */
-    function drawArcSet(ctx, data, start, end, fill, interval, angle) {
+    function drawArcSet(ctx, data, start, end, fill, interval, angle, filterInterval) {
+        filterInterval = filterInterval || 1; // filter data for performance optimization
         interval = interval || 1;
 
         // The length of each arc
-        const arcLength = (4 * Math.PI) / FrequencyAnalyzer.getMetrics().dataLimit;
+        const arcLength = ((4 * Math.PI) / FrequencyAnalyzer.getMetrics().dataLimit) * filterInterval;
         const avgLoudness = FrequencyAnalyzer.getMetrics().avgLoudness;
         const maxLoudness = 256;
         const canvas = ctx.canvas;
@@ -54,11 +56,15 @@ function FrequencyPinwheel(AudioData, MEasel, FrequencyAnalyzer, MColor) {
         ctx.save();
         ctx.translate(origin.x, origin.y);
         ctx.rotate(angle + start * arcLength);
+
+        const rotationDelta = arcLength * interval;
+        const startAdjust = (start % filterInterval); // this might only work with an orig interval of 2 or less
+        const dataInterval = interval * filterInterval;
         // loop through the data and draw!
-        for (let i = start; i < end; i += interval) {
+        for (let i = start + startAdjust; i < end; i += dataInterval) {
             const loudness = data[i];
 
-            ctx.rotate(arcLength * interval);
+            ctx.rotate(rotationDelta);
             if (loudness > 0) {
                 // Fudge the radius of the arcs based on the overall average of
                 // the previous range to the whole set of arcs is fuller
@@ -114,14 +120,22 @@ function FrequencyPinwheel(AudioData, MEasel, FrequencyAnalyzer, MColor) {
         const darkFront = MColor.hsla(hue, 70, 70, 0.5);
         const lightFront = MColor.hsla(hue, 55, 78, 0.5);
 
+        const interval = 2;
+        const filterInterval = MEasel.isLowPerformanceMode() && metrics.dataLimit > 256 ? 2 : 1;
         // skip every other
-        drawArcSet(ctx, data, 0, metrics.dataLimit / 2, lightBack, 2, angle);
+        drawArcSet(ctx, data, 0, metrics.dataLimit / 2, lightBack, interval, angle, filterInterval);
         // offset by 1 and skip ever other arc
-        drawArcSet(ctx, data, 1, metrics.dataLimit / 2 + 1, darkBack, 2, angle);
+        drawArcSet(ctx, data, 1, metrics.dataLimit / 2 + 1, darkBack, interval, angle, filterInterval);
         // start at middle, skip every other
-        drawArcSet(ctx, data, metrics.dataLimit / 2, metrics.dataLimit, darkFront, 2, -angle);
+        drawArcSet(ctx, data, metrics.dataLimit / 2, metrics.dataLimit, darkFront, interval, -angle, filterInterval);
         // start middle, offset by 1, skip every other
-        drawArcSet(ctx, data, metrics.dataLimit / 2 + 1, metrics.dataLimit - 1, lightFront, 2, -angle);
+        drawArcSet(ctx, data,
+            metrics.dataLimit / 2 + 1,
+            metrics.dataLimit - 1,
+            lightFront,
+            interval,
+            -angle,
+            filterInterval);
 
         drawPeakShimmers(ctx, origin, metrics.maxRangeIndices, angle);
 

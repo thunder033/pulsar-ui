@@ -50,10 +50,15 @@ function easelDirective(MEasel, Scheduler, MState) {
             Scheduler.schedule(() => {
                 const lowResScale = 0.75;
                 // Reduce canvas resolution is performance is bad
-                if (Scheduler.FPS < 30 && scale === 1) {
+                if (Scheduler.FPS < 30 && !MEasel.isLowPerformanceMode()) {
+                    MEasel.toggleLowPerformanceMode(true);
                     scale = lowResScale;
                     MEasel.resizeCanvas(canvas, ctx, scale);
-                } else if (Scheduler.FPS > 40 && scale === lowResScale) {
+                } else if (
+                    !MEasel.isLowPerformanceModeForced()
+                    && Scheduler.FPS > 40
+                    && MEasel.isLowPerformanceMode()) {
+                    MEasel.toggleLowPerformanceMode(false);
                     scale = 1;
                     MEasel.resizeCanvas(canvas, ctx, scale);
                 }

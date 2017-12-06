@@ -10,10 +10,27 @@ require('angular').module('mallet').service(MDT.Easel, [
 function Easel(Log) {
     const contexts = {};
     const defaultKey = 'default';
+    let lowPerformanceMode = false;
+    let performanceModeToggles = 0;
+    const toggleLimit = 8;
 
     return {
         get context() {
             return contexts[defaultKey];
+        },
+        toggleLowPerformanceMode(value) {
+            lowPerformanceMode = value;
+            // if performance degrades repeatedly, just stay in low performance mode
+            if (performanceModeToggles++ > toggleLimit) {
+                lowPerformanceMode = true;
+            }
+            return lowPerformanceMode;
+        },
+        isLowPerformanceMode() {
+            return lowPerformanceMode;
+        },
+        isLowPerformanceModeForced() {
+            return performanceModeToggles > toggleLimit;
         },
         createNewCanvas(contextKey, width, height) {
             const canvas = document.createElement('canvas');

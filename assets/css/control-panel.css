@@ -26,6 +26,22 @@ html, body {
     transition: opacity .75s;
 }
 
+.icon-grey {
+    color: #ddd;
+}
+
+.icon-lavender {
+    color: #aa99ef
+}
+
+.icon-yellow {
+    color: #fc0;
+}
+
+.icon-yellow, .icon-lavender, .icon-grey {
+    text-shadow: 1px 1px 1px #000;
+}
+
 .control-panel.collapsed .ps-logo {
     transform: translate(0);
 }
@@ -100,18 +116,20 @@ html, body {
     padding: .5em;
     margin: 0 0 .25em;
     display: block;
+    height: 1.9em;
 }
 
 .select-box select, .select-box input {
     border: 0;
-    padding: .25em;
-    margin: -.25em 0 -.25em .5em;
+    padding: .5em;
+    margin: 0 0 -.25em .5em;
     vertical-align: middle;
+    min-width: 10em;
 }
 
 .color-input .strip {
-    width: 12em;
-    margin: 0 0 -1.5em .4em;
+    width: 11em;
+    margin: 0 -11.75em -.55em .6em;
     height: 2em;
     background: linear-gradient(to right,
     rgba(255, 0, 0, 1),
@@ -121,13 +139,25 @@ html, body {
     rgba(0, 0, 255, 1),
     rgba(255, 0, 255, 1),
     rgba(255, 0, 0, 1));
+    display: inline-block;
 }
 
 .color-input input {
-    width: 15em;
+    width: 14em;
     height: 1em;
     padding: 0;
     margin-bottom: .5em;
+}
+
+.select-box span:first-child, .color-input span:first-child {
+    display: block;
+    margin: -.3em .3em -.3em -.3em;
+    border-right: 1px #999 solid;
+    width: 6.5em;
+    padding: .7em .5em .3em;
+    background: #444;
+    float: left;
+    height: 1.5em;
 }
 
 .select-box .readout {

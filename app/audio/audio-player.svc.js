@@ -179,11 +179,14 @@ function Player(SampleCount, $timeout, AudioClip, Log) {
     this.playUserStream = deviceId => navigator.mediaDevices.getUserMedia({
         audio: deviceId ? {deviceId} : true,
     }).then((stream) => {
+        Log.info(`Streaming from user device ${deviceId}`);
         userStream = stream;
         this.playStream(userStream);
         cachedOutputGain = outputGainNode.gain.value;
         outputGainNode.gain.value = 0;
         playing = playableStream;
+    }).catch((err) => {
+        Log.error(`Failed to play stream for device ${deviceId}`, err);
     });
 
     /**

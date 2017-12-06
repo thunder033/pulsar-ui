@@ -8,10 +8,11 @@ require('angular').module('pulsar.flare').directive('controlPanel', [
     'media.Library',
     'audio.Player',
     'media.const.Type',
+    'audio.RealtimeData',
     MDT.Log,
     controlPanel]);
 
-function controlPanel(Visualizer, Effects, MediaLibrary, AudioPlayer, MediaType, Log) {
+function controlPanel(Visualizer, Effects, MediaLibrary, AudioPlayer, MediaType, AudioData, Log) {
     return {
         restrict: 'E',
         replace: true,
@@ -23,7 +24,8 @@ function controlPanel(Visualizer, Effects, MediaLibrary, AudioPlayer, MediaType,
             scope.effects = Effects;
 
             const noneOption = {name: 'None', id: 9999};
-            scope.fields = {reverbEffect: noneOption};
+            scope.fields = {reverbEffect: noneOption, amplifyFactor: 1};
+            scope.setAmplifyFactor = AudioData.setAmplifyFactor;
             // Get all of the reverb effects from the media library
             MediaLibrary.getAudioClips(MediaType.ReverbImpulse)
                 .then((effects) => {

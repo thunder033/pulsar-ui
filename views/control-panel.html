@@ -30,6 +30,11 @@
         </label>
 
         <label class="select-box">Noise Amount
+        <label class="select-box"><span>Amplify Factor</span>
+            <input type="range" min=".9" max="2" ng-model="fields.amplifyFactor" ng-change="setAmplifyFactor(fields.amplifyFactor)" step="0.02">
+            <span class="readout" ng-bind="fields.amplifyFactor"></span>
+        </label>
+
             <input type="range" min="0" max="1" ng-model="visualizer.noiseThreshold" step="0.01">
         </label>
 

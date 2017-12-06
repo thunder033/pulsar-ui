@@ -130,6 +130,13 @@ html, body {
     margin-bottom: .5em;
 }
 
+.select-box .readout {
+    display: inline-block;
+    vertical-align: middle;
+    padding: .25em;
+    font-size: 1.1em;
+}
+
 .cp-container {
     margin-top: .5em;
 }

@@ -12,12 +12,13 @@ require('angular').module('pulsar.audio').service('audio.RealtimeData', [
     MDT.Scheduler,
     MDT.const.SampleCount,
     'audio.Player',
-    '$q',
+    MDT.ng.$q,
     RealtimeData]);
 
 function RealtimeData(MScheduler, SampleCount, AudioPlayer) {
     const waveformData = new Uint8Array(SampleCount / 2);
     const frequencyData = new Uint8Array(SampleCount / 2);
+    let amplifyFactor = 1;
 
     MScheduler.schedule(() => {
         const analyzerNode = AudioPlayer.getAnalyzerNode();
@@ -28,7 +29,15 @@ function RealtimeData(MScheduler, SampleCount, AudioPlayer) {
 
         analyzerNode.getByteFrequencyData(frequencyData);
         analyzerNode.getByteTimeDomainData(waveformData);
+
+        for (let i = 0; i < frequencyData.length; i++) {
+            frequencyData[i] *= amplifyFactor;
+        }
     }, 50);
+
+    this.setAmplifyFactor = (factor) => {
+        amplifyFactor = factor;
+    };
 
     this.getWaveform = () => waveformData;
 

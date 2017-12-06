@@ -32,6 +32,7 @@ function Flare(MScheduler, MEasel, Effects, FrequencyRanges, MColor, WaveformAna
         },
         effects: [],
         waveform: WaveformAnalyzer.getMetrics(),
+        baseVelocity: 0,
         velocity: 0,
         hue: 0,
         noiseThreshold: 0.1,
@@ -103,22 +104,24 @@ function Flare(MScheduler, MEasel, Effects, FrequencyRanges, MColor, WaveformAna
      * @param ctx the context to draw on
      * @param origin where to start drawing from
      * @param maxRadius the max radius of the pulses
+     * @param dt
      */
-    function drawQuarterRadialPulses(ctx, origin, maxRadius) {
+    function drawQuarterRadialPulses(ctx, origin, maxRadius, dt) {
         // PULSES
 
         // Derive new velocity value from the period the waveform
-        const vel = (1 / visualizer.waveform.period) / 20000;
+        const vel = (1 / visualizer.waveform.period) / 500000;
 
         // If the new velocity is greater than current, generate a new pulse
-        if (vel > visualizer.velocity) {
+        if (vel > visualizer.baseVelocity) {
             const energy = Math.min((visualizer.waveform.amplitude) / 10, 1);
             radialPulses.enqueue(0, {pos: 0, energy});
         }
 
         // Either keep the new, higher velocity, or decay the existing velocity
         const decayRate = 0.03;
-        visualizer.velocity = vel > visualizer.velocity ? vel : visualizer.velocity * (1 - decayRate);
+        visualizer.baseVelocity = vel > visualizer.baseVelocity ? vel : visualizer.baseVelocity * (1 - decayRate);
+        visualizer.velocity = visualizer.baseVelocity * dt;
 
         // Create a gradient that will show the pulses
         const gradient2 = ctx.createRadialGradient(origin.x, origin.y, 0, origin.x, origin.y, maxRadius);
@@ -257,9 +260,9 @@ function Flare(MScheduler, MEasel, Effects, FrequencyRanges, MColor, WaveformAna
         linearPulses = nextPulses;
     }
 
-    function drawRadialPulses(origin, ctx) {
+    function drawRadialPulses(origin, ctx, dt) {
         const quarterCtx = MEasel.getContext('quarterRender');
-        drawQuarterRadialPulses(quarterCtx, {x: 0, y: 0}, ctx.canvas.width / 2);
+        drawQuarterRadialPulses(quarterCtx, {x: 0, y: 0}, ctx.canvas.width / 2, dt);
         // mirror the image into the other quadrants
         MEasel.drawQuarterRender(ctx, quarterCtx.canvas, origin);
     }
@@ -272,7 +275,7 @@ function Flare(MScheduler, MEasel, Effects, FrequencyRanges, MColor, WaveformAna
         MEasel.drawQuarterRender(ctx, quarterCtx.canvas, origin);
     }
 
-    function update() {
+    function update(dt) {
         visualizer.angle += visualizer.velocity;
 
         // Update the particle emitter
@@ -292,7 +295,7 @@ function Flare(MScheduler, MEasel, Effects, FrequencyRanges, MColor, WaveformAna
         });
 
         // Queue up draw commands for visualization
-        MScheduler.draw(() => drawRadialPulses(origin, MEasel.context), 99);
+        MScheduler.draw(() => drawRadialPulses(origin, MEasel.context, dt), 99);
         MScheduler.draw(() => FrequencyPinwheel.draw(origin, visualizer.hue, MEasel.context, visualizer.angle), 100);
         MScheduler.draw(() => drawLinearPulses(origin, MEasel.context), 101);
 
